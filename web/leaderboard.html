@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Candidates · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* page-specific — leaderboard. Uses only the app.css variables. */
+
+  /* Candidate shortlist kicker merged into the same maroon/lattice band used
+     on the candidate 360 hero, instead of sitting on it as a separate light strip. */
+  .page-state{position:relative;padding:26px 32px 22px;background:var(--maroon);
+    color:#fff;border-radius:var(--r-xl);overflow:hidden;margin-bottom:14px}
+  .page-state::before{content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background-image:url("assets/pattern-arch.svg");background-size:230px 230px}
+  .page-state > *{position:relative}
+  /* The page's name reads as a title, not an eyebrow — same size, weight and
+     casing as every other page's banner title (.arch h1 in app.css, e.g.
+     Start Campaign, Today), so this reads as one consistent site. */
+  .page-state .kicker{font-size:42px;font-weight:600;letter-spacing:-.035em;
+    color:#fff;line-height:1.14}
+  .page-state p{margin-top:16px;font-size:17.5px;color:rgba(255,255,255,.78);font-weight:300;max-width:52ch;line-height:1.5}
+
+  .rankdial-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;flex:none}
+  .rankdial{width:150px;height:150px;flex:none;position:relative;display:grid;place-items:center}
+  .rankdial svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .rankdial .n{font-size:52px;font-weight:200;letter-spacing:-.04em;line-height:1;color:var(--maroon)}
+  .rankdial-wrap .u{font-size:13px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;text-align:center}
+  .headline{display:flex;align-items:center;gap:40px;flex-wrap:wrap}
+  .headline .txt{flex:1;min-width:240px}
+  .headline h1{font-size:30px;font-weight:400;letter-spacing:-.025em;line-height:1.28;max-width:24ch}
+  .headline h1 b{color:var(--maroon);font-weight:500}
+  .headline p{margin-top:12px;font-size:16px;color:var(--ink-2);font-weight:300;max-width:44ch;line-height:1.55}
+
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+  .pill-f{
+    border:1px solid var(--hair);border-radius:var(--r-pill);background:var(--surface);
+    padding:10px 20px;font-size:14.5px;font-weight:400;color:var(--ink-2);
+  }
+  .pill-f.on{background:var(--maroon);border-color:var(--maroon);color:#fff}
+
+  .lb-list{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .lb-row{
+    display:grid;grid-template-columns:40px 66px 1fr auto;column-gap:22px;align-items:center;
+    padding:20px 28px;border-top:1px solid var(--hair-soft);text-decoration:none;color:inherit;
+    transition:background .18s;
+  }
+  .lb-row[hidden]{display:none}
+  .lb-row:first-child{border-top:0}
+  .lb-row:hover{background:#FBF8F4}
+  .lb-row[aria-disabled="true"]{cursor:default}
+  .lb-rank{font-size:15px;font-weight:400;color:var(--ink-3)}
+  .lb-dial{width:66px;height:66px;position:relative;display:grid;place-items:center}
+  .lb-dial svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .lb-dial .n{font-size:21px;font-weight:400;letter-spacing:-.03em;color:var(--ink)}
+  .lb-main .nm{font-size:17px;font-weight:400;letter-spacing:-.015em}
+  .lb-main .ev{margin-top:5px;font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.45}
+  .lb-tags{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .lb-mand{font-size:13px;color:var(--ink-3);font-weight:300}
+  .lb-mand b{color:var(--ink-2);font-weight:400}
+
+  .spread-wrap{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:26px 30px}
+  .spread-key{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px}
+  .spread-key .k{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink-2);font-weight:300}
+  .spread-key i{width:10px;height:10px;border-radius:50%;flex:none;display:block}
+  .spread-key .k1{background:var(--v-strong)} .spread-key .k2{background:var(--v-potential)}
+  .spread-key .k3{background:var(--v-review)} .spread-key .k4{background:var(--v-no)}
+  .live-run-note{margin:0 0 18px;padding:13px 16px;border:1px solid var(--hair);border-radius:var(--r-md);background:var(--sand);font-size:13.5px;color:var(--ink-2);font-weight:300}
+
+  @media (max-width:980px){
+    .headline{flex-direction:column;align-items:flex-start;gap:22px}
+    .lb-row{grid-template-columns:28px 52px 1fr;row-gap:10px}
+    .lb-tags{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center;width:100%}
+    .lb-dial{width:52px;height:52px}
+    .lb-dial .n{font-size:17px}
+  }
+
+  .lb-main{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .lb-main .nm{display:block;font-size:16px;font-weight:500;letter-spacing:-.01em;color:var(--ink-1)}
+  .lb-main .lb-meta{display:block;font-size:13px;font-weight:400;color:var(--maroon);
+    letter-spacing:.01em;font-variant-numeric:tabular-nums}
+  .lb-main .ev{display:flex;flex-direction:column;gap:6px;max-width:82ch;margin-top:2px}
+  .lb-main .ev > span{font-size:14px;font-weight:300;line-height:1.55;
+    padding:9px 14px;border-radius:var(--r-md);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .lb-main .ev-fact{background:var(--sand);color:var(--ink-2)}
+  .lb-main .ev-note{background:#FBF2F4;color:#8A3050}
+  .lb-row{border-left:3px solid transparent;transition:border-color .2s,background .2s}
+  .lb-row[data-group="strong"]{border-left-color:var(--v-strong)}
+  .lb-row[data-group="look"]{border-left-color:var(--v-potential)}
+  .lb-row[data-group="no"]{border-left-color:var(--v-no)}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <div class="page-state">
+    <div class="kicker">Candidate shortlist</div>
+    <p>Everyone who applied, ranked against the approved rubric — pick who moves forward from here.</p>
+  </div>
+
+  <!-- ═══════ CHUNK 1 — the headline ratio. This is the whole argument.
+       Loading placeholders only below — real values are never baked in
+       ahead of the live fetch, so there is nothing here to flash. ═══════ -->
+  <section class="band" style="margin-top:20px">
+    <div class="label">
+      <h2 id="campaign-title">Loading this campaign…</h2>
+      <span class="aside" id="campaign-meta"></span>
+    </div>
+    <div class="card pad-lg headline">
+      <div class="rankdial-wrap">
+        <div class="rankdial">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="54" fill="none" stroke="var(--sand-2)" stroke-width="11"/>
+            <circle cx="75" cy="75" r="54" fill="none" stroke="var(--maroon)" stroke-width="11" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="339"/>
+          </svg>
+          <span class="n" id="shortlist-count">—</span>
+        </div>
+        <span class="u" id="screened-count"></span>
+      </div>
+      <div class="txt">
+        <h1 id="headline-copy">Loading your shortlist…</h1>
+        <p id="headline-detail"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — filters, calm pills ═══════ -->
+  <section class="band">
+    <div class="filters">
+      <button type="button" class="pill-f on" data-filter="all">All</button>
+      <button type="button" class="pill-f" data-filter="strong">Strong fit</button>
+      <button type="button" class="pill-f" data-filter="look">Needs a look</button>
+      <button type="button" class="pill-f" data-filter="no">Not recommended</button>
+    </div>
+
+    <!-- ═══════ CHUNK 3 — the ranked list. A plain loading placeholder only
+         — render() below always clears and replaces this before showing
+         real rows, so nothing fake is ever left to flash. ═══════ -->
+    <div class="live-run-note" id="live-run-note" hidden></div>
+    <div class="lb-list" id="candidate-list">
+      <div class="lb-row"><span class="lb-main"><span class="nm">Loading candidates…</span></span></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — the spread across all 622. Sample-only and always
+       hidden once render() runs below (never wired to live data) — hidden
+       by default too, so it cannot flash in first. ═══════ -->
+  <section class="band" hidden>
+    <div class="label" data-summary="8% are strong fits, 22% show potential, and 30% need a closer review.">
+      <h2>How all 622 came out</h2>
+    </div>
+    <div class="spread-wrap">
+      <div class="spread">
+        <i class="s1" style="width:8%"></i>
+        <i class="s2" style="width:22%"></i>
+        <i class="s3" style="width:30%"></i>
+        <i class="s4" style="width:40%"></i>
+      </div>
+      <div class="spread-key">
+        <span class="k"><i class="k1"></i>Strong fit — 8%</span>
+        <span class="k"><i class="k2"></i>Potential fit — 22%</span>
+        <span class="k"><i class="k3"></i>Review required — 30%</span>
+        <span class="k"><i class="k4"></i>Not recommended — 40%</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — the cut, folded away. Same as chunk 4: sample-only,
+       always hidden once render() runs, hidden by default too. ═══════ -->
+  <section class="band" hidden>
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b ok">?</span>
+          <span class="t">Why these 24, and not the other 598</span>
+          <span class="s">the same rubric was applied to everyone</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <p style="font-size:15px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch">
+            All 622 applications were scored against rubric version 4.2, approved by F. Al-Rashid
+            on 2 September. The 24 people above cleared every mandatory requirement — residency,
+            qualification, console hours, DCS training and medical clearance — and then scored well
+            on the preferred skills that add to the total.
+          </p>
+          <p style="font-size:15px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch;margin-top:12px">
+            The other 598 are still in the pool. Most missed one mandatory requirement, most often
+            console hours or DCS training. None were removed from the campaign — they can be opened
+            and read at any time from the full applicant list.
+          </p>
+          <p style="font-size:15px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch;margin-top:12px">
+            Nationals of the host country are advanced to review automatically under the approved National workforce preference
+            preference. Protected characteristics play no part in any score.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <p class="sig" hidden>Scoring rules approved by <b>F. Al-Rashid</b> on 2 September · version <b>4.2</b></p>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function () {
+  var SCREENING_KEY = 'recruitment360.screening.v1';
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var raw = sessionStorage.getItem(SCREENING_KEY);
+  var state;
+  try { state = raw ? JSON.parse(raw) : null; } catch (error) { state = null; }
+  if (params.get('campaign') || params.get('run_id')) state = null;
+
+  if (!state || !state.response || !Array.isArray(state.response.results)) {
+    var runId = params.get('run_id');
+    var selectedCampaign = params.get('campaign');
+    var runRequest = runId
+      ? fetch(API_BASE + '/api/runs/' + encodeURIComponent(runId))
+      : fetch(API_BASE + '/api/runs' + (selectedCampaign ? '?campaign_id=' + encodeURIComponent(selectedCampaign) : '')).then(function (response) {
+          if (!response.ok) throw new Error('Live assessments are unavailable.');
+          return response.json().then(function (body) {
+            var latest = body.runs && body.runs[0];
+            if (!latest) throw new Error(selectedCampaign ? 'No candidates assessed yet in this campaign.' : 'No live assessment runs are available.');
+            return { ok: true, json: function () { return Promise.resolve(latest); } };
+          });
+        });
+    runRequest
+      .then(function (response) {
+        if (!response.ok) throw new Error('This assessment run is no longer available.');
+        return response.json();
+      })
+      .then(function (response) {
+        render({
+          response: response,
+          submittedCount: Number(params.get('submitted')) || response.submitted_count || response.count,
+          campaign: response.campaign || {
+            title: params.get('title') || 'Screening results',
+            site: params.get('site') || '',
+            vacancies: Number(params.get('vacancies')) || 1
+          }
+        });
+      })
+      .catch(function (error) {
+        var note = document.getElementById('live-run-note');
+        note.hidden = false;
+        note.textContent = error.message;
+        document.getElementById('candidate-list').textContent = '';
+        if (/No candidates assessed yet/.test(error.message)) {
+          document.getElementById('campaign-title').textContent = 'No candidates assessed yet';
+          document.getElementById('campaign-meta').textContent = 'Upload CVs to start this stage.';
+          document.getElementById('headline-copy').textContent = 'This shortlist is empty.';
+          document.getElementById('headline-detail').textContent = 'Candidates will appear after CVs are uploaded and assessed.';
+          document.querySelectorAll('.page > .band').forEach(function (band, i) { if (i > 0) band.style.display = 'none'; });
+        }
+      });
+    return;
+  }
+  render(state);
+
+  function render(state) {
+
+  var response = state.response;
+  if (response.campaign_id) window.dispatchEvent(new CustomEvent('campaign-changed', { detail: { id: response.campaign_id } }));
+  var results = response.results;
+  var submitted = Number(state.submittedCount) || results.length;
+  var processed = Number(response.count) || results.length;
+  var unread = Math.max(submitted - processed, 0);
+  var campaign = state.campaign || {};
+  var recommended = results.filter(function (result) {
+    var code = result.score && result.score.recommendation_code;
+    return code === 'STRONG_HIRE' || code === 'HIRE';
+  }).length;
+
+  document.getElementById('campaign-title').textContent = (campaign.title || 'New role') + (campaign.site ? ' · ' + campaign.site : '');
+  document.getElementById('campaign-meta').textContent = (campaign.vacancies || 1) + ' vacancies · assessment run ' +
+    (response.short_id || String(response.run_id || '').slice(0, 8));
+  document.getElementById('shortlist-count').textContent = recommended;
+  document.getElementById('screened-count').textContent = 'of ' + processed + ' read';
+
+  var headline = document.getElementById('headline-copy');
+  headline.textContent = submitted + ' application' + (submitted === 1 ? '' : 's') + ' submitted. ';
+  var emphasis = document.createElement('b');
+  emphasis.textContent = recommended + (recommended === 1 ? ' is' : ' are') + ' worth a closer look.';
+  headline.appendChild(emphasis);
+
+  document.getElementById('headline-detail').textContent = processed + ' application' + (processed === 1 ? ' was' : 's were') + ' assessed against the same job description.' + (unread ? ' ' + unread + ' could not be read and needs attention.' : ' Every submitted file was read.');
+
+  var topRing = document.querySelector('.rankdial circle:last-of-type');
+  var ringRatio = processed ? recommended / processed : 0;
+  if (topRing) topRing.setAttribute('stroke-dashoffset', String(Math.round(339 * (1 - Math.min(ringRatio, 1)))));
+
+  var note = document.getElementById('live-run-note');
+  note.hidden = false;
+  note.textContent = 'Live assessment · ' + processed + ' read' + (unread ? ' · ' + unread + ' needs attention' : '') + '. Open any row for the full assessment behind its score.';
+
+  var list = document.getElementById('candidate-list');
+  list.textContent = '';
+  if (!results.length) {
+    var empty = document.createElement('div');
+    empty.className = 'lb-row';
+    empty.textContent = 'No applications could be read. Return to the campaign and try supported PDF or Word files.';
+    list.appendChild(empty);
+  }
+
+  function verdictFor(code) {
+    return {
+      STRONG_HIRE: { label: 'Strong fit', className: 'strong', group: 'strong' },
+      HIRE: { label: 'Potential fit', className: 'potential', group: 'look' },
+      MAYBE: { label: 'Review required', className: 'review', group: 'look' },
+      NO_HIRE: { label: 'Not recommended', className: 'no', group: 'no' }
+    }[code] || { label: 'Review required', className: 'review', group: 'look' };
+  }
+
+  function makeElement(tag, className, text) {
+    var element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+  }
+
+  results.forEach(function (result, index) {
+    var score = result.score || {};
+    var verdict = verdictFor(score.recommendation_code);
+    var pct = Math.max(0, Math.min(100, Math.round(Number(score.hiring_match_pct != null ? score.hiring_match_pct : Number(score.weighted_total || 0) * 10))));
+    var matched = Array.isArray(score.matched_skills) ? score.matched_skills.length : 0;
+    var missing = Array.isArray(score.missing_skills) ? score.missing_skills.length : 0;
+    var required = matched + missing;
+
+    /* Rows link through to the Candidate 360. `evaluation_id` is carried on
+       every score by the compatibility layer precisely so this deep link
+       works; that page accepts evaluation, candidate or campaign. Falls
+       back to a plain div when no id is present, rather than producing a
+       link that goes nowhere. */
+    var targetId = score.evaluation_id || result.evaluation_id;
+    var row;
+    if (targetId) {
+      row = makeElement('a', 'lb-row');
+      row.setAttribute('href', 'candidate.html?evaluation=' + encodeURIComponent(targetId));
+    } else {
+      row = makeElement('div', 'lb-row');
+      row.setAttribute('aria-disabled', 'true');
+    }
+    row.dataset.group = verdict.group;
+    row.appendChild(makeElement('span', 'lb-rank', String(index + 1)));
+
+    var dial = makeElement('span', 'lb-dial');
+    var offset = Math.round(176 * (1 - pct / 100));
+    dial.innerHTML = '<svg width="66" height="66" viewBox="0 0 66 66" aria-hidden="true"><circle cx="33" cy="33" r="28" fill="none" stroke="var(--sand-2)" stroke-width="7"/><circle cx="33" cy="33" r="28" fill="none" stroke="var(--maroon)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 33 33)" stroke-dasharray="176" stroke-dashoffset="' + offset + '"/></svg>';
+    dial.appendChild(makeElement('span', 'n', String(pct)));
+    row.appendChild(dial);
+
+    var main = makeElement('span', 'lb-main');
+    var who = score.candidate_name || (result.profile && result.profile.name) || 'Name unavailable';
+    main.appendChild(makeElement('span', 'nm', who));
+    var raw = score.shortlist_reasoning || '';
+    var conf = raw.match(/with\s+(\d+)%\s+confidence/i);
+    var meta = pct + ' of 100';
+    if (conf) meta += '  \u00b7  confidence ' + conf[1] + '%';
+    main.appendChild(makeElement('span', 'lb-meta', meta));
+    var ev = raw
+      .replace(/^[\s\S]*?confidence\.\s*/i, '')
+      .replace(/This is a decision-support summary[^.]*\.\s*$/i, '')
+      .trim();
+
+    /* One thought per block. Sentences that report a problem take the
+       warm tint; everything else stays neutral. Adjacent sentences of
+       the same kind are joined so a row never becomes a stack. */
+    var CONCERN = /inconsisten|could not be confirmed|not confirmed|unconfirmed|need(s)? recruiter|missing|ambiguous|contradic|gap/i;
+    var parts = (ev ? ev.match(/[^.]+\.(?:\s|$)/g) || [ev] : []);
+    var groups = [];
+    parts.forEach(function (s) {
+      s = s.trim();
+      if (!s) return;
+      var kind = CONCERN.test(s) ? 'note' : 'fact';
+      var last = groups[groups.length - 1];
+      if (last && last.kind === kind) last.text += ' ' + s;
+      else groups.push({ kind: kind, text: s });
+    });
+    if (!groups.length) {
+      groups.push({ kind: 'fact',
+        text: 'Assessment completed; open the candidate to see the evidence.' });
+    }
+    var evWrap = makeElement('span', 'ev');
+    groups.slice(0, 3).forEach(function (g) {
+      evWrap.appendChild(makeElement('span', 'ev-' + g.kind, g.text));
+    });
+    main.appendChild(evWrap);
+    row.appendChild(main);
+
+    var tags = makeElement('span', 'lb-tags');
+    tags.appendChild(makeElement('span', 'verdict ' + verdict.className, verdict.label));
+    var requirement = makeElement('span', 'lb-mand');
+    var count = makeElement('b', '', required ? matched + ' of ' + required : 'Not counted');
+    requirement.appendChild(count);
+    requirement.appendChild(document.createTextNode(required ? ' required skills' : ' required skills'));
+    tags.appendChild(requirement);
+    row.appendChild(tags);
+    list.appendChild(row);
+  });
+
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+  var counts = { all: results.length, strong: 0, look: 0, no: 0 };
+  results.forEach(function (result) { counts[verdictFor(result.score && result.score.recommendation_code).group] += 1; });
+  buttons.forEach(function (button) {
+    var filter = button.dataset.filter;
+    var label = filter === 'all' ? 'All' : filter === 'strong' ? 'Strong fit' : filter === 'look' ? 'Needs a look' : 'Not recommended';
+    button.textContent = label + ' ' + counts[filter];
+    button.addEventListener('click', function () {
+      buttons.forEach(function (item) { item.classList.toggle('on', item === button); });
+      Array.prototype.forEach.call(list.querySelectorAll('.lb-row[data-group]'), function (row) {
+        row.hidden = filter !== 'all' && row.dataset.group !== filter;
+      });
+    });
+  });
+
+  var bands = document.querySelectorAll('.band');
+  if (bands[2]) bands[2].hidden = true;
+  if (bands[3]) bands[3].hidden = true;
+  var signature = document.querySelector('.sig');
+  if (signature) signature.hidden = true;
+  }
+})();
+</script>
+</body>
+</html>

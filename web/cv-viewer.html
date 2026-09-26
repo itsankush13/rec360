@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Original CV · Recruitment 360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  body{background:var(--sand)}
+  .v-top{
+    display:flex;align-items:center;gap:14px;padding:16px 24px;background:var(--surface);
+    border-bottom:1px solid var(--hair);position:sticky;top:0;z-index:2;
+  }
+  .v-top .back{font-size:13.5px;color:var(--maroon);text-decoration:none;flex:none}
+  .v-top .back:hover{text-decoration:underline}
+  .v-top b{font-size:15px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .v-top .dl{margin-left:auto;font-size:13.5px;color:var(--maroon);text-decoration:none;flex:none}
+  .v-top .dl:hover{text-decoration:underline}
+  .v-wrap{max-width:960px;margin:0 auto;padding:28px 24px 60px;overflow-x:auto}
+  #frame{width:100%;height:calc(100vh - 132px);border:0;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  /* #doc holds docx-preview's own paginated output (.docx-wrapper > .docx page divs) —
+     each page already renders itself as a white, shadowed, correctly-sized sheet, so this
+     wrapper only centers the stack; it must not impose its own padding/font on the page. */
+  #doc{display:flex;flex-direction:column;align-items:center;gap:24px}
+  #doc .docx-wrapper{background:transparent!important;padding:0!important}
+  .v-state{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:26px;text-align:center;color:var(--ink-2);font-size:14.5px}
+</style>
+</head>
+<body>
+
+<div class="v-top">
+  <!-- This page is reached in the same tab from candidate.html, so without this
+       link it is a dead end: it has no main navigation of its own. history.back()
+       returns to the exact candidate; start-campaign.html is the fallback when the
+       page was opened directly from a pasted or bookmarked link. -->
+  <a class="back" href="start-campaign.html" id="v-back">&larr; Back</a>
+  <b id="v-title">Original CV</b>
+  <a class="dl" id="v-download" hidden>Download the file</a>
+</div>
+<div class="v-wrap">
+  <div id="v-state" class="v-state">Opening the CV…</div>
+  <iframe id="frame" hidden title="CV preview"></iframe>
+  <div id="doc" hidden></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var evaluationId = params.get('evaluation');
+
+  var state = document.getElementById('v-state');
+  var frame = document.getElementById('frame');
+  var doc = document.getElementById('doc');
+  var download = document.getElementById('v-download');
+  var title = document.getElementById('v-title');
+
+  if (!evaluationId) {
+    state.textContent = 'No CV was specified to open.';
+    return;
+  }
+
+  var url = API_BASE + '/api/evaluations/' + encodeURIComponent(evaluationId) + '/cv';
+
+  // Content-Type is always readable cross-origin; Content-Disposition only
+  // is if the API opts in (Access-Control-Expose-Headers) — fall back to a
+  // type map rather than depending on the filename ever being readable.
+  var EXTENSION_BY_CONTENT_TYPE = {
+    'application/pdf': 'pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx'
+  };
+
+  fetch(url)
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error(response.status === 404
+          ? 'The original CV for this assessment is no longer on file.'
+          : 'The original CV could not be opened.');
+      }
+      var contentType = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+      var disposition = response.headers.get('content-disposition') || '';
+      var nameMatch = disposition.match(/filename="([^"]+)"/);
+      var filename = nameMatch ? nameMatch[1] : '';
+      var extension = (filename ? filename.split('.').pop() : '') ||
+        EXTENSION_BY_CONTENT_TYPE[contentType] || '';
+      title.textContent = filename || ('Original CV' + (extension ? ' (.' + extension + ')' : ''));
+      download.href = url;
+      if (filename) download.download = filename;
+      download.hidden = false;
+      return response.arrayBuffer().then(function (buffer) {
+        return { buffer: buffer, extension: extension.toLowerCase() };
+      });
+    })
+    .then(function (result) {
+      var buffer = result.buffer, extension = result.extension;
+      if (extension === 'pdf') {
+        var blobUrl = URL.createObjectURL(new Blob([buffer], { type: 'application/pdf' }));
+        frame.src = blobUrl;
+        frame.hidden = false;
+        state.hidden = true;
+      } else if (extension === 'docx' && window.docx && window.docx.renderAsync) {
+        // docx-preview renders the document's own paginated layout (page size, margins,
+        // headers/footers, fonts, columns) instead of mammoth's semantic-HTML-only
+        // conversion, which is what dropped the CV's real look down to "just text".
+        window.docx.renderAsync(buffer, doc, doc, {
+          inWrapper: true, ignoreWidth: false, ignoreHeight: false, ignoreFonts: false,
+          breakPages: true, renderHeaders: true, renderFooters: true, renderFootnotes: true
+        })
+          .then(function () {
+            doc.hidden = false;
+            state.hidden = true;
+          })
+          .catch(function () {
+            state.textContent = 'This file could not be previewed here — use the download link above to open it.';
+          });
+      } else {
+        state.textContent = 'A preview is not available yet for this file type (' +
+          (extension || 'unknown').toUpperCase() + ') — use the download link above to open it.';
+      }
+    })
+    .catch(function (error) {
+      state.textContent = error.message || 'The original CV for this assessment could not be opened.';
+    });
+})();
+</script>
+<script>
+  document.getElementById('v-back').addEventListener('click', function (event) {
+    if (history.length > 1) { event.preventDefault(); history.back(); }
+  });
+</script>
+</body>
+</html>

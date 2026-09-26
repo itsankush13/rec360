@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--port", "8000"],
+      "port": 8000,
+      "env": { "QUEUE_BACKEND": "inline" }
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "http.server", "8124", "--directory", "web"],
+      "port": 8124
+    }
+  ]
+}

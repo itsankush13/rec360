@@ -1,0 +1,12 @@
+{
+  "base_url": "http://localhost:8124",
+  "campaign_id": "REPLACE-WITH-LIVE-CAMPAIGN-ID",
+  "candidate_evaluation_id": "REPLACE-WITH-LIVE-EVALUATION-ID",
+  "compare_candidate_ids": [
+    "REPLACE-WITH-CANDIDATE-ID-1",
+    "REPLACE-WITH-CANDIDATE-ID-2"
+  ],
+  "hiring_manager_email": "hiring.manager@example.com",
+  "viewport": { "width": 1600, "height": 900 },
+  "output_path": "scripts/demo_video/output/demo-video.mp4"
+}

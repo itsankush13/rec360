@@ -1,0 +1,1570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start a new role · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .arch.slim h1{font-size:31px;max-width:30ch}
+  .arch.slim .date{margin-bottom:9px}
+
+  /* stepper, inside the arch */
+  .steps{display:flex;gap:26px;margin-top:22px;flex-wrap:wrap}
+  .step{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.62);font-weight:300}
+  .step .n{
+    width:26px;height:26px;flex:none;border-radius:var(--r-pill);border:1.5px solid rgba(255,255,255,.4);
+    display:grid;place-items:center;font-size:12.5px;font-weight:500;
+  }
+  .step.now{color:#fff}
+  .step.now .n{background:#fff;color:var(--maroon);border-color:#fff}
+  .step.done .n{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+  .step.done{color:rgba(255,255,255,.85)}
+
+  /* form grid */
+  .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 22px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field label{font-size:13px;color:var(--ink-2);font-weight:400}
+  .field input,.field select{
+    font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+    background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:13px 15px;width:100%;
+  }
+  .field input:focus,.field select:focus{outline:none;border-color:var(--maroon-mid)}
+
+  /* upload / write toggle */
+  .tabs{display:inline-flex;gap:2px;background:var(--sand-2);border-radius:var(--r-pill);padding:4px;margin-bottom:20px}
+  .tabs button{
+    padding:9px 20px;border-radius:var(--r-pill);font-size:14px;font-weight:400;color:var(--ink-2);
+  }
+  .tabs button.on{background:var(--surface);color:var(--maroon);box-shadow:0 2px 8px -4px rgba(78,11,34,.3)}
+  .pane{display:none}
+  .pane.on{display:block}
+
+  .drop{
+    border:2px dashed var(--hair);border-radius:var(--r-lg);padding:44px 28px;text-align:center;
+    background:var(--sand);transition:background .2s,border-color .2s;
+  }
+  .drop.over{background:var(--maroon-soft);border-color:var(--maroon-mid)}
+  .drop .ic{
+    width:56px;height:56px;margin:0 auto 16px;border-radius:var(--r-pill);background:var(--surface);
+    display:grid;place-items:center;color:var(--maroon);border:1px solid var(--hair);
+  }
+  .drop .t{font-size:16px;font-weight:400;color:var(--ink)}
+  .drop .s{margin-top:6px;font-size:14px;color:var(--ink-3);font-weight:300}
+  .drop .pick{margin-top:18px;display:inline-flex}
+  .drop input[type=file]{display:none}
+  .filed{
+    margin-top:18px;display:flex;align-items:center;gap:14px;padding:16px 18px;
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-md);
+  }
+  .filed .ok{
+    width:34px;height:34px;flex:none;border-radius:var(--r-pill);background:var(--teal-soft);color:var(--teal);
+    display:grid;place-items:center;
+  }
+  .filed .nm{flex:1;min-width:0;font-size:15px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .filed .sz{font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .filed .rm{color:var(--ink-3);flex:none;padding:6px}
+  .filed .rm:hover{color:var(--maroon)}
+
+  textarea.jd{
+    width:100%;min-height:260px;resize:vertical;font-family:inherit;font-size:15.5px;font-weight:300;
+    line-height:1.6;color:var(--ink);background:var(--sand);border:1px solid var(--hair);
+    border-radius:var(--r-md);padding:20px 22px;
+  }
+  textarea.jd:focus{outline:none;border-color:var(--maroon-mid)}
+
+  .readrow{display:flex;align-items:center;gap:16px;margin-top:22px;flex-wrap:wrap}
+  .readnote{font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+  /* the read progress */
+  .reading{display:none;align-items:center;gap:16px;padding:20px 4px}
+  .reading.on{display:flex}
+  .reading .ring{width:26px;height:26px;flex:none;border-radius:50%;border:3px solid var(--hair);border-top-color:var(--maroon);animation:spin 1s linear infinite}
+  @media (prefers-reduced-motion:reduce){.reading .ring{animation:none;border-top-color:var(--hair);border-right-color:var(--maroon)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .reading .t{font-size:15px;color:var(--ink-2);font-weight:300}
+
+  /* step 3 */
+  #step3{display:none}
+  #step3.on{display:block;animation:rise .4s cubic-bezier(.22,1,.28,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){#step3.on{animation:none}}
+
+  .reqlist{display:flex;flex-direction:column;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden;margin-top:14px}
+  .reqrow{display:flex;align-items:center;gap:14px;padding:15px 20px;background:var(--surface)}
+  .reqrow input[type=text]{
+    flex:1;min-width:0;font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+    background:transparent;border:0;border-bottom:1px solid transparent;padding:6px 2px;
+  }
+  .reqrow input[type=text]:focus{outline:none;border-bottom-color:var(--maroon-mid)}
+  .reqrow .wt{display:flex;align-items:center;gap:8px;flex:none;font-size:13px;color:var(--ink-3);font-weight:300}
+  .reqrow .wt input{
+    width:56px;font-family:inherit;font-size:14.5px;font-weight:400;color:var(--ink);text-align:center;
+    background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-pill);padding:6px 4px;
+  }
+  .reqrow .wt input:focus{outline:none;border-color:var(--maroon-mid)}
+  .reqrow.unsure{background:var(--gold-soft)}
+  .reqrow .rm{
+    flex:none;width:30px;height:30px;border-radius:var(--r-pill);color:var(--ink-3);display:grid;place-items:center;
+  }
+  .reqrow .rm:hover{background:var(--sand-2);color:var(--maroon)}
+
+  .grouphead{display:flex;align-items:baseline;gap:12px;margin-top:30px}
+  .grouphead:first-child{margin-top:0}
+  .grouphead h3{font-size:17px;font-weight:400}
+  .grouphead .cnt{font-size:13px;color:var(--ink-3);font-weight:300}
+  .grouphead .note{margin-left:auto;font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+  .addreq{margin-top:16px}
+
+  .approve{
+    margin-top:36px;padding:26px 30px;background:var(--maroon-soft);border-radius:var(--r-lg);
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  }
+  .approve p{flex:1;min-width:240px;font-size:15px;color:var(--maroon-ink);font-weight:300;line-height:1.55}
+  .approve .btns{display:flex;gap:12px;flex-wrap:wrap}
+
+  .screening-upload{
+    margin-top:32px;padding:22px 24px;border:1px solid var(--hair);border-radius:var(--r-lg);
+    background:var(--sand);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .screening-upload h3{font-size:17px;font-weight:400}
+  .screening-upload p{margin-top:5px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .screening-upload input[type=file]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .screening-files{margin-top:12px;font-size:14px;color:var(--ink-2);font-weight:300}
+  .screening-files-existing{margin-top:10px;font-size:13.5px;color:var(--ink-2);font-weight:300}
+  .screening-status{margin-top:14px;font-size:14px;color:var(--ink-2);font-weight:300;min-height:22px}
+  .screening-status.error{color:var(--maroon)}
+  .screening-status.success{color:var(--teal)}
+  .screening-progress{display:none;margin-top:18px}
+  .screening-progress.on{display:block}
+  .screening-progress .progress-head{display:flex;justify-content:space-between;gap:16px;font-size:13px;color:var(--ink-3);font-weight:300}
+  .screening-progress .track{height:8px;margin-top:9px;background:var(--hair);border-radius:var(--r-pill);overflow:hidden}
+  .screening-progress .fill{height:100%;width:0;background:var(--maroon);border-radius:inherit;transition:width .35s ease}
+  .screening-progress .detail{margin-top:8px;font-size:13.5px;color:var(--ink-2);font-weight:300}
+
+  @media (max-width:760px){
+    .fgrid{grid-template-columns:1fr}
+    .steps{gap:16px}
+    .step .n{width:22px;height:22px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page wide">
+
+  <section class="arch slim">
+    <div class="lattice"></div>
+    <div class="date" id="setup-kicker">New campaign</div>
+    <h1 id="setup-title">Start a new role</h1>
+    <p>Describe the role and its job description — the system drafts a scoring rubric from
+      what's in it, you approve the rubric, then every CV is screened against exactly that.</p>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:18px 0">
+      <button type="button" class="ghost" id="save-progress">Save progress</button>
+      <a href="start-campaign.html">All campaigns</a>
+      <span id="save-progress-status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="steps">
+      <div class="step now" data-stepind="1"><span class="n">1</span> Describe the role</div>
+      <div class="step" data-stepind="2"><span class="n">2</span> Give it the job description</div>
+      <div class="step" data-stepind="3"><span class="n">3</span> What we found in it</div>
+    </div>
+  </section>
+
+  <div class="band" id="role">
+    <div class="label" data-summary="Role title, team, location and number of vacancies."><h2>1 · Describe the role</h2></div>
+    <div class="card pad-lg">
+      <div class="fgrid">
+        <div class="field">
+          <label for="f-title">Role title</label>
+          <input id="f-title" type="text" value="" placeholder="e.g. Control Room Operator">
+        </div>
+        <div class="field">
+          <label for="f-site">Site</label>
+          <select id="f-site">
+            <option>North Plant</option>
+            <option selected>Coastal Terminal</option>
+            <option>Head Office</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-vac">Number of vacancies</label>
+          <input id="f-vac" type="number" min="1" value="1">
+        </div>
+        <div class="field">
+          <label for="f-mgr">Hiring manager</label>
+          <input id="f-mgr" type="text" value="" placeholder="Name of the hiring manager">
+        </div>
+        <div class="field">
+          <label for="f-unit">Business unit</label>
+          <input id="f-unit" type="text" value="" placeholder="e.g. Refining and Petrochemicals">
+        </div>
+        <div class="field">
+          <label for="f-rec">Recruiter</label>
+          <input id="f-rec" type="text" value="" placeholder="Who is running this campaign">
+        </div>
+        <div class="field">
+          <label for="f-close">Closing date</label>
+          <input id="f-close" type="date" value="">
+        </div>
+        <div class="field">
+          <label for="f-type">Employment type</label>
+          <select id="f-type">
+            <option>Full-time, permanent</option>
+            <option>Full-time, fixed-term</option>
+            <option>Part-time</option>
+            <option>Contract</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band" id="jd">
+    <div class="label" data-summary="Paste or upload the brief; we will turn it into draft criteria."><h2>2 · Give it the job description</h2></div>
+    <div class="card pad-lg">
+      <div class="tabs" role="tablist">
+        <button type="button" class="on" id="tab-write" data-pane="write">Write or paste</button>
+        <button type="button" id="tab-upload" data-pane="upload">Upload a file</button>
+        <button type="button" id="tab-generate" data-pane="generate">Generate with AI</button>
+      </div>
+
+      <div class="pane on" id="pane-write">
+        <textarea class="jd" id="jd-text" aria-label="Job description text" placeholder="Paste the job description here, or use Upload a file."></textarea>
+      </div>
+
+      <div class="pane" id="pane-generate">
+        <button type="button" class="cta" id="generate-jd-btn">Generate with AI</button>
+        <div class="screening-status" id="jd-generate-status" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="pane" id="pane-upload">
+        <div class="drop" id="dropzone">
+          <div class="ic">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          </div>
+          <div class="t">Drag the job description here</div>
+          <div class="s">or choose a file from your computer &middot; PDF, Word or text</div>
+          <label class="ghost pick" for="file-input">Choose a file</label>
+          <input type="file" id="file-input" accept=".pdf,.docx,.txt">
+        </div>
+        <div class="filed" id="filed-row" style="display:none">
+          <div class="ok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="nm" id="filed-name"></div>
+          <div class="sz" id="filed-size"></div>
+          <button type="button" class="rm" id="filed-remove" aria-label="Remove file">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="screening-status" id="jd-file-status" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="readrow">
+        <button type="button" class="cta" id="read-btn">Read the description</button>
+        <span class="readnote">This finds the requirements. It does not decide anything by itself.</span>
+      </div>
+      <div class="reading" id="reading-state">
+        <span class="ring"></span>
+        <span class="t">Reading the description and finding requirements&hellip;</span>
+      </div>
+      <div class="screening-status" id="jd-read-status" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="band" id="step3">
+    <div class="label"><h2>3 · What we found in it</h2><span class="aside">from the job description above</span></div>
+    <div class="card pad-lg">
+
+      <div class="weight-summary" id="weight-summary" style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:18px;font-size:13.5px;color:var(--ink-3);font-weight:300">
+        <span id="weight-total-note"></span>
+      </div>
+
+      <div class="grouphead">
+        <h3>Must have</h3>
+        <span class="cnt">mandatory &mdash; a candidate without these is not eligible</span>
+      </div>
+      <div class="reqlist" id="list-must"></div>
+
+      <div class="grouphead">
+        <h3>Counts in their favour</h3>
+        <span class="cnt">preferred &mdash; adds to the score, never disqualifies</span>
+      </div>
+      <div class="reqlist" id="list-preferred"></div>
+
+      <div class="grouphead">
+        <h3>Things it was unsure about</h3>
+        <span class="cnt">a person must resolve these before scoring starts</span>
+      </div>
+      <div class="reqlist" id="list-unsure"></div>
+
+      <button type="button" class="ghost addreq" id="add-req">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add a requirement
+      </button>
+
+      <!-- UI contract: accepts pasted JD plus multiple PDF/DOCX applications;
+           shows empty, loading, error, partial and success states; stores one
+           run in sessionStorage; does not persist results or import from ATS. -->
+      <div class="screening-upload" id="cvs">
+        <div>
+          <h3>Applications to assess</h3>
+          <p>Choose PDF or Word CVs. Files stay attached only for this assessment.</p>
+          <p class="screening-files-existing" id="screening-files-existing" hidden></p>
+        </div>
+        <label class="ghost" for="resume-input">Choose applications</label>
+        <input type="file" id="resume-input" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
+        <!-- The requirement asks for a folder, which is how a recruiter
+             actually holds a month of applications. Kept as a second control
+             rather than replacing the first: webkitdirectory turns the
+             picker into folders only, and picking three CVs out of a folder
+             is still the commoner action. -->
+        <label class="ghost" for="resume-folder">Choose a folder</label>
+        <input type="file" id="resume-folder" webkitdirectory directory multiple>
+      </div>
+      <div class="screening-files" id="screening-files">No applications chosen.</div>
+      <div class="screening-status" id="screening-status" role="status" aria-live="polite"></div>
+      <div class="screening-progress" id="screening-progress" role="status" aria-live="polite">
+        <div class="progress-head"><span>Screening pipeline</span><span id="screening-progress-percent">0%</span></div>
+        <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Screening progress"><div class="fill" id="screening-progress-fill"></div></div>
+        <div class="detail" id="screening-progress-detail">Preparing applications…</div>
+      </div>
+
+      <div class="approve">
+        <p>These rules will be used to score every application. A person approves them, and the version is recorded. Scoring cannot begin until this is approved.</p>
+        <div class="btns">
+          <button type="button" class="ghost" id="save-draft">Save as draft</button>
+          <button type="button" class="cta" id="approve-btn">Approve and start screening</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script src="assets/pending-resumes.js?v=1"></script>
+<script>
+(function () {
+  // --- tabs: write / upload / generate ---
+  var tabWrite = document.getElementById('tab-write');
+  var tabUpload = document.getElementById('tab-upload');
+  var tabGenerate = document.getElementById('tab-generate');
+  var paneWrite = document.getElementById('pane-write');
+  var paneUpload = document.getElementById('pane-upload');
+  var paneGenerate = document.getElementById('pane-generate');
+  function showPane(which) {
+    tabWrite.classList.toggle('on', which === 'write');
+    tabUpload.classList.toggle('on', which === 'upload');
+    tabGenerate.classList.toggle('on', which === 'generate');
+    paneWrite.classList.toggle('on', which === 'write');
+    paneUpload.classList.toggle('on', which === 'upload');
+    paneGenerate.classList.toggle('on', which === 'generate');
+  }
+  tabWrite.addEventListener('click', function () { showPane('write'); });
+  tabUpload.addEventListener('click', function () { showPane('upload'); });
+  tabGenerate.addEventListener('click', function () { showPane('generate'); });
+
+  // --- generate with AI (D7): POSTs {} to jd/generate and fills #jd-text ---
+  var generateBtn = document.getElementById('generate-jd-btn');
+  var jdGenerateStatus = document.getElementById('jd-generate-status');
+
+  function setJdGenerateStatus(message, kind) {
+    jdGenerateStatus.textContent = message || '';
+    jdGenerateStatus.className = 'screening-status' + (kind ? ' ' + kind : '');
+  }
+
+  generateBtn.addEventListener('click', async function () {
+    if (!value('f-title')) {
+      setJdGenerateStatus('Add the role title before generating a job description.', 'error');
+      document.getElementById('f-title').focus();
+      return;
+    }
+    generateBtn.disabled = true;
+    setJdGenerateStatus('Generating a job description…');
+    try {
+      await saveDraft();
+      var result = await api('POST', '/api/campaigns/' + draftCampaignId + '/jd/generate', {});
+      document.getElementById('jd-text').value = result.jd_text || '';
+      setJdGenerateStatus('Job description generated.', 'success');
+      showPane('write');
+    } catch (error) {
+      setJdGenerateStatus(error && error.message
+        ? error.message
+        : 'Could not generate a job description right now — write it directly.', 'error');
+    } finally {
+      generateBtn.disabled = false;
+    }
+  });
+
+  // --- drag and drop ---
+  var dropzone = document.getElementById('dropzone');
+  var fileInput = document.getElementById('file-input');
+  var filedRow = document.getElementById('filed-row');
+  var filedName = document.getElementById('filed-name');
+  var filedSize = document.getElementById('filed-size');
+  var filedRemove = document.getElementById('filed-remove');
+  var jdFileStatus = document.getElementById('jd-file-status');
+  var uploadedJdText = '';
+  var uploadedJdName = '';
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function showFile(file) {
+    if (!file) return;
+    filedName.textContent = file.name;
+    filedSize.textContent = formatSize(file.size);
+    filedRow.style.display = 'flex';
+    dropzone.querySelector('.pick').textContent = 'Choose a different file';
+  }
+
+  function setJdFileStatus(message, kind) {
+    jdFileStatus.textContent = message || '';
+    jdFileStatus.className = 'screening-status' + (kind ? ' ' + kind : '');
+  }
+
+  async function loadJobDescription(file) {
+    if (!file) return;
+    showFile(file);
+    setJdFileStatus('Reading ' + file.name + '…');
+    readBtn.disabled = true;
+    var formData = new FormData();
+    formData.append('file', file, file.name);
+    try {
+      var response = await fetch(API_BASE + '/api/documents/extract-text', { method: 'POST', body: formData });
+      var body = await response.json().catch(function () { return {}; });
+      if (!response.ok) {
+        throw new Error(body.error && body.error.message ? body.error.message : 'The job description could not be read.');
+      }
+      uploadedJdText = body.text || '';
+      uploadedJdName = body.filename || file.name;
+      document.getElementById('jd-text').value = uploadedJdText;
+      setJdFileStatus('Ready — ' + uploadedJdText.length.toLocaleString() + ' characters loaded.', 'success');
+    } catch (error) {
+      uploadedJdText = '';
+      uploadedJdName = '';
+      setJdFileStatus(error.message || 'The job description could not be read.', 'error');
+    } finally {
+      readBtn.disabled = false;
+    }
+  }
+
+  ['dragenter', 'dragover'].forEach(function (evt) {
+    dropzone.addEventListener(evt, function (e) {
+      e.preventDefault();
+      dropzone.classList.add('over');
+    });
+  });
+  ['dragleave', 'drop'].forEach(function (evt) {
+    dropzone.addEventListener(evt, function (e) {
+      e.preventDefault();
+      dropzone.classList.remove('over');
+    });
+  });
+  dropzone.addEventListener('drop', function (e) {
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length) loadJobDescription(files[0]);
+  });
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files && fileInput.files.length) loadJobDescription(fileInput.files[0]);
+  });
+  filedRemove.addEventListener('click', function () {
+    fileInput.value = '';
+    filedRow.style.display = 'none';
+    dropzone.querySelector('.pick').textContent = 'Choose a file';
+    if (document.getElementById('jd-text').value === uploadedJdText) {
+      document.getElementById('jd-text').value = '';
+    }
+    uploadedJdText = '';
+    uploadedJdName = '';
+    setJdFileStatus('');
+  });
+
+  // --- read the description -> extract real requirements -> reveal step 3 ---
+  var readBtn = document.getElementById('read-btn');
+  var readingState = document.getElementById('reading-state');
+  var readStatus = document.getElementById('jd-read-status');
+  var step3 = document.getElementById('step3');
+  var stepInds = document.querySelectorAll('.step');
+  var listMustEl = document.getElementById('list-must');
+  var listPreferredEl = document.getElementById('list-preferred');
+  var listUnsureEl = document.getElementById('list-unsure');
+  var draftCampaignId = null;
+
+  function setStepIndicator(n) {
+    stepInds.forEach(function (s) {
+      var i = parseInt(s.dataset.stepind, 10);
+      s.classList.toggle('now', i === n);
+      s.classList.toggle('done', i < n);
+    });
+  }
+
+  function setReadStatus(message, kind) {
+    readStatus.textContent = message || '';
+    readStatus.className = 'screening-status' + (kind ? ' ' + kind : '');
+  }
+
+  function escapeAttr(value) {
+    var div = document.createElement('div');
+    div.textContent = value == null ? '' : String(value);
+    return div.innerHTML.replace(/"/g, '&quot;');
+  }
+
+  function makeReqRow(text, weight, criterionKey, weightId) {
+    var row = document.createElement('div');
+    row.className = 'reqrow';
+    var weightHtml = (weight === undefined) ? '' :
+      '<span class="wt"><input type="number" value="' + escapeAttr(Math.round(weight || 0)) +
+      '" min="0" max="100" aria-label="Weight"> pts</span>';
+    row.innerHTML = '<input type="text" value="' + escapeAttr(text) + '">' + weightHtml +
+      '<button type="button" class="rm" aria-label="Remove requirement">&times;</button>';
+    if (criterionKey) row.dataset.criterionKey = criterionKey;
+    if (weightId) row.dataset.weightId = weightId;
+    return row;
+  }
+
+  // --- preferred-weight running total + normalize (B04 batch item 2) --------
+  // The number inputs above only ever lived in the DOM until this session's
+  // fix: nothing saved them, and the rubric approved at the end was reseeded
+  // straight from the JD, silently discarding anything typed here. A
+  // RubricVersion is now created (seeded from requirements) as soon as the
+  // requirements are read, so there is something real to save weights to and
+  // to call .../weights/normalize against.
+  var weightTotalNote = document.getElementById('weight-total-note');
+  var draftRubricVersion = null;
+
+  // Must-have rows carry a weight too (real rubrics put most weight on
+  // mandatory criteria), so every weighted row — Must-have and Preferred —
+  // is read together here.
+  function weightedRows() {
+    return Array.prototype.slice.call(listMustEl.querySelectorAll('.reqrow'))
+      .concat(Array.prototype.slice.call(listPreferredEl.querySelectorAll('.reqrow')));
+  }
+
+  function updateWeightTotal() {
+    var inputs = weightedRows()
+      .map(function (row) { return row.querySelector('.wt input'); })
+      .filter(Boolean);
+    if (!inputs.length) {
+      weightTotalNote.textContent = '';
+      return;
+    }
+    var total = inputs.reduce(function (sum, el) { return sum + (Number(el.value) || 0); }, 0);
+    var balanced = Math.abs(total - 100) < 0.5;
+    weightTotalNote.textContent = 'Total: ' + Math.round(total) + ' pts' + (balanced ? '' : ' — must total 100');
+    weightTotalNote.style.color = balanced ? '' : 'var(--maroon)';
+  }
+
+  // Keep the group at 100 pts without a separate "Normalize" click: whichever
+  // field the person just typed into keeps its new value, and the remainder
+  // is spread across the other fields in proportion to their current
+  // weights (so a field already worth twice another loses twice as much).
+  // The last field absorbs whatever rounding leaves over, so the total is
+  // always exactly 100 rather than 99 or 101.
+  function autoBalanceWeights(changedInput) {
+    var inputs = weightedRows()
+      .map(function (row) { return row.querySelector('.wt input'); })
+      .filter(Boolean);
+    if (inputs.length < 2 || inputs.indexOf(changedInput) === -1) { updateWeightTotal(); return; }
+    var changedValue = Math.max(0, Math.min(100, Number(changedInput.value) || 0));
+    changedInput.value = Math.round(changedValue);
+    var others = inputs.filter(function (el) { return el !== changedInput; });
+    var remaining = Math.max(0, 100 - changedValue);
+    var othersTotal = others.reduce(function (sum, el) { return sum + (Number(el.value) || 0); }, 0);
+    var running = 0;
+    others.forEach(function (el, i) {
+      var share = othersTotal > 0 ? (Number(el.value) || 0) / othersTotal : 1 / others.length;
+      var value = i === others.length - 1 ? Math.round(remaining - running) : Math.round(share * remaining);
+      running += value;
+      el.value = Math.max(0, value);
+    });
+    updateWeightTotal();
+  }
+
+  // After a row is removed, scale whatever is left back up (or down) to 100
+  // proportionally, rather than leaving the total short by the deleted
+  // row's weight.
+  function redistributeAfterRemoval() {
+    var inputs = weightedRows()
+      .map(function (row) { return row.querySelector('.wt input'); })
+      .filter(Boolean);
+    if (!inputs.length) { updateWeightTotal(); return; }
+    var total = inputs.reduce(function (sum, el) { return sum + (Number(el.value) || 0); }, 0);
+    var running = 0;
+    inputs.forEach(function (el, i) {
+      var share = total > 0 ? (Number(el.value) || 0) / total : 1 / inputs.length;
+      var value = i === inputs.length - 1 ? Math.round(100 - running) : Math.round(share * 100);
+      running += value;
+      el.value = Math.max(0, value);
+    });
+    updateWeightTotal();
+  }
+
+  listMustEl.addEventListener('input', function (e) {
+    if (e.target.matches('.wt input')) autoBalanceWeights(e.target);
+  });
+  listPreferredEl.addEventListener('input', function (e) {
+    if (e.target.matches('.wt input')) autoBalanceWeights(e.target);
+  });
+
+  // Apply a RubricVersionOut-shaped weights array to whichever rows already
+  // exist in both groups. Shared by Normalize and by the AI suggestion, both
+  // of which only ever update rows that are already on screen.
+  function applyWeights(weights) {
+    var byKey = {};
+    (weights || []).forEach(function (w) { byKey[w.criterion_key] = w; });
+    weightedRows().forEach(function (row) {
+      var w = byKey[row.dataset.criterionKey];
+      var input = row.querySelector('.wt input');
+      if (w && input) input.value = Math.round(w.weight);
+    });
+    // Same independent-rounding gap as the initial render from
+    // refreshWeightsFromVersion (see its comment) — the AI suggestion this
+    // feeds can hand back e.g. 33.33/33.33/33.34, which rounds to 99 here
+    // too. suggestWeights() runs right after refreshWeightsFromVersion in the
+    // real JD-read flow, so without this fix here as well, that second call
+    // could reintroduce the exact "rubric not matched" failure just fixed.
+    redistributeAfterRemoval();
+  }
+
+  var suggestingWeights = false;
+
+  async function suggestWeights(campaignId, versionNumber) {
+    if (suggestingWeights) return;
+    suggestingWeights = true;
+    try {
+      var suggested = await api('POST',
+        '/api/campaigns/' + campaignId + '/rubric/versions/' + versionNumber + '/weights/suggest', {});
+      applyWeights(suggested.weights);
+    } catch (error) {
+      weightTotalNote.textContent = error && error.message
+        ? error.message
+        : 'AI weight suggestion is unavailable right now — enter weights manually.';
+      weightTotalNote.style.color = 'var(--maroon)';
+    } finally {
+      suggestingWeights = false;
+    }
+  }
+
+  async function ensureDraftRubricVersion(campaignId) {
+    try {
+      var rubric = await api('GET', '/api/campaigns/' + campaignId + '/rubric');
+      var draft = (rubric.versions || []).find(function (v) {
+        return v.status === 'DRAFT' || v.status === 'SUBMITTED';
+      });
+      if (draft) return draft.version_number;
+    } catch (e) { /* no rubric yet for this campaign */ }
+    try {
+      var created = await api('POST', '/api/campaigns/' + campaignId + '/rubric/versions',
+        { seed_from_requirements: true });
+      return created.version_number;
+    } catch (e) {
+      // Nothing to seed from yet (e.g. approving without a Read in this
+      // session) — extract once, then seed. The normal path never reaches
+      // here, so this never doubles up the extraction the recruiter saw.
+      await api('POST', '/api/campaigns/' + campaignId + '/requirements/extract', {});
+      var retried = await api('POST', '/api/campaigns/' + campaignId + '/rubric/versions',
+        { seed_from_requirements: true });
+      return retried.version_number;
+    }
+  }
+
+  async function refreshWeightsFromVersion(campaignId, versionNumber) {
+    var version = await api('GET', '/api/campaigns/' + campaignId + '/rubric/versions/' + versionNumber);
+    var mandatory = (version.weights || []).filter(function (w) {
+      return w.requirement_type === 'MANDATORY' && w.active;
+    });
+    var preferred = (version.weights || []).filter(function (w) {
+      return w.requirement_type === 'PREFERRED' && w.active;
+    });
+    listMustEl.innerHTML = '';
+    mandatory.forEach(function (w) {
+      listMustEl.appendChild(makeReqRow(w.label, w.weight, w.criterion_key, w.id));
+    });
+    if (!listMustEl.children.length) {
+      listMustEl.innerHTML = '<p class="readnote">No mandatory requirements were found in this description. Add them below.</p>';
+    }
+    listPreferredEl.innerHTML = '';
+    preferred.forEach(function (w) {
+      listPreferredEl.appendChild(makeReqRow(w.label, w.weight, w.criterion_key, w.id));
+    });
+    if (!listPreferredEl.children.length) {
+      listPreferredEl.innerHTML = '<p class="readnote">No preferred requirements were found in this description. Add them below.</p>';
+    }
+    // Each row above was rounded independently from the seeded weights (e.g. three
+    // criteria at 33.33/33.33/33.34 all display as 33, totalling 99) — the same
+    // "last field absorbs the rounding remainder" pass autoBalanceWeights already
+    // uses closes that gap here too, so the very first screen after JD extraction
+    // is guaranteed to sum to exactly 100, before the recruiter has typed anything.
+    // Without this, Approve/Submit silently rejects an unbalanced rubric and
+    // screening never runs — this was the "rubric not matches" failure.
+    redistributeAfterRemoval();
+  }
+
+  function currentWeightItems() {
+    return weightedRows()
+      .map(function (row) {
+        var input = row.querySelector('.wt input');
+        return input ? { criterion_key: row.dataset.criterionKey, weight: Number(input.value) || 0 } : null;
+      })
+      .filter(function (item) { return item && item.criterion_key; });
+  }
+
+  function renderExtractedRequirements(requirements) {
+    listMustEl.innerHTML = '';
+    listPreferredEl.innerHTML = '';
+    listUnsureEl.innerHTML = '';
+
+    (requirements || []).forEach(function (req) {
+      if (req.requirement_type === 'MANDATORY') {
+        listMustEl.appendChild(makeReqRow(req.description));
+      } else if (req.requirement_type === 'PREFERRED') {
+        listPreferredEl.appendChild(makeReqRow(req.description, req.weight));
+      }
+    });
+
+    if (!listMustEl.children.length) {
+      listMustEl.innerHTML = '<p class="readnote">No mandatory requirements were found in this description. Add them below.</p>';
+    }
+    if (!listPreferredEl.children.length) {
+      listPreferredEl.innerHTML = '<p class="readnote">No preferred requirements were found in this description. Add them below.</p>';
+    }
+    listUnsureEl.innerHTML = '<p class="readnote">Nothing was flagged as ambiguous. Review the lists above before approving.</p>';
+  }
+
+  function api(method, path, body, isForm) {
+    var options = { method: method };
+    if (isForm) {
+      options.body = body;
+    } else if (body !== undefined) {
+      options.headers = { 'Content-Type': 'application/json' };
+      options.body = JSON.stringify(body);
+    }
+    return fetch(API_BASE + path, options).then(function (response) {
+      return response.text().then(function (raw) {
+        var parsed = null;
+        try { parsed = raw ? JSON.parse(raw) : null; } catch (e) { parsed = null; }
+        if (!response.ok) {
+          var detail = parsed && parsed.detail;
+          var message = (parsed && parsed.error && parsed.error.message)
+            || (detail && detail.message)
+            || (typeof detail === 'string' ? detail : '')
+            || ('That step failed (' + response.status + ').');
+          // A 422's specific reasons (e.g. "weights sum to 99, not 100") live in
+          // detail.errors and were previously dropped, leaving only the generic
+          // "failed validation" message on screen with no way to tell what to fix.
+          var errors = detail && detail.errors;
+          if (errors && errors.length) message += ' — ' + errors.join('; ');
+          throw new Error(message);
+        }
+        return parsed;
+      });
+    });
+  }
+
+  // --- one durable campaign per setup (B14 / X18 / X19) ----------------------
+  // Setup used to POST /api/campaigns twice: once when the description was
+  // read, once more on approval. A reload lost the id and made another. One
+  // id, reused by every step, is what stops the duplicates.
+  //
+  // X19: the id used to live in one shared localStorage key, so two setup
+  // tabs for two different roles wrote over the same draft. This tab's own
+  // URL is now the only source of truth for which draft it edits.
+
+  function setField(id, v) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var text = v == null ? '' : String(v);
+    if (el.tagName === 'SELECT' && !Array.from(el.options).some(function (option) { return option.value === text; })) {
+      el.add(new Option(text || 'Choose a site', text));
+    }
+    el.value = text;
+  }
+
+  function roleFields() {
+    var title = value('f-title') || 'New role';
+    var payload = {
+      name: title + ' intake',
+      job_title: title,
+      job_description: document.getElementById('jd-text').value.trim(),
+      location: value('f-site'),
+      vacancies: Number(value('f-vac')) || 1
+    };
+    // Every later screen and every export reports against this record, so a
+    // field left out here is a blank in the audit trail, not a tidier payload.
+    var unit = value('f-unit'), recruiter = value('f-rec'), manager = value('f-mgr');
+    var closing = value('f-close');
+    if (unit) { payload.business_unit = unit; }
+    if (manager) { payload.hiring_manager = manager; }
+    if (recruiter) { payload.recruiter = recruiter; payload.created_by = recruiter; }
+    if (closing) { payload.target_completion_date = closing; }
+    return payload;
+  }
+
+  // Create once, update every time after. Returns the one campaign that every
+  // later step works on.
+  //
+  // Saves run one after another, never side by side. Three handlers call this
+  // and each disables only its own button, so "Save as draft" followed by
+  // "Read the description" used to put two creates in the air at once: both
+  // saw no id yet and both created a campaign. Queueing makes the second call
+  // wait, find the id the first one stored, and send a PATCH.
+  var draftQueue = Promise.resolve();
+
+  function saveDraft() {
+    var result = draftQueue.then(saveDraftNow, saveDraftNow);
+    draftQueue = result.catch(function () { /* a failed save must not stop the next one */ });
+    return result;
+  }
+  window.__r360SaveCampaignForNavigation = saveDraft;
+
+  function urlDraftId() {
+    return new URLSearchParams(location.search).get('campaign_id');
+  }
+
+  // B20 identifier model: show the short RC-prefixed id (e.g. RC20260913-33)
+  // as soon as this draft has one, so a recruiter has something readable to
+  // say or search on instead of the UUID in the address bar.
+  function showCampaignId(campaign) {
+    var kicker = document.getElementById('setup-kicker');
+    if (kicker && campaign && campaign.short_id) kicker.textContent = campaign.short_id;
+  }
+
+  async function saveDraftNow() {
+    // The URL, not a page variable. restoreDraft() is not awaited and the
+    // buttons are live at once, so a save clicked while that GET is in the
+    // air would otherwise see no id and create a second campaign.
+    var id = draftCampaignId || urlDraftId();
+    var payload = roleFields();
+    if (id) {
+      try {
+        var updated = await api('PATCH', '/api/campaigns/' + id, payload);
+        draftCampaignId = updated.id;
+        window.dispatchEvent(new CustomEvent('campaign-changed', { detail: { id: updated.id } }));
+        showCampaignId(updated);
+        return updated;
+      } catch (error) {
+        // A draft removed elsewhere must not block setup. Any other failure is
+        // real and has to reach the user rather than become a silent new row.
+        if (!/404|not found/i.test((error && error.message) || '')) { throw error; }
+        draftCampaignId = null;
+      }
+    }
+    var created = await api('POST', '/api/campaigns', payload);
+    draftCampaignId = created.id;
+    window.dispatchEvent(new CustomEvent('campaign-changed', { detail: { id: created.id } }));
+    showCampaignId(created);
+    // Stamp the new id into this tab's own URL, so a reload finds the same
+    // draft. replaceState, not pushState: Back must not gain a bogus step.
+    var url = new URL(location.href);
+    url.searchParams.set('campaign_id', created.id);
+    history.replaceState(null, '', url);
+    return created;
+  }
+
+  // Resume. The campaign_id in this tab's own URL is the only source of
+  // which draft it edits (X19) — never a value another tab wrote.
+  async function restoreDraft() {
+    var id = urlDraftId();
+    if (!id) { return; }
+    try {
+      var campaign = await api('GET', '/api/campaigns/' + id);
+      // The user may have saved a newer draft in this tab while this GET was
+      // in the air. A late answer about the old id must not speak for it.
+      if (draftCampaignId && draftCampaignId !== id) { return; }
+      // X22: load the campaign whatever its status. This used to give up
+      // unless the campaign was still a DRAFT, which left the form holding its
+      // prefilled sample values. CV upload saves the role fields before it
+      // posts the batch, so "I will upload the CVs later" then overwrote a real
+      // approved campaign with "Control Room Operator". Never PATCH a record
+      // that was not read. What may be edited once a rubric is approved is a
+      // separate question, decided per field in docs/DECISIONS.md.
+      draftCampaignId = campaign.id;
+      window.dispatchEvent(new CustomEvent('campaign-changed', { detail: { id: campaign.id } }));
+      document.getElementById('setup-title').textContent = campaign.job_title || 'Continue campaign';
+      showCampaignId(campaign);
+      setField('f-title', campaign.job_title);
+      setField('f-site', campaign.location);
+      setField('f-vac', campaign.vacancies);
+      setField('f-mgr', campaign.hiring_manager);
+      setField('f-unit', campaign.business_unit);
+      setField('f-rec', campaign.recruiter);
+      if (campaign.target_completion_date) {
+        setField('f-close', String(campaign.target_completion_date).slice(0, 10));
+      }
+      document.getElementById('jd-text').value = campaign.job_description || '';
+      if (!location.hash && window.CampaignSteps) {
+        var destination = await window.CampaignSteps.resolve(campaign, function (path) { return api('GET', path); });
+        if (window.CampaignSteps.anchorFor(destination.step)) {
+          var restoredUrl = new URL(location.href);
+          restoredUrl.hash = destination.step;
+          history.replaceState(null, '', restoredUrl);
+        }
+      }
+      setReadStatus(campaign.status === 'DRAFT'
+        ? 'Continuing the draft you saved earlier. Your role details are restored.'
+        : 'This role is already past setup (' + campaign.status.toLowerCase().replace(/_/g, ' ') +
+          '). Its saved details are restored so you can carry on, for example by adding CVs.',
+        'success');
+    } catch (error) {
+      // Only a draft the server says is gone gets forgotten. A dropped
+      // connection must never discard the recruiter's saved work, so the id
+      // is kept and the next save will find it again.
+      if (/404|not found/i.test((error && error.message) || '')) {
+        // Forget the id that is gone, not whichever id this tab has since
+        // moved to. A save that landed while this GET was in the air has
+        // already set draftCampaignId to a good one.
+        if (!draftCampaignId || draftCampaignId === id) {
+          draftCampaignId = null;
+        }
+        return;
+      }
+      setReadStatus('Your saved draft could not be loaded because the server did not answer. ' +
+                    'It is still there. Reload this page when the connection is back.', 'error');
+    }
+  }
+
+  // --- Open at the step the next-step rule names ---------------------------
+  // 07-CAMPAIGN-JOURNEY-UX-PROPOSAL.md section 3. A campaign card links to
+  // `new-campaign.html?campaign_id=X#<step>`, where the step id comes from the
+  // one rule in assets/app.js. Every step is a real URL, so a deep link and
+  // browser Back both work without this page keeping its own history
+  // (AGENT-START-HERE.md section 5).
+  //
+  // The page never lands somewhere the records do not support. Band 3 holds
+  // both the scoring rules and the CV upload, so it cannot be opened until the
+  // requirements that belong in it have been read back. When they cannot be,
+  // the page says so and lands at the job description instead of showing an
+  // empty band that looks like lost work.
+  var openingStep = false;
+
+  // Instant, never smooth. This is an arrival, not an in-page transition: the
+  // recruiter followed a link to a step and wants to be at it. Animating the
+  // trip is motion nobody asked for, and a smooth scroll started in the same
+  // frame as band 3's reveal animation does not survive it.
+  //
+  // The bands are collapsed by default (the cascade in assets/app.js), so
+  // scrolling to a closed one lands the recruiter on a shut accordion. Open it
+  // first, and wait for the 0.58s opening transition, or the position measured
+  // is the position before the band grew.
+  async function landOn(element) {
+    if (!element) { return; }
+    var opened = window.__r360OpenBand ? window.__r360OpenBand(element) : false;
+    if (opened) {
+      var block = element.closest('.story-block');
+      var detail = block && block.querySelector('.story-detail');
+      await new Promise(function (resolve) {
+        var settled = false;
+        function finish() { if (!settled) { settled = true; resolve(); } }
+        if (detail) { detail.addEventListener('transitionend', finish, { once: true }); }
+        // A band with nothing to animate never fires transitionend.
+        setTimeout(finish, 700);
+      });
+    }
+    element.scrollIntoView({ block: 'start' });
+  }
+
+  async function openRequestedStep() {
+    var step = (location.hash || '').replace(/^#/, '');
+    // A browser holding an older cached assets/app.js has no rule to ask. The
+    // form still works; it just opens at the top as it always did.
+    if (!window.CampaignSteps) { return; }
+    var anchor = window.CampaignSteps.anchorFor(step);
+    // No hash, or a hash this rule does not own: leave the page where it is.
+    if (!anchor) { return; }
+    // A fresh setup has no saved campaign, so there is no step to return to.
+    var id = draftCampaignId || urlDraftId();
+    if (!id) { return; }
+    // A hashchange fired while a slow requirements read is still in the air
+    // must not start a second one.
+    if (openingStep) { return; }
+    openingStep = true;
+    try {
+      if (anchor === 'step3' || step === 'cvs') {
+        if (!step3.classList.contains('on')) {
+          var requirements = null;
+          var unreadable = false;
+          try {
+            requirements = await api('GET', '/api/campaigns/' + id + '/requirements');
+          } catch (error) {
+            unreadable = true;
+          }
+          var haveRules = !!(requirements && requirements.length);
+          // The scoring rules ARE the destination here. With none recorded
+          // there is nothing to review, so the page says that and lands at the
+          // job description the rules would come from.
+          if (step !== 'cvs' && !haveRules) {
+            setReadStatus(unreadable
+              ? 'The scoring rules for this campaign could not be loaded, so this page opened at ' +
+                'the job description instead. They are still saved. Reload this page when the ' +
+                'connection is back.'
+              : 'This campaign has no scoring rules recorded yet, so this page opened at the job ' +
+                'description. Read the description to produce them.',
+              unreadable ? 'error' : '');
+            // The page landed on band 2, so the stepper has to say band 2.
+            setStepIndicator(2);
+            await landOn(document.getElementById('jd'));
+            return;
+          }
+          // Uploading CVs does not depend on the rules being readable, so a
+          // recruiter who came to upload is never blocked by them. What is
+          // missing is still said out loud, beside the upload where it is read.
+          if (haveRules) { renderExtractedRequirements(requirements); }
+          step3.classList.add('on');
+          if (step === 'cvs' && !haveRules) {
+            setScreeningStatus(unreadable
+              ? 'The scoring rules could not be loaded, so they are not listed above. They are ' +
+                'still saved and will still be used. You can add CVs now.'
+              : 'No individual requirements are recorded for this campaign, so none are listed ' +
+                'above. Its approved rubric is still what scores every CV.');
+          }
+        }
+        setStepIndicator(3);
+      } else {
+        setStepIndicator(step === 'jd' ? 2 : 1);
+      }
+      await landOn(document.getElementById(anchor));
+    } finally {
+      openingStep = false;
+    }
+  }
+
+  // Back and Forward between two steps of the same campaign are hash changes,
+  // not loads. Without this the URL would move and the page would not.
+  window.addEventListener('hashchange', function () { openRequestedStep(); });
+
+  readBtn.addEventListener('click', async function () {
+    var jdText = document.getElementById('jd-text').value.trim();
+    if (!jdText) {
+      setReadStatus('Add or upload a job description before reading it.', 'error');
+      document.getElementById('jd-text').focus();
+      return;
+    }
+
+    readBtn.disabled = true;
+    setReadStatus('');
+    readingState.classList.add('on');
+    setStepIndicator(2);
+
+    try {
+      await saveDraft();
+
+      var requirements = await api(
+        'POST',
+        '/api/campaigns/' + draftCampaignId + '/requirements/extract',
+        { jd_text: jdText }
+      );
+
+      renderExtractedRequirements(requirements);
+
+      try {
+        draftRubricVersion = await ensureDraftRubricVersion(draftCampaignId);
+        await refreshWeightsFromVersion(draftCampaignId, draftRubricVersion);
+        // Replace the preset-seeded weights with AI-suggested ones, once,
+        // right after the draft rubric version is ready. suggestWeights
+        // reports its own failure and leaves the fields manually editable.
+        await suggestWeights(draftCampaignId, draftRubricVersion);
+      } catch (rubricError) {
+        // Requirements are still shown and editable; only the weight total
+        // and Normalize button are unavailable until this succeeds (retried
+        // automatically at approve time).
+        weightTotalNote.textContent = 'Could not prepare weight totals: ' +
+          (rubricError && rubricError.message ? rubricError.message : 'unknown error');
+        weightTotalNote.style.color = 'var(--maroon)';
+      }
+
+      readingState.classList.remove('on');
+      readBtn.disabled = false;
+      step3.classList.add('on');
+      setStepIndicator(3);
+      var delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900;
+      step3.scrollIntoView({ behavior: delay ? 'smooth' : 'auto', block: 'start' });
+    } catch (error) {
+      readingState.classList.remove('on');
+      readBtn.disabled = false;
+      setStepIndicator(1);
+      setReadStatus(error && error.message ? error.message : 'The job description could not be read.', 'error');
+    }
+  });
+
+  // --- requirement rows: remove and add ---
+  var listMust = document.getElementById('list-must');
+
+  // A row just typed in has no criterion_key yet — there is nothing on the
+  // server to give it a weight against, so Apply creates that criterion
+  // first (POST .../weights, which mints the criterion_key) and only then
+  // turns the row into a normal weighted row that Approve/Save will pick up
+  // through currentWeightItems(). Before Apply, typing the description and
+  // never clicking anything used to look saved but was silently dropped:
+  // currentWeightItems() only ever read rows that already had a criterion_key.
+  async function applyRequirementRow(row) {
+    var textInput = row.querySelector('input[type=text]');
+    var label = textInput.value.trim();
+    if (!label) { textInput.focus(); return; }
+    if (!draftCampaignId || !draftRubricVersion) {
+      setReadStatus('Read the job description first — a requirement needs a rubric to belong to.', 'error');
+      return;
+    }
+    var applyBtn = row.querySelector('.apply-req');
+    applyBtn.disabled = true;
+    applyBtn.textContent = 'Applying…';
+    try {
+      var created = await api('POST',
+        '/api/campaigns/' + draftCampaignId + '/rubric/versions/' + draftRubricVersion + '/weights',
+        { label: label, requirement_type: 'MANDATORY', weight: 0 });
+      row.dataset.criterionKey = created.criterion_key;
+      row.dataset.weightId = created.id;
+      applyBtn.remove();
+      var wt = document.createElement('span');
+      wt.className = 'wt';
+      wt.innerHTML = '<input type="number" value="0" min="0" max="100" aria-label="Weight"> pts';
+      row.insertBefore(wt, row.querySelector('.rm'));
+      autoBalanceWeights(wt.querySelector('input'));
+    } catch (error) {
+      applyBtn.disabled = false;
+      applyBtn.textContent = 'Apply';
+      setReadStatus('Could not add that requirement: ' + ((error && error.message) || 'unknown error'), 'error');
+    }
+  }
+
+  // Removing a row that already has a weightId (persisted on the server as a
+  // RubricWeight) must also delete it there — bulk_set_weights only ever
+  // updates the criterion_keys it is given, it never deactivates ones left
+  // out. Without this call, a deleted must-have/preferred row kept its old
+  // weight active in the database while the remaining on-screen rows were
+  // redistributed back up to 100: the server-side total then read as
+  // (100 + the deleted row's old weight), tripping the "weights must sum to
+  // exactly 100" check on submit and surfacing as a generic screening
+  // failure with no visible cause, since the row that broke it was already
+  // gone from the screen.
+  document.addEventListener('click', function (e) {
+    var apply = e.target.closest('.reqrow .apply-req');
+    if (apply) { applyRequirementRow(apply.closest('.reqrow')); return; }
+    var rm = e.target.closest('.reqrow .rm');
+    if (rm) {
+      var row = rm.closest('.reqrow');
+      var hadWeight = !!row.querySelector('.wt input');
+      var weightId = row.dataset.weightId;
+      row.remove();
+      if (hadWeight) redistributeAfterRemoval();
+      if (weightId && draftCampaignId && draftRubricVersion) {
+        api('DELETE', '/api/campaigns/' + draftCampaignId + '/rubric/versions/' +
+          draftRubricVersion + '/weights/' + weightId).catch(function (error) {
+          setReadStatus('Could not remove that requirement on the server: ' +
+            ((error && error.message) || 'unknown error') +
+            ' — re-add it or reload before approving.', 'error');
+        });
+      }
+    }
+  });
+
+  document.getElementById('add-req').addEventListener('click', function () {
+    var row = document.createElement('div');
+    row.className = 'reqrow';
+    row.innerHTML = '<input type="text" value="" placeholder="Describe the requirement">' +
+      '<button type="button" class="ghost apply-req" style="flex:none">Apply</button>' +
+      '<button type="button" class="rm" aria-label="Remove requirement">&times;</button>';
+    listMust.appendChild(row);
+    row.querySelector('input[type=text]').focus();
+  });
+
+  // --- approve and run the real screening API ---
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var SCREENING_KEY = 'recruitment360.screening.v1';
+  var resumeInput = document.getElementById('resume-input');
+  var screeningFiles = document.getElementById('screening-files');
+  var screeningStatus = document.getElementById('screening-status');
+  var screeningProgress = document.getElementById('screening-progress');
+  var screeningProgressFill = document.getElementById('screening-progress-fill');
+  var screeningProgressPercent = document.getElementById('screening-progress-percent');
+  var screeningProgressDetail = document.getElementById('screening-progress-detail');
+  var approveBtn = document.getElementById('approve-btn');
+
+  function value(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function setScreeningStatus(message, kind) {
+    screeningStatus.textContent = message || '';
+    screeningStatus.className = 'screening-status' + (kind ? ' ' + kind : '');
+  }
+
+  function setScreeningProgress(percent, detail) {
+    var bounded = Math.max(0, Math.min(100, Math.round(percent)));
+    screeningProgress.classList.add('on');
+    screeningProgressFill.style.width = bounded + '%';
+    screeningProgressPercent.textContent = bounded + '%';
+    screeningProgressDetail.textContent = detail || '';
+    screeningProgress.querySelector('[role="progressbar"]').setAttribute('aria-valuenow', bounded);
+  }
+
+  var folderInput = document.getElementById('resume-folder');
+  // Whichever control was used last is the choice. Kept here rather than
+  // read off an input at submit time, or a folder pick would be described
+  // on screen and then quietly not uploaded.
+  var chosenFiles = [];
+
+  function describeChoice(files) {
+    chosenFiles = files;
+    screeningFiles.textContent = files.length
+      ? files.length + ' application' + (files.length === 1 ? '' : 's') + ' chosen: ' + files.slice(0, 3).map(function (file) { return file.name; }).join(', ') + (files.length > 3 ? ' and ' + (files.length - 3) + ' more' : '')
+      : 'No applications chosen.';
+    setScreeningStatus('');
+  }
+
+  resumeInput.addEventListener('change', function () {
+    describeChoice(Array.prototype.slice.call(resumeInput.files || []));
+  });
+
+  if (folderInput) {
+    folderInput.addEventListener('change', function () {
+      // A folder sweep picks up everything in it — spreadsheets, images,
+      // a stray .DS_Store. Only CVs are sent, and the count shown is the
+      // number that will actually be assessed, not the number in the folder.
+      var all = Array.prototype.slice.call(folderInput.files || []);
+      var cvs = all.filter(function (file) {
+        return /\.(pdf|docx|doc)$/i.test(file.name);
+      });
+      describeChoice(cvs);
+      if (all.length > cvs.length) {
+        setScreeningStatus((all.length - cvs.length) + ' of ' + all.length +
+          ' files in that folder are not CVs and will not be sent.');
+      }
+    });
+  }
+
+  approveBtn.addEventListener('click', async function () {
+    var jdText = document.getElementById('jd-text').value.trim();
+    var files = chosenFiles.slice();
+    if (!jdText) {
+      setScreeningStatus('Add the job description before starting assessment.', 'error');
+      document.getElementById('jd-text').focus();
+      return;
+    }
+    if (!files.length) {
+      setScreeningStatus('Choose at least one application before starting assessment.', 'error');
+      resumeInput.focus();
+      return;
+    }
+
+    var originalText = approveBtn.textContent;
+    var originalStatus = 'Reading every application against the approved requirements. Keep this page open.';
+    var progressTimer = null;
+    var progressStep = 0;
+    var progressStages = [
+      [12, 'Receiving applications and checking file quality…'],
+      [28, 'Sending applications through the ATS-compatible screening queue…'],
+      [52, 'Extracting evidence from each CV…'],
+      [72, 'Calculating deterministic rubric scores…'],
+      [88, 'Running bounded LLM review against CV evidence…']
+    ];
+
+    approveBtn.disabled = true;
+    approveBtn.textContent = 'Assessing ' + files.length + ' application' + (files.length === 1 ? '' : 's') + '…';
+    setScreeningStatus(originalStatus);
+    setScreeningProgress(5, 'Starting screening pipeline…');
+    progressTimer = setInterval(function () {
+      if (progressStep >= progressStages.length) return;
+      var stage = progressStages[progressStep++];
+      setScreeningProgress(stage[0], stage[1]);
+      setScreeningStatus(stage[1]);
+    }, 700);
+
+    /* ── The modern pipeline ────────────────────────────────────────────
+       This used to POST to /api/campaigns/screen, which predates the
+       rubric engine: it returned results in the HTTP response and wrote
+       nothing to the database, so no other screen could ever see them.
+
+       It now runs the real sequence — create the campaign, read the
+       requirements out of the job description, seed and approve a rubric,
+       upload the CVs, then assess them against that rubric. Everything it
+       writes is durable, which is what makes the leaderboard, comparison,
+       what-if and dashboard screens work.
+
+       Note the rubric is auto-approved here so one button still does the
+       whole job. In real use a recruiter reviews and approves it on the
+       Rubric screen first; that is the whole point of Phase B, and this
+       shortcut exists only so the upload form remains a single action. */
+
+    function api(method, path, body, isForm) {
+      var options = { method: method };
+      if (isForm) {
+        options.body = body;
+      } else if (body !== undefined) {
+        options.headers = { 'Content-Type': 'application/json' };
+        options.body = JSON.stringify(body);
+      }
+      return fetch(API_BASE + path, options).then(function (response) {
+        return response.text().then(function (raw) {
+          var parsed = null;
+          try { parsed = raw ? JSON.parse(raw) : null; } catch (e) { parsed = null; }
+          if (!response.ok) {
+            var detail = parsed && parsed.detail;
+            var message = (parsed && parsed.error && parsed.error.message)
+              || (detail && detail.message)
+              || (typeof detail === 'string' ? detail : '')
+              || ('That step failed (' + response.status + ').');
+            throw new Error(message);
+          }
+          return parsed;
+        });
+      });
+    }
+
+    var title = document.getElementById('f-title').value.trim() || 'New role';
+    var site = document.getElementById('f-site').value;
+    var vacancies = Number(document.getElementById('f-vac').value) || 1;
+    var closing = document.getElementById('f-close').value;
+    var campaign = null, runId = null;
+
+    try {
+      setScreeningStatus('Saving the campaign…');
+      // The same campaign the description was read into. Creating a second one
+      // here is defect X18: two rows for one role, and the rubric approved on
+      // the row the recruiter never saw.
+      campaign = await saveDraft();
+
+      if (campaign.status === 'DRAFT' || campaign.status === 'AWAITING_RUBRIC_APPROVAL') {
+        setScreeningStatus('Building the scoring rubric from those requirements…');
+        // The version was already seeded (and is now editable/normalizable)
+        // right after the description was read — reused here rather than
+        // re-extracting and reseeding, which used to silently discard
+        // whatever weights the recruiter had just edited on screen.
+        var versionNumber = draftRubricVersion || await ensureDraftRubricVersion(campaign.id);
+        var weightItems = currentWeightItems();
+        // The AI weight suggestion (called right after the JD is read) writes
+        // a weight onto every active criterion it was given, including
+        // requirement types this screen never renders a row for (e.g.
+        // "informational" duty/responsibility lines pulled out of the JD
+        // alongside the Must-have/Preferred ones). Those never appear here,
+        // so the recruiter can neither see nor edit them, but the server
+        // still counts their weight toward the 100-point total. Left alone,
+        // that silently pushes the real total past 100 with nothing wrong
+        // visible on screen, and Submit rejects the rubric with a raw
+        // "weights sum to N, not 100" error the recruiter has no way to
+        // trace back to a row they never saw. Zero out anything active that
+        // isn't one of the rows on screen, in the same PUT, so a criterion
+        // with no editable weight never carries one.
+        var visibleKeys = {};
+        weightItems.forEach(function (item) { visibleKeys[item.criterion_key] = true; });
+        var currentVersion = await api('GET', '/api/campaigns/' + campaign.id + '/rubric/versions/' + versionNumber);
+        (currentVersion.weights || []).forEach(function (w) {
+          if (w.active && !visibleKeys[w.criterion_key] && w.weight !== 0) {
+            weightItems.push({ criterion_key: w.criterion_key, weight: 0 });
+          }
+        });
+        if (weightItems.length) {
+          await api('PUT', '/api/campaigns/' + campaign.id + '/rubric/versions/' + versionNumber + '/weights',
+            { weights: weightItems });
+        }
+        await api('POST', '/api/campaigns/' + campaign.id + '/rubric/versions/' + versionNumber + '/submit', {});
+        await api('POST', '/api/campaigns/' + campaign.id + '/rubric/versions/' + versionNumber + '/approve',
+                  { approved_by: window.__r360ActorName ? window.__r360ActorName() : 'Unknown user' });
+      }
+
+      setScreeningStatus('Uploading ' + files.length + ' application' +
+        (files.length === 1 ? '' : 's') + '…');
+      var form = new FormData();
+      files.forEach(function (file) { form.append('files', file); });
+      var batch = await api('POST', '/api/campaigns/' + campaign.id +
+        '/batches?name=' + encodeURIComponent('Applications for ' + title), form, true);
+
+      var progress = batch && batch.progress;
+      var read = progress ? (progress.completed || 0) + (progress.duplicate || 0) : files.length;
+      var held = progress ? (progress.failed || 0) : 0;
+
+      setScreeningStatus('Assessing every application against deterministic rules plus LLM review…');
+      setScreeningProgress(76, 'Calculating deterministic rubric scores, then asking LLM to review supported evidence…');
+      var run = await api('POST', '/api/campaigns/' + campaign.id + '/evaluations/runs', {
+        scoring_mode: 'LLM_ASSISTED',
+        demo_delay_seconds: 0.75,
+        notes: 'Demo screening: deterministic evidence plus bounded LLM review.'
+      });
+      runId = run.id;
+
+      var assessed = run.evaluated_count || 0;
+      // Setup is complete, so the next visit starts a new role rather than
+      // reopening a campaign that is already being assessed. Drop the id from
+      // memory and from this tab's URL.
+      draftCampaignId = null;
+      var doneUrl = new URL(location.href);
+      doneUrl.searchParams.delete('campaign_id');
+      doneUrl.hash = '';
+      history.replaceState(null, '', doneUrl);
+      sessionStorage.setItem(SCREENING_KEY, JSON.stringify({
+        campaign_id: campaign.id,
+        run_id: runId,
+        submittedCount: files.length,
+        campaign: { title: title, site: site, vacancies: vacancies, closingDate: closing }
+      }));
+
+      setScreeningStatus(assessed + ' of ' + files.length + ' assessed' +
+        (held ? '; ' + held + ' could not be read and are listed as held.' : '.') +
+        ' Opening ranked results…', held ? '' : 'success');
+      setScreeningProgress(100, 'Scores returned. Opening ranked results…');
+      location.href = 'leaderboard.html?run_id=' + encodeURIComponent(runId);
+    } catch (error) {
+      approveBtn.disabled = false;
+      approveBtn.textContent = originalText;
+      setScreeningStatus(error && error.message ? error.message : 'Assessment could not be completed. Try again.', 'error');
+      setScreeningProgress(0, 'Screening stopped. Fix the issue and try again.');
+    } finally {
+      if (progressTimer) clearInterval(progressTimer);
+    }
+  });
+  // A save that only relabels its own button is defect X18: the recruiter is
+  // told the work is safe when it is not. This one reports what the server did.
+  document.getElementById('save-draft').addEventListener('click', async function () {
+    var button = this;
+    var original = button.dataset.label || button.textContent;
+    button.dataset.label = original;
+    button.disabled = true;
+    button.textContent = 'Saving…';
+    try {
+      await saveDraft();
+      button.textContent = 'Draft saved';
+      setReadStatus('Draft saved. You can close this page and continue it from Campaigns.', 'success');
+    } catch (error) {
+      button.textContent = original;
+      var reason = (error && error.message) || '';
+      if (!reason || /failed to fetch|networkerror|load failed/i.test(reason)) {
+        reason = 'The draft could not be saved because the server did not answer. Nothing was stored.';
+      }
+      setReadStatus(reason, 'error');
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  document.getElementById('save-progress').addEventListener('click', async function () {
+    var button = this;
+    var status = document.getElementById('save-progress-status');
+    button.disabled = true;
+    status.textContent = 'Saving…';
+    try {
+      await saveDraft();
+      status.textContent = 'Progress saved. You can return from Start Campaign.';
+    } catch (error) {
+      status.textContent = 'Could not save. ' + error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  // Prefill from the JD library (docs/plan/DEMO-READINESS-2026-09-14.md P0-2):
+  // only when this tab has no draft of its own — an existing draft's own
+  // saved job description always wins, never overwritten by a template.
+  async function prefillFromJDTemplate() {
+    if (urlDraftId()) return;
+    var templateId = new URLSearchParams(location.search).get('jd_template_id');
+    if (!templateId) return;
+    try {
+      var template = await api('GET', '/api/jd-library/' + templateId);
+      setField('f-title', template.role_title);
+      document.getElementById('jd-text').value = template.body;
+      setReadStatus('Prefilled from the JD library (' + template.role_title +
+        '). Nothing is saved until you continue.', 'success');
+    } catch (error) {
+      setReadStatus('Could not load that JD template. Paste or type the job description below.', 'error');
+    }
+  }
+
+  // X20: the role boxes start filled with sample values, so a save clicked
+  // before the restoring GET answers used to PATCH a real draft with them.
+  // Every save already queues behind draftQueue, so making the restore the
+  // first thing in that queue holds an early click until the saved values are
+  // in the form. It covers all three save callers without disabling a button.
+  draftQueue = restoreDraft().then(prefillFromJDTemplate)
+    .catch(function () { /* restoreDraft reports its own failures */ });
+  // After the draft is loaded, not before: the step to open is decided from the
+  // campaign this tab is editing, and band 3 needs the campaign's id.
+  draftQueue.then(openRequestedStep);
+
+  // CVs chosen on the AI-start form are stashed (assets/pending-resumes.js)
+  // keyed by campaign id, since File objects cannot ride along in the
+  // "review it manually" link's URL. Picking them up here means the
+  // recruiter who already chose CVs on start-campaign.html is never asked to
+  // choose them again on this screen.
+  draftQueue.then(function () {
+    var id = draftCampaignId || urlDraftId();
+    if (!id || !window.PendingResumes || chosenFiles.length) return;
+    return window.PendingResumes.take(id).then(function (files) {
+      if (!files || !files.length) return;
+      describeChoice(files);
+      setScreeningStatus(files.length + ' CV' + (files.length === 1 ? '' : 's') +
+        ' carried over from what you chose earlier — already selected below. Choose again to replace them.',
+        'success');
+      step3.classList.add('on');
+    });
+  });
+
+  // Coming back to Upload CVs after screening already ran (e.g. from the
+  // Shortlist journey stop) used to show "No applications chosen" with no
+  // sign that CVs were ever sent — nothing on screen told the recruiter
+  // whether adding one more meant starting over or adding to what was
+  // already assessed. List what this campaign already has on file so
+  // "choose applications" reads as adding more, not replacing.
+  var existingCvsBox = document.getElementById('screening-files-existing');
+  function renderExistingCvs(names) {
+    if (!existingCvsBox) return;
+    if (!names.length) {
+      existingCvsBox.hidden = true;
+      existingCvsBox.textContent = '';
+      return;
+    }
+    existingCvsBox.hidden = false;
+    existingCvsBox.textContent = names.length + ' application' + (names.length === 1 ? '' : 's') +
+      ' already on file for this role: ' + names.join(', ') +
+      '. Choose more below to add to them.';
+  }
+  draftQueue.then(function () {
+    var id = draftCampaignId || urlDraftId();
+    if (!id) return;
+    return api('GET', '/api/campaigns/' + id + '/batches').then(function (batches) {
+      return Promise.all((batches || []).map(function (batch) {
+        return api('GET', '/api/processing/batches/' + batch.id + '/jobs').catch(function () { return []; });
+      }));
+    }).then(function (jobLists) {
+      var names = [];
+      jobLists.forEach(function (jobs) {
+        (jobs || []).forEach(function (job) {
+          if (job && job.original_filename) names.push(job.original_filename);
+        });
+      });
+      renderExistingCvs(names);
+    }).catch(function () { /* informational only — leave the box hidden */ });
+  });
+})();
+</script>
+</body>
+</html>

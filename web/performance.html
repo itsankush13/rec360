@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Performance · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* page-specific, built only from existing tokens */
+  .headline{
+    font-size:56px;font-weight:200;letter-spacing:-.04em;line-height:1.08;
+    max-width:18ch;
+  }
+  .headline b{font-weight:500}
+  @media (max-width:640px){.headline{font-size:36px}}
+
+  .trend-wrap{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:30px 34px 26px}
+  .trend-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .trend-top .big{font-size:32px;font-weight:300;color:var(--maroon);letter-spacing:-.03em}
+  .trend-top .lbl{font-size:14.5px;color:var(--ink-2);font-weight:300}
+  .trend-svg{width:100%;height:auto;display:block}
+  .trend-months{display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px;color:var(--ink-3);font-weight:300}
+
+  .care-row{display:flex;align-items:center;gap:20px;padding:18px 0;border-top:1px solid var(--hair-soft)}
+  .care-row:first-child{border-top:0}
+  .care-row .nm{flex:1;min-width:0;font-size:15.5px;font-weight:400;letter-spacing:-.01em}
+  .care-row .nm span{display:block;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:3px}
+  .care-row .num{flex:none;font-size:22px;font-weight:400;color:var(--ink);min-width:96px;text-align:right}
+  .care-why{margin-top:6px;padding:18px 20px;background:var(--sand);border-radius:var(--r-md);border-left:3px solid var(--gold);font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.6}
+
+  .lag-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--hair-soft)}
+  .lag-row:first-child{border-top:0}
+  .lag-row .nm{flex:1;font-size:15px;font-weight:400}
+  .lag-row .nm span{display:block;font-size:13px;color:var(--ink-3);font-weight:300;margin-top:2px}
+
+  @media (max-width:640px){
+    .care-row{flex-wrap:wrap;gap:6px}
+    .care-row .num{text-align:left;min-width:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the one number that matters ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date" id="p-period">1–30 September · reporting period</div>
+    <h1 class="headline" id="p-headline">Your team got <b>393 hours</b> back this month.</h1>
+    <p>That is time recruiters spent deciding, not reading. Every figure below shows its baseline and how it is worked out.</p>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — the figures, each with baseline and method ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2 id="p-breaktitle">How the hours break down</h2>
+      <span class="aside" id="p-breakaside">applications assessed</span>
+    </div>
+
+    <div class="figures four" id="p-figures">
+      <div class="figure">
+        <div class="k">Hours returned</div>
+        <div class="v maroon">393<small>hours</small></div>
+        <div class="b">Manual reading of 3,420 files takes <b>456 hours</b>. The team spent <b>63</b>.</div>
+        <div class="m">Method: 3,420 applications × 6.9 minutes saved per file ÷ 60.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Screening time not spent</div>
+        <div class="v">$16,506</div>
+        <div class="b">393 hours at <b>$42.00</b> an hour, fully loaded.</div>
+        <div class="m">Method: 393 × $42.00. You set this rate — it is not fixed by the system.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Days to a shortlist</div>
+        <div class="v">4.2<small>days</small></div>
+        <div class="b">It took <b>11.0 days</b> last year. That is <b>62% quicker</b>.</div>
+        <div class="m">Method: median days from a campaign opening to a shortlist, this period vs. last year.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Annualised, at this volume</div>
+        <div class="v">$198,000</div>
+        <div class="b">If every month runs like this one, this is the yearly figure.</div>
+        <div class="m">Method: this month's screening time not spent, projected across 12 months.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — the trend, one calm shape ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Hours returned, last six months</h2>
+      <span class="aside">Each point is a full reporting period</span>
+    </div>
+
+    <div class="trend-wrap" id="p-trend">
+      <div class="trend-top">
+        <span class="big">393 hours</span>
+        <span class="lbl">this month, up from 301 in April</span>
+      </div>
+
+      <svg class="trend-svg" viewBox="0 0 760 200" preserveAspectRatio="none" role="img" aria-label="Hours returned rose from 301 in April to 393 in September, six months of data">
+        <defs>
+          <linearGradient id="trendfill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#971A3E" stop-opacity="0.16"/>
+            <stop offset="100%" stop-color="#971A3E" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- points: Apr 301, May 322, Jun 338, Jul 356, Aug 371, Sep 393 — mapped to a 200-tall, 40-margin plot -->
+        <path d="M20,158 C 90,150 90,140 148,133 C 206,126 206,120 276,116 C 346,112 346,104 404,99 C 462,94 462,84 532,80 C 602,76 610,50 740,42 L740,190 L20,190 Z" fill="url(#trendfill)"/>
+        <path d="M20,158 C 90,150 90,140 148,133 C 206,126 206,120 276,116 C 346,112 346,104 404,99 C 462,94 462,84 532,80 C 602,76 610,50 740,42" fill="none" stroke="#971A3E" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="20" cy="158" r="4.5" fill="#971A3E"/>
+        <circle cx="148" cy="133" r="4.5" fill="#971A3E"/>
+        <circle cx="276" cy="116" r="4.5" fill="#971A3E"/>
+        <circle cx="404" cy="99" r="4.5" fill="#971A3E"/>
+        <circle cx="532" cy="80" r="4.5" fill="#971A3E"/>
+        <circle cx="740" cy="42" r="5.5" fill="#971A3E"/>
+      </svg>
+      <div class="trend-months">
+        <span>Apr · 301h</span><span>May · 322h</span><span>Jun · 338h</span>
+        <span>Jul · 356h</span><span>Aug · 371h</span><span>Sep · 393h</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — where we are careful ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Where we are careful</h2>
+      <span class="aside">The numbers that admit a limit</span>
+    </div>
+
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">People stay in control, and the system checks its own errors</span>
+          <span class="s">why these figures matter</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="care-why" id="p-care-why">
+            The system recommends. It never decides. These four figures are how you check that it
+            is being careful: how often a person overrides it, how often it flags its own
+            uncertain scores, and how often a file reads cleanly with a quote to back every score.
+          </div>
+
+          <div class="care-row">
+            <div class="nm">Assessments the team overruled<span>219 of 3,420 applications. You always have the last word.</span></div>
+            <div class="num">6.4%</div>
+          </div>
+          <div class="care-row">
+            <div class="nm">High scores the checker could not justify<span>Held back for a person to look at. The limit set for this is 1%.</span></div>
+            <div class="num">0.3%</div>
+          </div>
+          <div class="care-row">
+            <div class="nm">Applications processed without a problem<span>3,389 of 3,420. The rest are held, with a plain-English reason, on Today.</span></div>
+            <div class="num">99.1%</div>
+          </div>
+          <div class="care-row">
+            <div class="nm">Scores backed by a quote from the CV<span>Every scored criterion, for every application, this month.</span></div>
+            <div class="num">100%</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — the fuller set, folded and honestly separated ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>The fuller set of measures</h2>
+      <span class="aside">Open to see everything, split by what we can claim today</span>
+    </div>
+
+    <div class="fold" id="p-fuller">
+      <details>
+        <summary>
+          <span class="b run">6</span>
+          <span class="t">Measures we control now</span>
+          <span class="s">based on this month's 3,420 applications</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="lag-row"><div class="nm">Hours returned<span>393, against a manual baseline of 456</span></div></div>
+          <div class="lag-row"><div class="nm">Screening time not spent<span>$16,506, at the configured rate</span></div></div>
+          <div class="lag-row"><div class="nm">Days to a shortlist<span>4.2, against 11.0 last year</span></div></div>
+          <div class="lag-row"><div class="nm">Applications processed without a problem<span>99.1%, 3,389 of 3,420</span></div></div>
+          <div class="lag-row"><div class="nm">Evidence coverage<span>100% of scored criteria cite a CV line</span></div></div>
+          <div class="lag-row"><div class="nm">Assessments the team overruled<span>6.4%, 219 of 3,420</span></div></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="b hold">2</span>
+          <span class="t">Outcomes we are not claiming yet</span>
+          <span class="s">these need a baseline period first</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="lag-row"><div class="nm">Quality of hire<span>Needs a full hiring cycle plus a probation period to compare against. Not yet measured.</span></div></div>
+          <div class="lag-row"><div class="nm">Early attrition<span>Needs six months of new starters to compare against. Not yet measured.</span></div></div>
+          <div class="dfoot"><span class="note">These are lagging outcomes. We will report them once a baseline period has passed — not before.</span></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <p class="sig" id="p-sig">Figures load from current campaign records.</p>
+
+</div>
+
+<script>
+/* Performance — live wiring.
+
+   Every figure on this page is derived from configurable planning
+   assumptions, not from anything this system measured. The API returns
+   those assumptions with each result and this page prints them as the
+   "Method" line under each figure, which is what web/DATA.md requires:
+   never a saving without its baseline, never a percentage without its
+   denominator.
+
+   The six-month trend is deliberately NOT wired. No historical reporting
+   periods are stored, so any line drawn here would be invented. It is
+   replaced with a plain statement of that rather than left looking like
+   real history. */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function set(id, h) { var e = document.getElementById(id); if (e) e.innerHTML = h; }
+  function txt(id, s) { var e = document.getElementById(id); if (e) e.textContent = s; }
+  function n1(v) { return Math.round(Number(v || 0) * 10) / 10; }
+
+  function figure(k, value, unit, baseline, method) {
+    return '<div class="figure"><div class="k">' + esc(k) + '</div>' +
+      '<div class="v' + (unit === 'hours' ? ' maroon' : '') + '">' + esc(value) +
+      (unit ? '<small>' + esc(unit) + '</small>' : '') + '</div>' +
+      '<div class="b">' + baseline + '</div>' +
+      (method ? '<div class="m">' + esc(method) + '</div>' : '') + '</div>';
+  }
+
+  txt('p-period', 'Loading current records…');
+  set('p-headline', 'Loading performance…');
+  set('p-figures', '<p>Loading current figures…</p>');
+  set('p-trend', '<p>Loading reporting basis…</p>');
+  set('p-fuller', '<p>Loading current measures…</p>');
+  var initialCare = document.getElementById('p-care-why');
+  if (initialCare) initialCare.parentNode.innerHTML = '<div id="p-care-why">Loading current measures…</div>';
+
+  fetch(API_BASE + '/api/analytics/kpis').then(function (r) {
+    if (!r.ok) throw new Error(String(r.status));
+    return r.json();
+  }).then(function (k) {
+    var e = k.efficiency, a = e.assumptions, q = k.quality, w = k.workload,
+        t = k.throughput, x = k.exceptions;
+
+    txt('p-period', 'All campaigns to date · reporting period');
+    var head = document.getElementById('p-headline');
+    if (head) {
+      head.innerHTML = 'Your team got <b>' + n1(e.recruiter_hours_returned) +
+        ' hours</b> back so far.';
+    }
+    txt('p-breaktitle', 'How the ' + n1(e.recruiter_hours_returned) + ' hours breaks down');
+    txt('p-breakaside', w.candidates_assessed + ' of ' + w.cvs_received +
+        ' applications assessed');
+
+    set('p-figures',
+      figure('Hours returned', n1(e.recruiter_hours_returned), 'hours',
+        'Manual reading of ' + e.cvs_included + ' files takes <b>' +
+        n1(e.manual_equivalent_hours) + ' hours</b>. The team spent <b>' +
+        n1(e.actual_recruiter_hours) + '</b>.',
+        'Method: ' + e.cvs_included + ' applications × ' + a.minutes_saved_per_cv +
+        ' minutes saved per file ÷ 60.') +
+      figure('Screening time not spent',
+        e.screening_time_not_spent.currency + ' ' + e.screening_time_not_spent.amount, '',
+        n1(e.recruiter_hours_returned) + ' hours at <b>' + a.hourly_rate.toFixed(2) +
+        '</b> an hour, fully loaded.',
+        'Method: ' + e.screening_time_not_spent.derivation +
+        '. You set this rate — it is not fixed by the system.') +
+      figure('Read without a problem',
+        t.processed_without_a_problem ? n1(t.processed_without_a_problem.value) : '—',
+        t.processed_without_a_problem ? '%' : '',
+        t.processed_without_a_problem
+          ? '<b>' + esc(t.processed_without_a_problem.statement) + '</b> applications read.'
+          : 'Nothing has been read yet.',
+        x.files_held ? 'The remaining ' + x.files_held +
+          ' are held with a plain-English reason on Today.' : '') +
+      figure('Assumptions behind these figures', a.minutes_saved_per_cv, 'min/CV',
+        'Manual baseline <b>' + a.manual_minutes_per_cv + ' minutes</b> per file, ' +
+        'assisted <b>' + a.assisted_minutes_per_cv + '</b>.',
+        a.note));
+
+    /* The trend needs stored historical periods, which do not exist. */
+    var trend = document.getElementById('p-trend');
+    if (trend) {
+      trend.innerHTML = '<div class="trend-top"><span class="big">' +
+        n1(e.recruiter_hours_returned) + ' hours</span>' +
+        '<span class="lbl">this period</span></div>' +
+        '<div class="trend-months" style="grid-template-columns:1fr">' +
+        '<span>Earlier reporting periods are not stored yet, so there is no ' +
+        'history to compare against. This figure covers all activity to date.</span>' +
+        '</div>';
+    }
+
+    /* Care figures — each with its denominator. */
+    var care = document.getElementById('p-care-why');
+    if (care && care.parentNode) {
+      var rows = [
+        ['Assessments the team overruled', q.assessments_the_team_overruled,
+         'You always have the last word.'],
+        ['Assessments the checker questioned', q.assessments_the_reviewer_questioned,
+         'Raised for a person to look at.'],
+        ['Applications read without a problem', t.processed_without_a_problem,
+         'The rest are held, with a plain-English reason, on Today.'],
+        ['Scores backed by a quote from the CV', q.evidence_coverage,
+         'Every scored criterion that earned a score cites a CV line.']
+      ];
+      var html = '<div class="care-why">The system recommends. It never decides. ' +
+        'These figures are how you check that it is being careful.</div>';
+      rows.forEach(function (row) {
+        var p = row[1];
+        html += '<div class="care-row"><div class="nm">' + esc(row[0]) +
+          '<span>' + (p ? esc(p.statement) + '. ' : '') + esc(row[2]) + '</span></div>' +
+          '<div class="num">' + (p ? n1(p.value) + '%' : '—') + '</div></div>';
+      });
+      care.parentNode.innerHTML = html;
+    }
+    set('p-fuller', '<details><summary>Measured and estimated today</summary><div class="drawer">' +
+      '<div class="lag-row"><div class="nm">Applications assessed<span>' + w.candidates_assessed + ' of ' + w.cvs_received + ' received</span></div></div>' +
+      '<div class="lag-row"><div class="nm">Estimated hours returned<span>' + n1(e.recruiter_hours_returned) + ' against ' + n1(e.manual_equivalent_hours) + ' manual hours; ' + esc(a.note) + '</span></div></div>' +
+      '<div class="lag-row"><div class="nm">Files held<span>' + x.files_held + ' held for a stated reason</span></div></div></div></details>' +
+      '<details><summary>Outcomes still awaiting a baseline</summary><div class="drawer">Quality of hire and early attrition need a full hiring cycle before they can be compared.</div></details>');
+    txt('p-sig', 'Current cumulative figures · planning estimates identified above');
+  }).catch(function () {
+    txt('p-period', 'Live figures unavailable');
+    set('p-headline', 'Could not load current performance.');
+    set('p-figures', '<p>Start the API and refresh to see current figures.</p>');
+    set('p-trend', '<p>No current reporting data available.</p>');
+    set('p-fuller', '<p>No current measures available.</p>');
+    var care = document.getElementById('p-care-why');
+    if (care) care.parentNode.innerHTML = '<p>No current measures available.</p>';
+  });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

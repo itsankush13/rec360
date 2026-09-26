@@ -1,0 +1,37 @@
+# SUPERSEDED on Python 3.13 — see requirements.txt.
+#
+# The two-step install below existed because spacy 3.7.4 and thinc 8.2.5
+# required numpy<2 while the OCR chain declares numpy>=2. The 3.13 upgrade
+# moves to spacy>=3.8.7 on numpy 2.x, so the constraints no longer collide
+# and OCR installs from requirements.txt in a single pass. Keep this file
+# only while a 3.11 environment still needs the old dance.
+#
+# ---------------------------------------------------------------------------
+
+# Optional: optical character recognition for CVs that arrive as photographs.
+#
+# Roughly a third of the client's held files are images of a CV rather than
+# text. Without this they are never assessed. With it they are read, scored,
+# and held to a lower confidence — see app/core/document_quality.py.
+#
+# Install this SEPARATELY, and put numpy back afterwards:
+#
+#     pip install -r requirements-ocr.txt
+#     pip install "numpy==1.26.4"
+#
+# Why two steps. RapidOCR pulls opencv and onnxruntime, whose current wheels
+# declare numpy>=2. spacy 3.7.4 and thinc 8.2.5 require numpy<2. Both
+# constraints cannot be met in one resolver pass, so pip upgrades numpy and
+# breaks spacy. The declaration is stricter than the reality: wheels built
+# against numpy 2 headers run correctly on numpy 1.x, so reinstalling the
+# pinned numpy afterwards leaves everything working. Verified on Windows and
+# Linux with the full test suite green.
+#
+# Nothing is required to make this work beyond pip: RapidOCR ships its
+# models inside the wheel, so no system binary, no administrator rights and
+# no download at first use.
+#
+# If this is not installed, OCR turns itself off and image-only files are
+# held exactly as they were before. Nothing else changes.
+
+rapidocr-onnxruntime>=1.4.4

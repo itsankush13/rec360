@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Timeline · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* page-specific — the recruitment lifecycle timeline. Only existing
+     tokens, plus one new token added to app.css: --v-negative, for a
+     terminal outcome that did not end in hire (no red token existed
+     before this page needed one). */
+
+  .breadcrumb{font-size:14px;color:var(--ink-3);font-weight:300;margin-bottom:18px}
+  .breadcrumb a{color:var(--maroon);text-decoration:none}
+  .breadcrumb a:hover{text-decoration:underline}
+
+  .kv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .kv-cell{background:var(--surface);padding:22px 24px}
+  .kv-cell .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-bottom:8px}
+  .kv-cell .v{font-size:17px;font-weight:400;color:var(--ink)}
+  .kv-cell .m{margin-top:6px;font-size:13.5px;color:var(--ink-2);font-weight:300;line-height:1.5}
+
+  /* the spine — one vertical line, one marker per gate */
+  .spine{position:relative}
+  .spine-step{display:flex;gap:20px;position:relative;padding-bottom:30px}
+  .spine-step:last-child{padding-bottom:0}
+  .spine-step:not(:last-child):before{
+    content:"";position:absolute;left:17px;top:36px;bottom:-4px;width:2px;background:var(--hair);
+  }
+  .spine-marker{
+    width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;
+    font-size:15px;font-weight:500;z-index:1;background:var(--sand-2);color:var(--ink-3);
+  }
+  .spine-step.done .spine-marker{background:var(--teal-soft);color:var(--teal)}
+  .spine-step.current .spine-marker{background:var(--gold-soft);color:var(--gold-ink);box-shadow:0 0 0 4px var(--gold-soft)}
+  .spine-step.negative .spine-marker{background:rgba(166,65,58,.14);color:var(--v-negative)}
+  .spine-step.future .spine-marker{background:var(--sand-2);color:var(--ink-3)}
+
+  .spine-content{flex:1;min-width:0;padding-top:4px}
+  .spine-title{font-size:16.5px;font-weight:400;color:var(--ink);letter-spacing:-.01em}
+  .spine-step.future .spine-title{color:var(--ink-3);font-weight:300}
+  .spine-meta{margin-top:4px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .spine-detail{margin-top:6px;font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.5}
+  .spine-note{margin-top:8px;padding:10px 14px;background:var(--sand);border-radius:var(--r-md);font-size:13.5px;color:var(--ink-2);font-weight:300}
+  .spine-note.negative{background:rgba(166,65,58,.08);color:var(--v-negative)}
+  .tag.negative{background:rgba(166,65,58,.14);color:var(--v-negative)}
+
+  .log-row{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft);align-items:flex-start}
+  .log-row:first-child{border-top:0}
+  .log-time{flex:none;width:132px;font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.5}
+  .log-time b{display:block;font-size:14px;color:var(--ink-2);font-weight:400}
+  .log-body{flex:1;min-width:0;font-size:15px;color:var(--ink);font-weight:300;line-height:1.55}
+  .log-body span{display:block;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:3px}
+
+  .picker-row{display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft)}
+  .picker-row:first-child{border-top:0}
+  .picker-row a{flex:1;min-width:0;text-decoration:none;color:var(--ink);font-size:15.5px;font-weight:400}
+  .picker-row a:hover{color:var(--maroon)}
+  .picker-row .s{flex:none;font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+  .empty-card{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:34px 32px;font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.6}
+  .empty-card code{background:var(--sand-2);padding:2px 7px;border-radius:6px;font-size:13.5px;color:var(--ink)}
+  .empty-card .fix{margin-top:14px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+  @media (max-width:640px){
+    .kv-grid{grid-template-columns:1fr}
+    .log-row{flex-direction:column;gap:4px}
+    .log-time{width:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <p class="breadcrumb" id="t-breadcrumb"><a href="campaigns.html">Campaigns</a> · Timeline</p>
+
+  <!-- ═══════ CHUNK 1 — the promise ═══════ -->
+  <section class="arch slim">
+    <div class="lattice"></div>
+    <div class="date" id="t-kick">The journey</div>
+    <h1 id="t-h1">One candidate, <b>every gate they have passed through</b>.</h1>
+    <p id="t-lede">Every step of the hiring process for this candidate, what has happened, what
+      has not, and who it is waiting on.</p>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — where they are now ═══════ -->
+  <section class="band" id="t-status-band" hidden>
+    <div class="label">
+      <h2>Current stage</h2>
+      <span class="aside" id="t-status-aside"></span>
+    </div>
+    <div class="kv-grid" id="t-status-grid"></div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — the spine ═══════ -->
+  <section class="band" id="t-spine-band" hidden>
+    <div class="label">
+      <h2>The journey, gate by gate</h2>
+      <span class="aside">All ten steps, including the ones that have not happened yet</span>
+    </div>
+    <div class="card pad-lg">
+      <div class="spine" id="t-spine"></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — the picker (campaign, no candidate) ═══════ -->
+  <section class="band" id="t-picker-band" hidden>
+    <div class="label">
+      <h2>Choose a candidate</h2>
+      <span class="aside" id="t-picker-aside">Who is in the recruitment lifecycle for this campaign</span>
+    </div>
+    <div class="card pad-lg" id="t-picker"></div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — every move recorded ═══════ -->
+  <section class="band" id="t-log-band" hidden>
+    <div class="label">
+      <h2>Every move recorded</h2>
+      <span class="aside" id="t-log-aside">Oldest first — the same record the auditor sees</span>
+    </div>
+    <div class="card pad-lg" id="t-log"></div>
+  </section>
+
+  <!-- ═══════ CHUNK 6 — empty / error state ═══════ -->
+  <section class="band" id="t-empty-band" hidden>
+    <div class="empty-card" id="t-empty"></div>
+  </section>
+
+</div>
+
+<script>
+/* ── Timeline — the recruitment lifecycle screen ──────────────────────────
+   Reads GET /campaigns/{id}/lifecycle/{candidate}/timeline for every
+   recorded move, GET .../lifecycle/{candidate} for the current stage, and
+   GET .../lifecycle for the candidate picker when only a campaign is given.
+
+   Journey steps 1 and 2 ("CV imported", "AI screens the CV") do not come
+   from the lifecycle at all — see docs/plan/02-LIFECYCLE-MODEL.md. Only a
+   shortlisted or interview candidate enters the lifecycle, by design, so
+   those two steps are read from the candidate record and the evaluation
+   record instead:
+     step 1 — GET /api/processing/candidates/{id}, field created_at
+     step 2 — GET /api/campaigns/{id}/candidates/{id}/evaluations, the
+               earliest created_at in the list (the list is newest first)
+
+   States: loading (nothing rendered yet, no error shown) / empty (no
+   campaign, or no candidate) / error (API unreachable or 404) / populated.
+   Never invented data — every state says plainly what is missing.
+   ──────────────────────────────────────────────────────────────────────── */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var campaignId = params.get('campaign_id') || params.get('campaign');
+  var candidateId = params.get('candidate_id') || params.get('candidate');
+
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function show(id) {
+    var el = document.getElementById(id);
+    if (el) el.hidden = false;
+  }
+
+  function set(id, html) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  }
+
+  function say(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function when(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return null;
+    var hh = ('0' + d.getHours()).slice(-2);
+    var mm = ('0' + d.getMinutes()).slice(-2);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ', ' + hh + ':' + mm;
+  }
+
+  var SLA_TAGS = {
+    ON_TRACK: { cls: 'ok', label: 'On track' },
+    DUE_SOON: { cls: 'hold', label: 'Due soon' },
+    OVERDUE: { cls: 'negative', label: 'Overdue' }
+  };
+
+  function slaBadge(status) {
+    var t = SLA_TAGS[status] || SLA_TAGS.ON_TRACK;
+    return '<span class="tag sm ' + t.cls + '">' + esc(t.label) + '</span>';
+  }
+
+  function timeOnly(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return 'time not recorded';
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ', ' +
+      ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  function get(path) {
+    return fetch(API_BASE + path).then(function (response) {
+      if (!response.ok) {
+        return response.json().catch(function () { return {}; }).then(function (body) {
+          var err = new Error(body.detail || 'The information could not be loaded.');
+          err.status = response.status;
+          throw err;
+        });
+      }
+      return response.json();
+    });
+  }
+
+  /* ── the honest empty / error state ──────────────────────────────────── */
+
+  function renderEmpty(message, showApiHint) {
+    ['t-status-band', 't-spine-band', 't-picker-band', 't-log-band'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.hidden = true;
+    });
+    var html = '<p>' + esc(message) + '</p>';
+    if (showApiHint) {
+      html += '<p class="fix">Reading the API at <code>' + esc(API_BASE) + '</code>. ' +
+        'To use a different address, run ' +
+        '<code>localStorage.setItem(\'recruitment360.apiBase\', \'http://host:port\')</code> ' +
+        'in this browser\'s console, then reload.</p>';
+    }
+    set('t-empty', html);
+    show('t-empty-band');
+  }
+
+  /* ── gates — the ten steps of B01, in the client's own numbering ────────
+     Steps 1-2 come from the candidate and evaluation records (see the file
+     header). Steps 3-10 come from the lifecycle status map in
+     docs/plan/02-LIFECYCLE-MODEL.md ("the port list" / gap table). Where the
+     model has more than one status for one client-facing step, any one of
+     them satisfies that gate. */
+  var GATES = [
+    { n: 1, title: 'CV imported', statuses: [] },
+    { n: 2, title: 'AI screens the CV', statuses: [] },
+    { n: 3, title: 'Shortlist / Hold / Reject', statuses: ['SHORTLISTED'] },
+    { n: 4, title: 'Hiring-manager handoff', statuses: ['WITH_HIRING_MANAGER', 'RETURNED_TO_RECRUITER'] },
+    { n: 5, title: 'Interview scheduled', statuses: ['INTERVIEW_SCHEDULED'] },
+    { n: 6, title: 'Interview feedback received', statuses: ['FEEDBACK_COMPLETE'] },
+    { n: 7, title: 'HR discussion', statuses: ['PENDING_APPROVAL', 'PENDING_COST_CENTRE'] },
+    { n: 8, title: 'Offer drafted or sent', statuses: ['APPROVED', 'OFFER_DRAFTED', 'OFFER_SENT'] },
+    { n: 9, title: 'Candidate accepts or declines', statuses: ['OFFER_ACCEPTED', 'OFFER_DECLINED'] },
+    { n: 10, title: 'Hired / Completed unsuccessfully', statuses: ['HIRED', 'CLOSED', 'NOT_PROCEEDING', 'WITHDRAWN'] }
+  ];
+
+  var NEGATIVE_STATUSES = { OFFER_DECLINED: 1, CLOSED: 1, NOT_PROCEEDING: 1, WITHDRAWN: 1 };
+  var HOLD_STATUSES = { ON_HOLD: 1, RETURNED_TO_RECRUITER: 1 };
+  // Matches TERMINAL in app/core/lifecycle.py. A terminal status is not "in
+  // progress" — there is no owner and nothing waiting — so it renders as
+  // reached (done, or negative if it was not a hire), never as "current".
+  var TERMINAL_STATUSES = { CLOSED: 1, NOT_PROCEEDING: 1, WITHDRAWN: 1, HIRED: 1 };
+
+  function gateForStatus(status) {
+    for (var i = 0; i < GATES.length; i++) {
+      if (GATES[i].statuses.indexOf(status) !== -1) return GATES[i];
+    }
+    return null;
+  }
+
+  /* Earliest transition into each gate's status set, oldest-first list in,
+     so the first match is the first time it happened. */
+  function firstTransitionFor(transitions, statuses) {
+    for (var i = 0; i < transitions.length; i++) {
+      if (statuses.indexOf(transitions[i].to_status) !== -1) return transitions[i];
+    }
+    return null;
+  }
+
+  function renderSpine(candidateRecord, evaluations, lifecycle, transitions) {
+    var sorted = transitions.slice().sort(function (a, b) {
+      return new Date(a.created_at) - new Date(b.created_at);
+    });
+
+    var earliestEvaluation = null;
+    (evaluations || []).forEach(function (e) {
+      if (!earliestEvaluation || new Date(e.created_at) < new Date(earliestEvaluation.created_at)) {
+        earliestEvaluation = e;
+      }
+    });
+
+    // Where the candidate is right now, and which gate that corresponds to.
+    // ON_HOLD and RETURNED_TO_RECRUITER pause or loop back rather than
+    // naming a new gate, so the gate "in progress" is the last one actually
+    // reached, found by walking the recorded moves backwards.
+    var currentStatus = lifecycle ? lifecycle.status : null;
+    var currentGate = currentStatus ? gateForStatus(currentStatus) : null;
+    if (!currentGate && currentStatus && (HOLD_STATUSES[currentStatus] || currentStatus === 'ON_HOLD')) {
+      for (var i = sorted.length - 1; i >= 0; i--) {
+        var g = gateForStatus(sorted[i].to_status);
+        if (g) { currentGate = g; break; }
+      }
+    }
+
+    var html = GATES.map(function (gate) {
+      var cls, marker, meta = '', detail = '', note = '';
+
+      if (gate.n === 1) {
+        if (candidateRecord && candidateRecord.created_at) {
+          cls = 'done'; marker = '✓';
+          meta = timeOnly(candidateRecord.created_at);
+          detail = 'CV received from ' + esc(candidateRecord.full_name || 'the candidate') +
+            (candidateRecord.source ? ' via ' + esc(candidateRecord.source.replace(/_/g, ' ').toLowerCase()) : '') + '.';
+        } else {
+          cls = 'future'; marker = String(gate.n);
+          detail = 'No CV on file for this candidate yet.';
+        }
+      } else if (gate.n === 2) {
+        if (earliestEvaluation) {
+          cls = 'done'; marker = '✓';
+          meta = timeOnly(earliestEvaluation.created_at);
+          detail = 'Scored ' + esc(Number(earliestEvaluation.overall_score).toFixed(1)) +
+            ' of 100 · ' + esc((earliestEvaluation.recommendation || '').replace(/_/g, ' ').toLowerCase() || 'assessed');
+        } else {
+          cls = 'future'; marker = String(gate.n);
+          detail = 'Not screened yet.';
+        }
+      } else {
+        var hit = firstTransitionFor(sorted, gate.statuses);
+        var isTerminalHit = hit && TERMINAL_STATUSES[hit.to_status];
+        var isCurrent = currentGate === gate && !isTerminalHit;
+        var isNegative = hit && NEGATIVE_STATUSES[hit.to_status];
+        if (hit) {
+          cls = isCurrent ? 'current' : (isNegative ? 'negative' : 'done');
+          marker = isCurrent ? String(gate.n) : (isNegative ? '✕' : '✓');
+          meta = timeOnly(hit.created_at) + (hit.actor_name ? ' · ' + esc(hit.actor_name) : '');
+          detail = esc(hit.to_label) + (hit.reason ? ' — "' + esc(hit.reason) + '"' : '');
+        } else if (isCurrent) {
+          cls = 'current'; marker = String(gate.n);
+          meta = lifecycle && lifecycle.entered_at ? 'since ' + timeOnly(lifecycle.entered_at) : '';
+          detail = lifecycle ? esc(lifecycle.status_label) : '';
+        } else {
+          cls = 'future'; marker = String(gate.n);
+          detail = 'Has not happened yet.';
+        }
+
+        if (isCurrent && lifecycle && lifecycle.owner_name) {
+          note = 'Waiting on ' + esc(lifecycle.owner_name) + '.';
+        }
+        if (currentStatus === 'ON_HOLD' && isCurrent) {
+          note = (note ? note + ' ' : '') + 'This candidate is currently on hold.';
+        }
+      }
+
+      return '<div class="spine-step ' + cls + '">' +
+        '<div class="spine-marker">' + marker + '</div>' +
+        '<div class="spine-content">' +
+          '<div class="spine-title">' + gate.n + '. ' + esc(gate.title) + '</div>' +
+          (meta ? '<div class="spine-meta">' + meta + '</div>' : '') +
+          (detail ? '<div class="spine-detail">' + detail + '</div>' : '') +
+          (note ? '<div class="spine-note' + (cls === 'negative' ? ' negative' : '') + '">' + esc(note) + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    set('t-spine', html);
+    show('t-spine-band');
+  }
+
+  function renderStatus(candidateRecord, lifecycle) {
+    if (!lifecycle) {
+      set('t-status-grid',
+        '<div class="kv-cell"><div class="k">Lifecycle</div><div class="v">Not entered yet</div>' +
+        '<div class="m">This candidate has been screened but has not been moved into the ' +
+        'recruitment lifecycle (shortlisted, held or sent to interview).</div></div>');
+      say('t-status-aside', candidateRecord ? esc(candidateRecord.full_name) : '');
+      show('t-status-band');
+      return;
+    }
+    say('t-status-aside', (candidateRecord ? candidateRecord.full_name + ' · ' : '') + lifecycle.status_label);
+    set('t-status-grid',
+      '<div class="kv-cell"><div class="k">Current stage</div><div class="v">' + esc(lifecycle.status_label) + '</div>' +
+        (lifecycle.entered_at ? '<div class="m">Since ' + esc(when(lifecycle.entered_at) || '') + '</div>' : '') + '</div>' +
+      '<div class="kv-cell"><div class="k">Waiting on</div><div class="v">' + esc(lifecycle.owner_name || 'No owner recorded') + '</div>' +
+        '<div class="m">' + (lifecycle.next_steps && lifecycle.next_steps.length
+          ? 'Can move to: ' + lifecycle.next_steps.map(function (s) { return esc(s.label); }).join(', ')
+          : 'This stage is terminal.') + '</div></div>' +
+      '<div class="kv-cell"><div class="k">Due</div><div class="v">' + (lifecycle.due_at ? esc(when(lifecycle.due_at) || '') : 'No due date recorded') + '</div>' +
+        '<div class="m">' + slaBadge(lifecycle.sla_status) + '</div></div>');
+    show('t-status-band');
+  }
+
+  function renderLog(transitions) {
+    var sorted = transitions.slice().sort(function (a, b) {
+      return new Date(a.created_at) - new Date(b.created_at);
+    });
+    if (!sorted.length) {
+      set('t-log', '<div class="log-row"><div class="log-body">No move has been recorded for this candidate yet.</div></div>');
+      say('t-log-aside', 'Nothing recorded yet');
+      show('t-log-band');
+      return;
+    }
+    say('t-log-aside', sorted.length + ' recorded move' + (sorted.length === 1 ? '' : 's') + ', oldest first');
+    set('t-log', sorted.map(function (t) {
+      var who = t.actor_name || 'The system';
+      var onBehalf = t.on_behalf_of_name ? ' on behalf of ' + esc(t.on_behalf_of_name) : '';
+      return '<div class="log-row">' +
+        '<div class="log-time"><b>' + esc(timeOnly(t.created_at)) + '</b>' + esc(who) + onBehalf + '</div>' +
+        '<div class="log-body">' +
+          (t.from_label ? esc(t.from_label) + ' → ' : '') + esc(t.to_label) +
+          (t.reason ? '<span>"' + esc(t.reason) + '"</span>' : '') +
+        '</div>' +
+      '</div>';
+    }).join(''));
+    show('t-log-band');
+  }
+
+  /* ── candidate picker — campaign given, candidate not ────────────────── */
+
+  function renderPicker(campaignRecord, lifecycleRows, candidateNames) {
+    say('t-h1', '');
+    document.getElementById('t-h1').innerHTML = 'Choose a candidate to see <b>their journey</b>.';
+    document.getElementById('t-lede').textContent =
+      (campaignRecord.job_title || campaignRecord.name || 'This campaign') +
+      ' — pick who to follow through the recruitment lifecycle.';
+
+    if (!lifecycleRows.length) {
+      set('t-picker',
+        '<p>No candidate has entered the recruitment lifecycle for this campaign yet. ' +
+        'A candidate enters once shortlisted, held or sent to interview.</p>');
+      show('t-picker-band');
+      return;
+    }
+    say('t-picker-aside', lifecycleRows.length + ' candidate' + (lifecycleRows.length === 1 ? '' : 's') + ' in the lifecycle');
+    set('t-picker', lifecycleRows.map(function (row) {
+      var name = candidateNames[row.candidate_id] || row.candidate_id;
+      var url = 'timeline.html?campaign_id=' + encodeURIComponent(campaignId) +
+        '&candidate_id=' + encodeURIComponent(row.candidate_id);
+      return '<div class="picker-row"><a href="' + url + '">' + esc(name) + '</a>' +
+        '<span class="s">' + esc(row.status_label) + '</span></div>';
+    }).join(''));
+    show('t-picker-band');
+  }
+
+  /* ── load ────────────────────────────────────────────────────────────── */
+
+  if (!campaignId) {
+    renderEmpty('Add a campaign to the address bar to see a journey: ' +
+      'timeline.html?campaign_id=... — open a campaign from the Campaigns page and copy its id.', false);
+    return;
+  }
+
+  if (!candidateId) {
+    Promise.all([
+      get('/api/campaigns/' + encodeURIComponent(campaignId)),
+      get('/api/campaigns/' + encodeURIComponent(campaignId) + '/lifecycle'),
+      get('/api/campaigns/' + encodeURIComponent(campaignId) + '/candidates').catch(function () { return []; })
+    ]).then(function (results) {
+      var campaignRecord = results[0];
+      var lifecycleRows = results[1] || [];
+      var candidates = results[2] || [];
+      var names = {};
+      candidates.forEach(function (c) { names[c.id] = c.full_name; });
+      renderPicker(campaignRecord, lifecycleRows, names);
+    }).catch(function (error) {
+      renderEmpty(error.status === 404
+        ? 'Campaign not found for this address. Check the campaign id and try again.'
+        : 'The candidate list could not be loaded.', true);
+    });
+    return;
+  }
+
+  Promise.all([
+    get('/api/campaigns/' + encodeURIComponent(campaignId)),
+    get('/api/processing/candidates/' + encodeURIComponent(candidateId)).catch(function () { return null; }),
+    get('/api/campaigns/' + encodeURIComponent(campaignId) + '/candidates/' + encodeURIComponent(candidateId) + '/evaluations').catch(function () { return []; }),
+    get('/api/campaigns/' + encodeURIComponent(campaignId) + '/lifecycle/' + encodeURIComponent(candidateId)).catch(function (error) {
+      if (error.status === 404) return null;
+      throw error;
+    }),
+    get('/api/campaigns/' + encodeURIComponent(campaignId) + '/lifecycle/' + encodeURIComponent(candidateId) + '/timeline').catch(function () { return []; })
+  ]).then(function (results) {
+    var campaignRecord = results[0];
+    var candidateRecord = results[1];
+    var evaluations = results[2] || [];
+    var lifecycle = results[3];
+    var transitions = results[4] || [];
+
+    document.getElementById('t-breadcrumb').innerHTML =
+      '<a href="campaigns.html">Campaigns</a> · ' +
+      '<a href="timeline.html?campaign_id=' + encodeURIComponent(campaignId) + '">' +
+        esc(campaignRecord.job_title || campaignRecord.name || 'Campaign') + '</a> · ' +
+      esc(candidateRecord ? candidateRecord.full_name : 'Candidate');
+
+    document.getElementById('t-h1').innerHTML =
+      esc(candidateRecord ? candidateRecord.full_name : 'This candidate') +
+      '’s <b>journey so far</b>.';
+    document.getElementById('t-lede').textContent =
+      'Every gate, the current stage, and the steps still ahead — shown even where ' +
+      'a later stage of the process is not built yet.';
+
+    renderStatus(candidateRecord, lifecycle);
+    renderSpine(candidateRecord, evaluations, lifecycle, transitions);
+    renderLog(transitions);
+  }).catch(function (error) {
+    renderEmpty(error.status === 404
+      ? 'That candidate could not be found in this campaign.'
+      : 'The journey could not be loaded.', true);
+  });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

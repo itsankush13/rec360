@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>What if · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .notice{
+    background:var(--maroon-soft);border-radius:var(--r-lg);padding:20px 26px;
+    display:flex;align-items:center;gap:16px;font-size:15px;color:var(--maroon-ink);font-weight:400;
+  }
+  .notice svg{flex:none;color:var(--maroon)}
+
+  .suggest{
+    background:var(--maroon-soft);border-radius:var(--r-lg);padding:20px 26px;
+    display:none;flex-direction:column;gap:10px;font-size:15px;color:var(--maroon-ink);
+  }
+  .suggest.show{display:flex}
+  .suggest .sg-head{display:flex;align-items:center;gap:10px;font-weight:500}
+  .suggest .sg-head svg{flex:none;color:var(--maroon)}
+  .suggest .sg-note{font-size:14px;font-weight:300;color:var(--maroon-ink)}
+  .suggest .sg-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .suggest button{
+    border:1px solid var(--maroon);background:var(--surface);color:var(--maroon);
+    border-radius:var(--r-pill);padding:9px 18px;font-size:13.5px;font-weight:500;cursor:pointer;
+  }
+  .suggest button.primary{background:var(--maroon);color:#fff}
+  .suggest button:disabled{opacity:.5;cursor:default}
+  .suggest .sg-status{font-size:13px;font-weight:400}
+
+  .share{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+    padding:18px 24px;margin-top:16px;display:none}
+  .share.show{display:block}
+  .share .sh-head{font-size:15px;font-weight:400;margin-bottom:10px}
+  .share .sh-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .share select, .share textarea{
+    border:1px solid var(--hair);border-radius:var(--r-md);padding:9px 12px;font-size:14px;
+    font-family:inherit;background:var(--surface);color:var(--ink);
+  }
+  .share textarea{width:100%;margin-top:10px;min-height:56px;resize:vertical}
+  .share button{
+    border:1px solid var(--maroon);background:var(--maroon);color:#fff;
+    border-radius:var(--r-pill);padding:9px 18px;font-size:13.5px;font-weight:500;cursor:pointer;
+  }
+  .share button:disabled{opacity:.5;cursor:default}
+  .share .sh-status{font-size:13px;font-weight:400;margin-top:8px}
+
+  .sliders{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:8px 28px}
+  .srow{display:flex;align-items:center;gap:20px;padding:18px 0;border-top:1px solid var(--hair-soft)}
+  .srow:first-child{border-top:0}
+  .srow .nm{width:170px;flex:none;font-size:15px;font-weight:400;letter-spacing:-.01em}
+  .srow input[type=range]{
+    flex:1;-webkit-appearance:none;appearance:none;height:8px;border-radius:var(--r-pill);
+    background:var(--sand-2);outline:none;
+  }
+  .srow input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+    background:var(--maroon);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--maroon);cursor:pointer;
+  }
+  .srow input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--maroon);border:3px solid var(--surface);
+    box-shadow:0 0 0 1px var(--maroon);cursor:pointer;
+  }
+  .srow .wv{width:44px;flex:none;text-align:right;font-size:17px;font-weight:400;color:var(--maroon)}
+  .sfoot{padding:16px 0 20px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .sfoot b{color:var(--ink-2);font-weight:400}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .plist{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .plist .phead{padding:18px 24px;border-bottom:1px solid var(--hair);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+  .plist.live .phead{color:var(--maroon)}
+  .prow2{display:flex;align-items:center;gap:14px;padding:14px 24px;border-top:1px solid var(--hair-soft)}
+  .prow2:first-child{border-top:0}
+  .prow2 .rk{width:24px;flex:none;font-size:14.5px;font-weight:500;color:var(--ink-3)}
+  .prow2 .nm2{flex:1;min-width:0;font-size:15px;font-weight:400;letter-spacing:-.01em}
+  .prow2 .sc{width:40px;flex:none;text-align:right;font-size:15px;font-weight:400;color:var(--ink)}
+  .prow2 .mv{width:52px;flex:none;text-align:right;font-size:13px;font-weight:400}
+  .mv.up{color:var(--teal)}
+  .mv.down{color:var(--gold-ink)}
+  .mv.same{color:var(--ink-3)}
+
+  @media (max-width:980px){
+    .compare{grid-template-columns:1fr}
+    .srow{flex-wrap:wrap}
+    .srow .nm{width:100%}
+    .srow input[type=range]{width:100%;order:3}
+    .srow .wv{margin-left:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the purpose, in one sentence ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date" id="w-campaign">Control Room Operator · CAM-2611 · version 4.2</div>
+    <h1>Try different weights and see <b>who would move</b>.</h1>
+    <p>Nothing here changes the approved shortlist. It only shows what a different balance would do.</p>
+  </section>
+
+  <section class="band">
+    <div class="notice">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+      This is a what-if view only. Nothing here changes anyone's real score or the shortlist — it just shows what the ranking would look like if you scored everyone against these settings instead. To make a change stick, the new rubric has to be approved and every CV scored again.
+    </div>
+  </section>
+
+  <section class="band" id="w-suggest-band" style="display:none">
+    <div class="suggest" id="w-suggest">
+      <div class="sg-head">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="w-suggest-title">The hiring manager suggested these weights</span>
+      </div>
+      <div class="sg-note" id="w-suggest-note"></div>
+      <div class="sg-row">
+        <button type="button" id="w-suggest-use">Use these weights</button>
+        <button type="button" class="primary" id="w-suggest-approve">Approve</button>
+        <button type="button" id="w-suggest-reject">Return</button>
+      </div>
+      <div class="sg-status" id="w-suggest-status"></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — the weights ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Move a weight</h2>
+      <span class="aside" id="w-aside">Approved weights shown when the page opens</span>
+    </div>
+
+    <div class="sliders">
+      <div class="srow">
+        <div class="nm">Mandatory</div>
+        <input type="range" min="0" max="100" value="45" id="w-mand">
+        <div class="wv" id="wv-mand">45</div>
+      </div>
+      <div class="srow">
+        <div class="nm">Skills</div>
+        <input type="range" min="0" max="100" value="20" id="w-skill">
+        <div class="wv" id="wv-skill">20</div>
+      </div>
+      <div class="srow">
+        <div class="nm">Experience</div>
+        <input type="range" min="0" max="100" value="18" id="w-exp">
+        <div class="wv" id="wv-exp">18</div>
+      </div>
+      <div class="srow">
+        <div class="nm">Qualifications</div>
+        <input type="range" min="0" max="100" value="10" id="w-qual">
+        <div class="wv" id="wv-qual">10</div>
+      </div>
+      <div class="srow">
+        <div class="nm">Certifications</div>
+        <input type="range" min="0" max="100" value="7" id="w-cert">
+        <div class="wv" id="wv-cert">7</div>
+      </div>
+      <div class="sfoot">The five weights are compared to each other, not fixed to add up to <b>100</b>. Drag any slider to see the list on the right re-order.</div>
+    </div>
+
+    <div class="share" id="w-share">
+      <div class="sh-head">Send this weight balance to HR for review</div>
+      <div class="sh-row">
+        <select id="w-share-to"></select>
+        <button type="button" id="w-share-send">Send weights to HR</button>
+      </div>
+      <textarea id="w-share-note" placeholder="Optional note for HR (why these weights?)"></textarea>
+      <div class="sh-status" id="w-share-status"></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — the two lists, side by side ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Approved ranking versus this preview</h2>
+      <span class="aside" id="w-listaside">Top 10 of 24 on the shortlist</span>
+    </div>
+
+    <div class="compare">
+      <div class="plist">
+        <div class="phead">Approved ranking</div>
+        <div id="approved-list"></div>
+      </div>
+      <div class="plist live">
+        <div class="phead">If you changed the weights</div>
+        <div id="live-list"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function(){
+  // Per-candidate sub-scores, 0-100 each, set from the CV evidence for CAM-2611.
+  // "mandatory" is the mandatory-band sub-score: 100 when all 5 items are met, 80 when 4 of 5 are met.
+  /* Candidates are loaded from the API below. The page's own maths is
+     unchanged: liveScore() normalises by the slider total, so the five
+     weights are compared to each other and do not need to add up to 100 —
+     which is what the footer under the sliders already promises.
+
+     The five sliders are category bands, while the rubric is per-criterion,
+     so this preview works from each candidate's category roll-up scores. It
+     shows how the ranking MOVES under a different balance; it is not a
+     re-score. Nothing here is saved, which the page states in two places. */
+  var candidates = [];
+
+  var sliders = {
+    mandatory:     document.getElementById("w-mand"),
+    skills:        document.getElementById("w-skill"),
+    experience:    document.getElementById("w-exp"),
+    qualifications:document.getElementById("w-qual"),
+    certifications:document.getElementById("w-cert")
+  };
+  var readouts = {
+    mandatory:     document.getElementById("wv-mand"),
+    skills:        document.getElementById("wv-skill"),
+    experience:    document.getElementById("wv-exp"),
+    qualifications:document.getElementById("wv-qual"),
+    certifications:document.getElementById("wv-cert")
+  };
+
+  function approvedRanked(){
+    return candidates.slice().sort(function(a,b){ return b.approved - a.approved; });
+  }
+
+  function liveScore(c, w){
+    var total = w.mandatory + w.skills + w.experience + w.qualifications + w.certifications;
+    if (total === 0) return 0;
+    var sum = c.mandatory*w.mandatory + c.skills*w.skills + c.experience*w.experience +
+              c.qualifications*w.qualifications + c.certifications*w.certifications;
+    return sum / total;
+  }
+
+  function currentWeights(){
+    return {
+      mandatory: Number(sliders.mandatory.value),
+      skills: Number(sliders.skills.value),
+      experience: Number(sliders.experience.value),
+      qualifications: Number(sliders.qualifications.value),
+      certifications: Number(sliders.certifications.value)
+    };
+  }
+
+  function renderApproved(){
+    var list = approvedRanked();
+    var html = "";
+    list.forEach(function(c, i){
+      html += '<div class="prow2"><div class="rk">'+(i+1)+'</div><div class="nm2">'+c.name+'</div><div class="sc">'+c.approved+'</div></div>';
+    });
+    document.getElementById("approved-list").innerHTML = html;
+  }
+
+  function renderLive(){
+    var w = currentWeights();
+    readouts.mandatory.textContent = w.mandatory;
+    readouts.skills.textContent = w.skills;
+    readouts.experience.textContent = w.experience;
+    readouts.qualifications.textContent = w.qualifications;
+    readouts.certifications.textContent = w.certifications;
+
+    var approvedOrder = approvedRanked().map(function(c){ return c.name; });
+
+    var scored = candidates.map(function(c){
+      return { name:c.name, score: liveScore(c, w) };
+    });
+    scored.sort(function(a,b){ return b.score - a.score; });
+
+    var html = "";
+    scored.forEach(function(c, i){
+      var oldRank = approvedOrder.indexOf(c.name);
+      var newRank = i;
+      var delta = oldRank - newRank; // positive means moved up
+      var mv, mvClass;
+      if (delta > 0){ mv = "up " + delta; mvClass = "up"; }
+      else if (delta < 0){ mv = "down " + Math.abs(delta); mvClass = "down"; }
+      else { mv = "no change"; mvClass = "same"; }
+      html += '<div class="prow2"><div class="rk">'+(i+1)+'</div><div class="nm2">'+c.name+
+              '</div><div class="sc">'+Math.round(c.score)+'</div><div class="mv '+mvClass+'">'+mv+'</div></div>';
+    });
+    document.getElementById("live-list").innerHTML = html;
+  }
+
+  Object.keys(sliders).forEach(function(key){
+    sliders[key].addEventListener("input", renderLive);
+  });
+
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var Q = new URLSearchParams(location.search);
+
+  function getJSON(path) {
+    return fetch(API_BASE + path).then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    });
+  }
+  function txt(id, s) { var el = document.getElementById(id); if (el) el.textContent = s; }
+  function num(v) { return v == null ? 0 : Math.max(0, Math.min(100, Number(v))); }
+
+  /* The five sliders were designed around five fixed bands (Mandatory,
+     Skills, Experience, Qualifications, Certifications). A real rubric may
+     use none of them — this one is mostly RESPONSIBILITY and INDUSTRY
+     criteria — which left four sliders pinned at zero and the page inert.
+
+     So the bands are now derived from the rubric itself: Mandatory, then
+     the four heaviest non-mandatory categories, with anything left over
+     folded into the last band. The markup is unchanged; only the labels
+     and weights are. */
+  var BAND_KEYS = ['mandatory', 'skills', 'experience', 'qualifications', 'certifications'];
+  var CATEGORY_WORDS = {
+    SKILL: 'Skills', EXPERIENCE: 'Experience', QUALIFICATION: 'Qualifications',
+    CERTIFICATION: 'Certifications', RESPONSIBILITY: 'Responsibilities',
+    INDUSTRY: 'Industry background', FUNCTIONAL: 'Functional experience',
+    SENIORITY: 'Seniority', LOCATION: 'Location', ELIGIBILITY: 'Eligibility',
+    DIFFERENTIATING: 'Differentiators'
+  };
+  var bands = [];   /* [{key, label, categories:[], weight}] */
+  var activeWeights = [];  /* raw per-criterion weights, for redistributing a band slider */
+
+  function buildBands(version) {
+    var active = (version.weights || []).filter(function (w) { return w.active; });
+    activeWeights = active;
+    var mandatoryWeight = 0, byCategory = {};
+    active.forEach(function (w) {
+      if (w.requirement_type === 'MANDATORY') { mandatoryWeight += w.weight; return; }
+      byCategory[w.category] = (byCategory[w.category] || 0) + w.weight;
+    });
+
+    var ordered = Object.keys(byCategory).sort(function (a, b) {
+      return byCategory[b] - byCategory[a];
+    });
+
+    bands = [{ key: 'mandatory', label: 'Mandatory', categories: [], weight: mandatoryWeight }];
+    ordered.slice(0, 3).forEach(function (cat, i) {
+      bands.push({
+        key: BAND_KEYS[i + 1], label: CATEGORY_WORDS[cat] || cat,
+        categories: [cat], weight: byCategory[cat]
+      });
+    });
+    var rest = ordered.slice(3);
+    if (rest.length) {
+      bands.push({
+        key: BAND_KEYS[bands.length],
+        label: rest.length === 1 ? (CATEGORY_WORDS[rest[0]] || rest[0]) : 'Everything else',
+        categories: rest,
+        weight: rest.reduce(function (sum, c) { return sum + byCategory[c]; }, 0)
+      });
+    }
+
+    /* Relabel and set each slider; hide any band the rubric doesn't use. */
+    BAND_KEYS.forEach(function (key, i) {
+      var input = sliders[key], readout = readouts[key];
+      if (!input) return;
+      var row = input.parentNode;
+      var band = bands[i];
+      if (!band) { row.style.display = 'none'; return; }
+      row.style.display = '';
+      var name = row.querySelector('.nm');
+      if (name) name.textContent = band.label;
+      input.value = Math.round(band.weight);
+      if (readout) readout.textContent = Math.round(band.weight);
+    });
+
+    txt('w-aside', bands.length + ' bands, taken from the approved rubric');
+  }
+
+  /* Each candidate needs a score per band. Category roll-ups come from the
+     evaluation detail, so one call per candidate. */
+  function bandScores(detail) {
+    var cats = detail.category_scores || {};
+    var out = {};
+    bands.forEach(function (band) {
+      if (band.key === 'mandatory') {
+        out.mandatory = Math.max(0, Math.min(100, Number(detail.mandatory_score || 0)));
+        return;
+      }
+      var weight = 0, sum = 0;
+      band.categories.forEach(function (c) {
+        var entry = cats[c];
+        if (entry && entry.weight) { weight += entry.weight; sum += entry.score * entry.weight; }
+      });
+      out[band.key] = weight ? Math.max(0, Math.min(100, sum / weight)) : 0;
+    });
+    BAND_KEYS.forEach(function (k) { if (out[k] == null) out[k] = 0; });
+    return out;
+  }
+
+  var campaignId = null;
+
+  /* ═══════ B17 follow-up — HM ↔ HR weight proposals on this page ═══════
+     Reuses the existing what-if-proposal API (app/services/whatif_service.py):
+     a hiring manager can now send his slider balance to HR, and HR sees a
+     notification here when one is waiting on a decision. Nothing about the
+     preview above changes — this only decides whether to show the share
+     panel or the suggestion banner, and how to translate between this
+     page's five band sliders and the per-criterion weights the API stores. */
+
+  // Matches buildBands()'s own split exactly: a criterion is mandatory or it
+  // is categorised, never both — most categories (SKILL here) hold plenty
+  // of MANDATORY-type criteria too, and counting those against a category
+  // band as well would double-count their weight into both bands.
+  function bandCriteria(band) {
+    return activeWeights.filter(function (cw) {
+      if (band.key === 'mandatory') return cw.requirement_type === 'MANDATORY';
+      return cw.requirement_type !== 'MANDATORY' && band.categories.indexOf(cw.category) !== -1;
+    });
+  }
+
+  // Band slider values -> per-criterion weights totalling 100, by splitting
+  // each band's slider value across its criteria in their existing
+  // proportions (the same "compared to each other" model the footer states).
+  function criterionWeightsFromBands(w) {
+    var raw = {};
+    bands.forEach(function (band) {
+      var criteria = bandCriteria(band);
+      if (!criteria.length) return;
+      var origTotal = criteria.reduce(function (s, cw) { return s + cw.weight; }, 0);
+      var target = w[band.key] || 0;
+      criteria.forEach(function (cw) {
+        var share = origTotal > 0 ? (cw.weight / origTotal) : (1 / criteria.length);
+        raw[cw.criterion_key] = target * share;
+      });
+    });
+    var total = Object.keys(raw).reduce(function (s, k) { return s + raw[k]; }, 0);
+    if (total <= 0) return raw;
+    var scaled = {};
+    Object.keys(raw).forEach(function (k) { scaled[k] = raw[k] * 100 / total; });
+    return scaled;
+  }
+
+  // The reverse: per-criterion weights (a proposal's) -> band totals, so a
+  // suggested weight set can be shown on this page's own sliders.
+  function bandTotalsFromCriterionWeights(weights) {
+    var out = {};
+    bands.forEach(function (band) {
+      out[band.key] = bandCriteria(band).reduce(function (s, cw) {
+        return s + (weights[cw.criterion_key] || 0);
+      }, 0);
+    });
+    return out;
+  }
+
+  function setSliders(w) {
+    Object.keys(sliders).forEach(function (key) {
+      if (w[key] == null || !sliders[key] || sliders[key].parentNode.style.display === 'none') return;
+      sliders[key].value = Math.round(w[key]);
+    });
+    renderLive();
+  }
+
+  function loadUsersByRole(role) {
+    return getJSON('/api/users?role=' + role).catch(function () { return []; });
+  }
+
+  function initShareWithHr() {
+    var panel = document.getElementById('w-share');
+    var select = document.getElementById('w-share-to');
+    var status = document.getElementById('w-share-status');
+    var sendBtn = document.getElementById('w-share-send');
+    var noteEl = document.getElementById('w-share-note');
+    var me = window.__r360Me;
+
+    Promise.all([loadUsersByRole('RECRUITER'), loadUsersByRole('ADMIN')]).then(function (r) {
+      var seen = {};
+      var recipients = r[0].concat(r[1]).filter(function (u) {
+        if (u.id === me.id || seen[u.id]) return false;
+        seen[u.id] = true;
+        return true;
+      });
+      if (!recipients.length) {
+        status.textContent = 'No HR account is set up to receive this yet.';
+        return;
+      }
+      select.innerHTML = recipients.map(function (u) {
+        return '<option value="' + u.id + '">' + u.full_name + '</option>';
+      }).join('');
+      var counterpartId = me.counterpart && me.counterpart.id;
+      if (counterpartId && recipients.some(function (u) { return u.id === counterpartId; })) {
+        select.value = counterpartId;
+      }
+      panel.classList.add('show');
+    });
+
+    sendBtn.addEventListener('click', function () {
+      if (!select.value) return;
+      sendBtn.disabled = true;
+      status.textContent = 'Sending…';
+      fetch(API_BASE + '/api/campaigns/' + campaignId + '/what-if/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          weights: criterionWeightsFromBands(currentWeights()),
+          proposed_by: me.id,
+          approver_id: select.value,
+          note: (noteEl.value || '').trim()
+        })
+      }).then(function (r) {
+        return r.json().then(function (body) { return { ok: r.ok, body: body }; });
+      }).then(function (res) {
+        sendBtn.disabled = false;
+        if (!res.ok) {
+          status.textContent = (res.body.detail && res.body.detail.message) || 'Could not send these weights.';
+          return;
+        }
+        status.textContent = 'Sent to ' + res.body.approver_name + '. They will see it the next time they open this page.';
+        noteEl.value = '';
+      }).catch(function () {
+        sendBtn.disabled = false;
+        status.textContent = 'Could not reach the server.';
+      });
+    });
+  }
+
+  function initHrSuggestionBanner() {
+    var band = document.getElementById('w-suggest-band');
+    var box = document.getElementById('w-suggest');
+    var title = document.getElementById('w-suggest-title');
+    var noteEl = document.getElementById('w-suggest-note');
+    var status = document.getElementById('w-suggest-status');
+    var useBtn = document.getElementById('w-suggest-use');
+    var approveBtn = document.getElementById('w-suggest-approve');
+    var rejectBtn = document.getElementById('w-suggest-reject');
+    var me = window.__r360Me;
+
+    getJSON('/api/campaigns/' + campaignId + '/what-if/proposals').then(function (list) {
+      var proposal = (list || []).find(function (p) {
+        return p.status === 'PROPOSED' && p.approver_id === me.id;
+      });
+      if (!proposal) return;
+
+      title.textContent = proposal.proposed_by_name + ' suggested these weights';
+      noteEl.textContent = proposal.note ? '"' + proposal.note + '"' : 'No note left with this suggestion.';
+      band.style.display = '';
+      box.classList.add('show');
+
+      function decided(text) {
+        status.textContent = text;
+        useBtn.disabled = approveBtn.disabled = rejectBtn.disabled = true;
+      }
+
+      useBtn.addEventListener('click', function () {
+        setSliders(bandTotalsFromCriterionWeights(proposal.proposed_weights));
+        status.textContent = 'Sliders updated with the suggested weights — nothing sent yet.';
+      });
+
+      approveBtn.addEventListener('click', function () {
+        approveBtn.disabled = rejectBtn.disabled = true;
+        fetch(API_BASE + '/api/campaigns/' + campaignId + '/what-if/proposals/' + proposal.id + '/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decided_by: me.id })
+        }).then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+          .then(function (res) {
+            if (!res.ok) {
+              approveBtn.disabled = rejectBtn.disabled = false;
+              status.textContent = (res.body.detail && res.body.detail.message) || 'Could not approve.';
+              return;
+            }
+            decided('Approved. A new rubric draft still needs to be created, submitted, approved and every CV re-scored before this changes anything real.');
+          });
+      });
+
+      rejectBtn.addEventListener('click', function () {
+        var reason = window.prompt('Reason for returning these weights:');
+        if (!reason || !reason.trim()) return;
+        approveBtn.disabled = rejectBtn.disabled = true;
+        fetch(API_BASE + '/api/campaigns/' + campaignId + '/what-if/proposals/' + proposal.id + '/reject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ decided_by: me.id, note: reason.trim() })
+        }).then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+          .then(function (res) {
+            if (!res.ok) {
+              approveBtn.disabled = rejectBtn.disabled = false;
+              status.textContent = (res.body.detail && res.body.detail.message) || 'Could not return this.';
+              return;
+            }
+            decided('Returned to ' + proposal.proposed_by_name + '.');
+          });
+      });
+    });
+  }
+
+  var roleFeaturesStarted = false;
+  function initRoleFeatures() {
+    if (roleFeaturesStarted || !campaignId || !bands.length) return;
+    var me = window.__r360Me;
+    if (!me) return; // runs again once r360-auth-ready fires, see below
+    roleFeaturesStarted = true;
+    if (me.role === 'HIRING_MANAGER') {
+      initShareWithHr();
+    } else {
+      initHrSuggestionBanner();
+    }
+  }
+  window.addEventListener('r360-auth-ready', initRoleFeatures);
+
+  function load() {
+    return (Q.get('campaign')
+      ? Promise.resolve(Q.get('campaign'))
+      : getJSON('/api/runs').then(function (b) {
+          var runs = (b && b.runs) || [];
+          if (!runs.length) throw new Error('no runs');
+          return runs[0].campaign_id;
+        })
+    ).then(function (id) {
+      campaignId = id;
+      return Promise.all([
+        getJSON('/api/campaigns/' + id),
+        getJSON('/api/campaigns/' + id + '/evaluations'),
+        getJSON('/api/campaigns/' + id + '/rubric/active').catch(function () { return null; })
+      ]);
+    }).then(function (r) {
+      var campaign = r[0], evals = r[1] || [], version = r[2];
+      if (!evals.length) throw new Error('no assessments');
+
+      txt('w-campaign', (campaign.job_title || campaign.name || 'Campaign') +
+          (version ? ' · rubric version ' + version.version_number : ''));
+      txt('w-listaside', candidates.length +
+          (candidates.length === 1 ? ' assessed candidate' : ' assessed candidates'));
+
+      if (!version) throw new Error('no rubric');
+      buildBands(version);
+
+      return Promise.all(evals.map(function (e) {
+        return getJSON('/api/evaluations/' + e.id).then(function (detail) {
+          var scores = bandScores(detail);
+          scores.name = e.candidate_name || 'Unknown';
+          scores.approved = Math.round(num(e.overall_score));
+          return scores;
+        });
+      })).then(function (list) {
+        candidates = list;
+        txt('w-listaside', candidates.length +
+            (candidates.length === 1 ? ' assessed candidate' : ' assessed candidates'));
+        renderApproved();
+        renderLive();
+        initRoleFeatures();
+      });
+    }).catch(function (err) {
+      /* The example candidates were removed when this page was wired, so
+         there is nothing to fall back to. Say that plainly rather than
+         leaving two empty columns under a live-looking heading. */
+      var reason = (err && err.message === 'no assessments')
+        ? 'No candidates have been assessed on this campaign yet, so there is ' +
+          'no ranking to try different weights against.'
+        : 'Live figures could not be loaded, so no ranking can be shown here.';
+      txt('w-campaign', reason);
+      var empty = '<div class="prow2"><div class="nm2">Nothing to show yet</div></div>';
+      var a = document.getElementById('approved-list');
+      var l = document.getElementById('live-list');
+      if (a) a.innerHTML = empty;
+      if (l) l.innerHTML = empty;
+    });
+  }
+
+  load();
+})();
+</script>
+<script id="r360-whatif-sections">
+/* Sections stay open until closed. Independent of any other page. */
+(function () {
+  var KEY = 'r360:whatif:open';
+
+  function read() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function write(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+
+  function key(el, i) {
+    var h = el.querySelector('.story-trigger h2, summary');
+    return (h && h.textContent.trim().slice(0, 60)) || ('n' + i);
+  }
+  function setOpen(el, open) {
+    if (el.tagName === 'DETAILS') { el.open = open; return; }
+    el.classList.toggle('is-open', open);
+    var t = el.querySelector('.story-trigger');
+    var d = el.querySelector('.story-detail');
+    if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (d) d.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  function isOpen(el) {
+    return el.tagName === 'DETAILS' ? el.open : el.classList.contains('is-open');
+  }
+  function all() {
+    return Array.prototype.slice.call(
+      document.querySelectorAll('.story-block, details'));
+  }
+  function save() {
+    var s = {};
+    all().forEach(function (el, i) { s[key(el, i)] = isOpen(el); });
+    write(s);
+  }
+  function restore() {
+    var s = read();
+    all().forEach(function (el, i) {
+      var k = key(el, i);
+      if (k in s && isOpen(el) !== !!s[k]) setOpen(el, !!s[k]);
+      if (!el.__bound) {
+        el.__bound = true;
+        if (el.tagName === 'DETAILS') el.addEventListener('toggle', save);
+      }
+    });
+  }
+
+  /* Clicks land on the trigger; run after the page's own handler. */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('.story-trigger');
+    if (!t) return;
+    if (e.target.closest('a,button,input,select,textarea')) return;
+    setTimeout(function () {
+      var block = t.closest('.story-block');
+      /* undo any sibling the page closed on our behalf */
+      var s = read();
+      all().forEach(function (el, i) {
+        if (el === block) return;
+        var k = key(el, i);
+        if (s[k] && !isOpen(el)) setOpen(el, true);
+      });
+      save();
+    }, 0);
+  }, true);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (!e.target.closest || !e.target.closest('.story-trigger')) return;
+    setTimeout(save, 0);
+  }, true);
+
+  function boot() {
+    restore();
+    setTimeout(restore, 200);
+    setTimeout(restore, 800);
+    setTimeout(restore, 1600);
+    var host = document.querySelector('main') || document.body;
+    new MutationObserver(function () { restore(); })
+      .observe(host, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+</body>
+</html>

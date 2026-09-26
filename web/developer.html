@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FinOps · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .dev-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .dev-head h1{font-size:48px;font-weight:250;letter-spacing:-.04em;margin:0}
+  .dev-head p{max-width:66ch;color:rgba(255,255,255,.82);font-weight:300;line-height:1.6;margin:12px 0 0}
+  .dev-actions{display:flex;align-items:center;gap:12px}
+  .dev-status{font-size:13px;color:rgba(255,255,255,.78)}
+  .dev-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .dev-metric{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:22px}
+  .dev-metric .k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3)}
+  .dev-metric .v{font-size:32px;letter-spacing:-.04em;margin-top:10px;color:var(--maroon)}
+  .dev-metric .n{font-size:13px;color:var(--ink-3);margin-top:8px;line-height:1.45}
+  .dev-note,.dev-error,.dev-empty{border-radius:var(--r-md);padding:16px 18px;font-size:14px;line-height:1.55}
+  .dev-note{background:var(--sand);border-left:3px solid var(--gold);color:var(--ink-2)}
+  .dev-error{background:#fff1f2;border:1px solid #efb7c0;color:#7a102f}
+  .dev-empty{border:1px dashed var(--hair);color:var(--ink-3);text-align:center;padding:34px}
+  .dev-table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg)}
+  .dev-table{width:100%;border-collapse:collapse;min-width:820px}
+  .dev-table th,.dev-table td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--hair-soft);font-size:13px}
+  .dev-table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-weight:500}
+  .dev-table tr:last-child td{border-bottom:0}
+  .dev-table code{font-size:12px;color:var(--ink-2)}
+  .dev-ok{color:#16734a}.dev-fail{color:#a51c30}.dev-run{color:#8b6400}
+  [hidden]{display:none!important}
+  @media(max-width:900px){.dev-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){.dev-head h1{font-size:36px}.dev-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="id" href="index.html"><div class="q">360</div><div><b>Recruitment 360</b><span>Talent Acquisition</span></div></a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<main class="page" data-cascade-disabled>
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="dev-head">
+      <div><div class="date">Operational telemetry · Azure OpenAI</div><h1>Understand your screening spend.</h1><p>Every screening run and model call is measured automatically. Prompt, CV, and JD content is never stored here.</p></div>
+      <div class="dev-actions"><span class="dev-status" id="refresh-status" aria-live="polite">Loading metrics…</span><button class="ghost" id="refresh" type="button">Refresh</button></div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="summary-title">
+    <div class="label"><h2 id="summary-title">Usage summary</h2><span class="aside" id="summary-period">All recorded runs</span></div>
+    <div class="dev-grid" id="summary-cards" aria-busy="true">
+      <div class="dev-metric"><div class="k">Runs</div><div class="v" id="runs">—</div><div class="n">Completed and failed screening runs</div></div>
+      <div class="dev-metric"><div class="k">Average run time</div><div class="v" id="avg-time">—</div><div class="n" id="calls-note">Across recorded runs</div></div>
+      <div class="dev-metric"><div class="k">Average tokens</div><div class="v" id="avg-tokens">—</div><div class="n" id="tokens-note">Input + output per run</div></div>
+      <div class="dev-metric"><div class="k">Average spend</div><div class="v" id="avg-cost">—</div><div class="n" id="cost-note">Estimated Azure token cost per run</div></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="label"><h2>Recent runs</h2><span class="aside">Latest 50 · newest first</span></div>
+    <div class="dev-error" id="error" role="alert" hidden></div>
+    <div class="dev-empty" id="empty" hidden>No runs yet. Complete a screening campaign, then refresh.</div>
+    <div class="dev-table-wrap" id="table-wrap" hidden>
+      <table class="dev-table">
+        <thead><tr><th>Started</th><th>Campaign</th><th>Status</th><th>Duration</th><th>LLM calls</th><th>Tokens</th><th>Estimated spend</th><th>Run ID</th></tr></thead>
+        <tbody id="run-rows"></tbody>
+      </table>
+    </div>
+    <div class="dev-note" id="pricing-note">Pricing loads automatically from Microsoft Azure Retail Prices API. Loading current meter details…</div>
+    <div class="dev-note" id="privacy-note">Retail pricing estimates are operational guidance, not invoice reconciliation. Prompt, JD, CV, candidate, and secret data is never stored.</div>
+  </section>
+</main>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function(){
+  var apiOverride=new URLSearchParams(location.search).get('api');
+  var API_BASE=(apiOverride||localStorage.getItem('recruitment360.apiBase')||(/^(localhost|127.0.0.1)$/.test(location.hostname)?'http://localhost:8000':location.origin)).replace(/\/$/,'');
+  var status=document.getElementById('refresh-status');
+  var refresh=document.getElementById('refresh');
+  var cards=document.getElementById('summary-cards');
+  var error=document.getElementById('error');
+  var empty=document.getElementById('empty');
+  var tableWrap=document.getElementById('table-wrap');
+  var rows=document.getElementById('run-rows');
+  var pricingNote=document.getElementById('pricing-note');
+
+  function number(value){return Number(value||0).toLocaleString();}
+  function duration(ms){
+    var value=Number(ms||0);
+    if(value<1000)return Math.round(value)+' ms';
+    if(value<60000)return (value/1000).toFixed(1)+' s';
+    return (value/60000).toFixed(1)+' min';
+  }
+  function money(value,configured){return configured&&value!==null?'$'+Number(value).toFixed(4):'Not configured';}
+  function rate(value){return value===null||value===undefined?'—':'$'+Number(value).toFixed(2);}
+  function cell(row,text,className){var td=document.createElement('td');td.textContent=text;if(className)td.className=className;row.appendChild(td);}
+
+  function render(data){
+    var summary=data.summary||{};
+    document.getElementById('runs').textContent=number(summary.run_count);
+    document.getElementById('avg-time').textContent=duration(summary.average_run_duration_ms);
+    document.getElementById('avg-tokens').textContent=number(Math.round(summary.average_tokens_per_run||0));
+    document.getElementById('avg-cost').textContent=money(summary.average_estimated_cost_usd,summary.cost_configured);
+    document.getElementById('calls-note').textContent=number(summary.llm_call_count)+' LLM calls recorded';
+    document.getElementById('tokens-note').textContent=number(summary.total_tokens)+' total tokens';
+    // X56: the per-run average excludes campaign-setup calls (JD extraction,
+    // weight suggestion), which happen before any run exists. Say so, and show
+    // that figure, so the average no longer looks broken next to the total.
+    var costNote='Pricing unavailable';
+    if(summary.cost_configured){
+      costNote=money(summary.total_estimated_cost_usd,true)+' total estimated spend';
+      if(summary.setup_call_count>0){
+        costNote+=' — of which '+money(summary.setup_estimated_cost_usd,true)+' is campaign setup across '
+          +number(summary.setup_call_count)+' calls, before any run started';
+      }
+    }
+    document.getElementById('cost-note').textContent=costNote;
+    var source=summary.pricing_source==='azure_retail_prices_api'?'Azure Retail Prices API':summary.pricing_source==='bundled_azure_retail_fallback'?'last verified Azure retail fallback':summary.pricing_source==='configuration'?'explicit configuration':'unavailable';
+    var effective=summary.pricing_effective_start_date?' Effective '+new Date(summary.pricing_effective_start_date).toLocaleDateString()+'.':'';
+    pricingNote.textContent='Rates: '+rate(summary.input_cost_per_1m)+' input / '+rate(summary.output_cost_per_1m)+' output per 1M tokens. Source: '+source+'.'+effective;
+    rows.textContent='';
+    (data.runs||[]).forEach(function(item){
+      var tr=document.createElement('tr');
+      var statusClass=item.status==='completed'?'dev-ok':item.status==='failed'?'dev-fail':'dev-run';
+      cell(tr,item.started_at?new Date(item.started_at).toLocaleString():'—');
+      cell(tr,item.campaign_name||item.campaign_id||'—');cell(tr,item.status||'unknown',statusClass);
+      cell(tr,duration(item.duration_ms));cell(tr,number(item.llm_call_count));cell(tr,number(item.total_tokens));
+      cell(tr,money(item.estimated_cost_usd,summary.cost_configured));cell(tr,item.run_id||'—');rows.appendChild(tr);
+    });
+    empty.hidden=(data.runs||[]).length>0;tableWrap.hidden=!empty.hidden;
+  }
+
+  async function load(){
+    refresh.disabled=true;cards.setAttribute('aria-busy','true');status.textContent='Loading metrics…';error.hidden=true;
+    try{
+      var response=await fetch(API_BASE+'/api/developer/metrics');
+      var body=await response.json().catch(function(){return {};});
+      if(!response.ok)throw new Error((body.error&&body.error.message)||'Metrics request failed');
+      render(body);status.textContent='Updated '+new Date().toLocaleTimeString();
+    }catch(err){error.textContent='Could not load developer metrics. '+err.message;error.hidden=false;empty.hidden=true;tableWrap.hidden=true;status.textContent='Update failed';}
+    finally{refresh.disabled=false;cards.setAttribute('aria-busy','false');}
+  }
+  refresh.addEventListener('click',load);load();setInterval(load,30000);
+})();
+</script>
+</body>
+</html>

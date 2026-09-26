@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · Recruitment 360</title>
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .login-wrap{max-width:420px;margin:64px auto 0;padding:0 20px 64px}
+  .login-arch h1{font-size:32px}
+  .login-arch p{font-size:15.5px}
+  .login-card{margin-top:-26px;position:relative;z-index:2}
+  .login-card .form{box-shadow:0 18px 44px -28px rgba(78,11,34,.35)}
+  .login-card .cta{width:100%}
+  .login-card .err{display:none}
+  .login-card .err.show{display:block}
+  @media (max-width:480px){.login-wrap{margin-top:32px}}
+</style>
+</head>
+<body>
+<div class="bar"><a class="id" href="index.html"><div class="q">360</div><div><b>Recruitment 360</b><span>Talent Acquisition</span></div></a></div>
+<main class="login-wrap">
+  <section class="arch slim login-arch"><div class="lattice" aria-hidden="true"></div>
+    <div><h1>Sign in</h1><p>Use your Recruitment 360 account to continue.</p></div>
+  </section>
+  <section class="login-card">
+    <form class="form" id="login-form" novalidate>
+      <div class="fld">
+        <label for="l-email">Email</label>
+        <input id="l-email" type="email" autocomplete="username" placeholder="you@protivitiglobal.in" required>
+      </div>
+      <div class="fld">
+        <label for="l-password">Password</label>
+        <input id="l-password" type="password" autocomplete="current-password" required>
+      </div>
+      <p class="err" id="login-error" role="alert"></p>
+      <button type="submit" class="cta" id="login-submit">Sign in</button>
+    </form>
+  </section>
+</main>
+<script>
+(function () {
+  var TOKEN_KEY = 'recruitment360.auth.token';
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var form = document.getElementById('login-form');
+  var errorEl = document.getElementById('login-error');
+  var submit = document.getElementById('login-submit');
+
+  // Already signed in with a token that still works: skip the form.
+  var existing = null;
+  try { existing = localStorage.getItem(TOKEN_KEY); } catch (e) {}
+  if (existing) {
+    fetch(API_BASE + '/api/auth/me', { headers: { Authorization: 'Bearer ' + existing } })
+      .then(function (r) { if (r.ok) location.replace('index.html'); })
+      .catch(function () {});
+  }
+
+  function showError(message) {
+    errorEl.textContent = message;
+    errorEl.classList.add('show');
+  }
+  function clearError() {
+    errorEl.textContent = '';
+    errorEl.classList.remove('show');
+  }
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    clearError();
+    var email = document.getElementById('l-email').value.trim();
+    var password = document.getElementById('l-password').value;
+    if (!email || !password) {
+      showError('Enter your email and password.');
+      return;
+    }
+    submit.disabled = true;
+    submit.textContent = 'Signing in…';
+    fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    }).then(function (response) {
+      if (!response.ok) {
+        if (response.status === 401) throw new Error('Wrong email or password.');
+        throw new Error('Sign-in is unavailable right now. Try again.');
+      }
+      return response.json();
+    }).then(function (data) {
+      try { localStorage.setItem(TOKEN_KEY, data.token); } catch (e) {}
+      location.href = 'index.html';
+    }).catch(function (error) {
+      showError(error.message || 'Sign-in failed. Try again.');
+      submit.disabled = false;
+      submit.textContent = 'Sign in';
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Record · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .log-row{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft);align-items:flex-start}
+  .log-row:first-child{border-top:0}
+  .log-time{flex:none;width:132px;font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.5}
+  .log-time b{display:block;font-size:14px;color:var(--ink-2);font-weight:400}
+  .log-body{flex:1;min-width:0;font-size:15px;color:var(--ink);font-weight:300;line-height:1.55}
+  .log-body span{display:block;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:3px}
+  .lock-note{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:4px}
+  .lock-note svg{flex:none;color:var(--gold)}
+
+  .kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .kv-cell{background:var(--surface);padding:22px 24px}
+  .kv-cell .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-bottom:8px}
+  .kv-cell .v{font-size:17px;font-weight:400;color:var(--ink)}
+  .kv-cell .m{margin-top:6px;font-size:13.5px;color:var(--ink-2);font-weight:300;line-height:1.5}
+
+  @media (max-width:640px){
+    .log-row{flex-direction:column;gap:4px}
+    .log-time{width:auto}
+    .kv-grid{grid-template-columns:1fr}
+  }
+
+  #a-filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  #a-filters label{color:var(--ink-3)}
+  #a-filters select,#a-filters input{
+    font:inherit;font-size:14px;color:var(--ink);background:var(--surface);
+    border:1px solid var(--hair);border-radius:var(--r-pill);
+    padding:9px 16px;max-width:190px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  #a-filters select{padding-right:30px}
+  #a-filters input{max-width:140px}
+  #a-filters select:focus,#a-filters input:focus{outline:2px solid var(--gold);outline-offset:1px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the promise ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date">The record</div>
+    <h1>Every material action is <b>recorded</b>. Nothing changes after the fact.</h1>
+    <p>Rubric versions, decisions, overrides and processing runs are all written here once, with a time and a name attached. Nothing on this page can be edited.</p>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — rubric version and approval ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Rubric version and approval</h2>
+      <span class="aside" id="a-line">What the system scored against, this period</span>
+    </div>
+
+    <div class="card pad-lg">
+      <div class="kick">Current version</div>
+      <h3 id="a-rubric-title">Version 4.2 — Control Room Operator</h3>
+      <div class="where" id="a-rubric-where">Approved by F. Al-Rashid on 2 September · applied to all six open campaigns</div>
+      <div class="lock-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span id="a-rubric-lock">This approval is locked. A new version needs a new approval, recorded the same way.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — decisions and overrides ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Decisions and overrides</h2>
+      <span class="aside" id="a-decisions-aside">Every time a person changed the system's recommendation</span>
+    </div>
+
+    <div class="fold" id="a-decisions">
+      <details>
+        <summary>
+          <span class="b hold">219</span>
+          <span class="t">assessments the team overruled</span>
+          <span class="s">6.4% of 3,420 · a reason is recorded for each one</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>10 Sep, 09:14</b>F. Al-Rashid</div>
+            <div class="log-body">
+              Moved <b>Bilal Haque</b> (CAM-2611) from "not eligible" to "review required"
+              <span>Reason given: "Nine years in operations, but the CV never says console or field — ask him before deciding."</span>
+            </div>
+          </div>
+          <div class="log-row">
+            <div class="log-time"><b>10 Sep, 08:52</b>F. Al-Rashid</div>
+            <div class="log-body">
+              Moved <b>Ahmed Karim</b> (CAM-2611) from "potential fit" to "strong fit"
+              <span>Reason given: "Ammonia console experience transfers well enough here — met him at interview last year."</span>
+            </div>
+          </div>
+          <div class="dfoot"><span class="note">The full list of 219 overrides is available on request, filtered by campaign.</span></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — processing log ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Audit trail</h2>
+      <span class="aside" id="a-log-aside">Recent batches, as they ran</span>
+      <!-- Filters are built from the backend's own list of actions, so an
+           action added there cannot go missing from the filter here. -->
+      <span class="aside" id="a-filters" hidden>
+        <label for="a-filter-action">Show</label>
+        <select id="a-filter-action"><option value="">everything</option></select>
+        <label for="a-filter-actor">by</label>
+        <input id="a-filter-actor" type="search" size="14" aria-label="Filter by who did it">
+        <a id="a-download" href="#">Download the record</a>
+      </span>
+    </div>
+
+    <div class="fold" id="a-log">
+      <details>
+        <summary>
+          <span class="b run">●</span>
+          <span class="t">Rotating Equipment Engineer — CAM-2618</span>
+          <span class="s">running now</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="kv-grid">
+            <div class="kv-cell"><div class="k">Progress</div><div class="v">268 of 412 read</div><div class="m">6 of 8 workers active · queue depth 107</div></div>
+            <div class="kv-cell"><div class="k">Speed</div><div class="v">412 CVs an hour</div><div class="m">Mean time per assessment: 8.7 seconds</div></div>
+            <div class="kv-cell"><div class="k">Estimated finish</div><div class="v">Today, 11:47</div><div class="m">Last checkpoint written 09:41:22</div></div>
+            <div class="kv-cell"><div class="k">Problems</div><div class="v">None reported</div><div class="m">Held files, if any, appear on Today once the batch closes</div></div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">Turnaround Planner — CAM-2588</span>
+          <span class="s">closed 3 September · handed to SuccessFactors</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>3 Sep, 16:20</b>System</div>
+            <div class="log-body">311 of 311 applications read. 11 shortlisted.</div>
+          </div>
+          <div class="log-row">
+            <div class="log-time"><b>3 Sep, 16:31</b>F. Al-Rashid</div>
+            <div class="log-body">11 of 11 candidates sent to SAP SuccessFactors, requisition CAM-2588. No duplicates found, no retries needed.</div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">Process Engineer — CAM-2575</span>
+          <span class="s">closed · 268 of 268 read</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>27 Aug, 14:02</b>System</div>
+            <div class="log-body">268 of 268 applications read. 7 shortlisted. No files held.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — engine, retention, connection ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>System status</h2>
+      <span class="aside">What is running, and where your data goes</span>
+    </div>
+
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">Assessment engine</span>
+          <span class="s">unchanged since 1 September</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>Scoring</b>Rubric engine</div>
+            <div class="log-body">Runs rubric version 4.2 against every application. A new rubric version needs a new approval before it can run.</div>
+          </div>
+          <div class="log-row">
+            <div class="log-time"><b>Reading</b>CV reader</div>
+            <div class="log-body">Reads the text of each CV and finds the evidence quoted against every scored line. It does not decide — it recommends.</div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="b hold">◷</span>
+          <span class="t">Data retention and deletion</span>
+          <span class="s">how long files and scores are kept</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>CVs and scores</b></div>
+            <div class="log-body">Kept for the length of the campaign, then removed once it closes and any shortlist has been sent.</div>
+          </div>
+          <div class="log-row">
+            <div class="log-time"><b>Held files</b></div>
+            <div class="log-body">Kept until the recruiter deals with them, or 90 days, whichever comes first.</div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">SAP SuccessFactors connection</span>
+          <span class="s">connected · last used 3 September</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="log-row">
+            <div class="log-time"><b>Status</b></div>
+            <div class="log-body">Connected to the organisation's live SAP SuccessFactors Recruiting instance.</div>
+          </div>
+          <div class="log-row">
+            <div class="log-time"><b>Last handover</b></div>
+            <div class="log-body">3 September, 16:31 — 11 of 11 candidates sent for CAM-2588, Turnaround Planner. No duplicates, no retries needed.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <p class="sig">This record is append-only. Every entry has a time and a name, and none can be edited after it is written.</p>
+
+</div>
+
+<script>
+/* ── Audit and Administration — live wiring ───────────────────────────────
+   Renders this campaign's recorded events into the existing markup.
+
+   Rules followed here:
+   * Only existing classes and CSS custom properties. No new colours, fonts
+     or layout; the <style> block above is untouched.
+   * Plain English only, per DATA.md. An AuditAction member is a lookup key
+     here and never output text — this is the screen a client auditor reads
+     most literally.
+   * Never a count without its denominator.
+   * The system recommends and a person decides; the page says so wherever
+     an override is shown.
+   * If the record cannot be loaded the page is left exactly as authored and
+     says so, rather than blanking or, worse, showing one campaign's history
+     under another campaign's name.
+   ──────────────────────────────────────────────────────────────────────── */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var campaignId = params.get('campaign') || params.get('campaign_id');
+
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun',
+                'Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  /* Every action the backend can write, in the words a recruiter would use.
+     An unmapped action would render as a blank line, so this list must stay
+     in step with AuditAction in app/db/models.py. */
+  var ACTION_WORDS = {
+    'CAMPAIGN_CREATED': 'Campaign opened',
+    'CAMPAIGN_UPDATED': 'Campaign details changed',
+    'CAMPAIGN_STATUS_CHANGED': 'Campaign moved to a new stage',
+    'REQUIREMENTS_EXTRACTED': 'Requirements read from the job description',
+    'AI_CAMPAIGN_DRAFTED': 'Campaign drafted by AI from a recruiter request',
+    'RUBRIC_VERSION_CREATED': 'New rubric version drafted',
+    'RUBRIC_SUBMITTED': 'Rubric version sent for approval',
+    'RUBRIC_APPROVED': 'Rubric version approved',
+    'RUBRIC_REJECTED': 'Rubric version sent back',
+    'RUBRIC_LOCKED': 'Rubric version locked',
+    'BATCH_UPLOADED': 'CVs uploaded',
+    'FILE_HELD': 'A file was held and not assessed',
+    'JOB_RETRIED': 'A held file was tried again',
+    'EVALUATION_RUN_STARTED': 'Assessment started',
+    'EVALUATION_RUN_COMPLETED': 'Assessment finished',
+    'REEVALUATION_STARTED': 'Assessment started again after a rubric change',
+    'DISPOSITION_SET': 'A decision was recorded',
+    'RECOMMENDATION_OVERRIDDEN': 'A person overruled the recommendation',
+    'COMMENT_ADDED': 'A comment was added',
+    'EXPORTED': 'Records exported',
+    'SENT_TO_HIRING_MANAGER': 'Sent to the hiring manager',
+    'MANAGER_REVIEWED': 'The hiring manager gave a verdict',
+    'STATUS_CHANGED': 'Moved to a new stage of the hiring process',
+    'PUT_ON_HOLD': 'Put on hold',
+    'CANDIDATE_WITHDREW': 'The candidate withdrew',
+    'INTERVIEW_SCHEDULED': 'Interview arranged',
+    'INTERVIEW_FEEDBACK_RECORDED': 'Interview feedback recorded',
+    'APPROVAL_REQUESTED': 'Approval requested',
+    'APPROVAL_GRANTED': 'Approval granted',
+    'APPROVAL_RETURNED': 'Approval returned',
+    'OFFER_DRAFTED': 'Offer drafted',
+    'OFFER_SENT': 'Offer recorded as sent',
+    'OFFER_RESPONSE_RECORDED': 'Candidate offer response recorded',
+    'CANDIDATE_HIRED': 'Candidate recorded as hired',
+    'MESSAGE_SENT': 'Candidate message recorded',
+    'SLA_REMINDER_SENT': 'Reminder sent: approaching the target time for this stage',
+    'SLA_ESCALATED': 'Escalated: past the target time for this stage',
+    'EMAIL_REPLY_RECEIVED': 'An email reply was read and classified'
+  };
+
+  var DECISION_ACTIONS = ['RECOMMENDATION_OVERRIDDEN', 'DISPOSITION_SET', 'COMMENT_ADDED'];
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function set(id, html) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  }
+
+  function say(id, message) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = message;
+  }
+
+  function when(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return 'time not recorded';
+    var hh = ('0' + d.getHours()).slice(-2);
+    var mm = ('0' + d.getMinutes()).slice(-2);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ', ' + hh + ':' + mm;
+  }
+
+  function actorName(actor) {
+    var parts = String(actor || '').trim().split(/\s+/);
+    if (!parts[0]) return 'Recorded by the system';
+    if (parts.length < 2) return parts[0];
+    return parts[0].charAt(0) + '. ' + parts[parts.length - 1];
+  }
+
+  function chevron() {
+    return '<svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" ' +
+      'stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  }
+
+  function logRow(event) {
+    // The name is what a person reads; the id is what they trace it back
+    // with. A row about a named applicant says so, because "a file was held"
+    // is not a usable record if you cannot tell whose file.
+    var about = event.candidate_name
+      ? esc(event.candidate_name)
+      : (event.candidate_id ? 'A candidate no longer on file' : '');
+    var ids = [];
+    if (event.candidate_id) ids.push('candidate ' + event.candidate_id);
+    if (event.campaign_id) ids.push('campaign ' + event.campaign_id);
+    return '<div class="log-row">' +
+      '<div class="log-time"><b>' + esc(clock(event.created_at)) + '</b>' +
+        esc(actorName(event.actor)) + '</div>' +
+      '<div class="log-body">' +
+        esc(event.action_label || ACTION_WORDS[event.action] || 'Action recorded') +
+        (about ? ' · ' + about : '') +
+        (ids.length ? '<span>' + esc(ids.join(' · ')) + '</span>' : '') +
+        '<span>' + esc(event.summary) + '</span>' +
+        changeLine(event) +
+      '</div>' +
+    '</div>';
+  }
+
+  // What actually changed, when the event recorded it. Rendered as words
+  // rather than as the stored keys.
+  function changeLine(event) {
+    if (!event.before && !event.after) return '';
+    var pairs = [];
+    var after = event.after || {};
+    var before = event.before || {};
+    Object.keys(after).forEach(function (key) {
+      if (before[key] !== undefined && String(before[key]) !== String(after[key])) {
+        pairs.push(label(key) + ': ' + before[key] + ' → ' + after[key]);
+      }
+    });
+    if (!pairs.length) return '';
+    return '<span>' + esc(pairs.join(' · ')) + '</span>';
+  }
+
+  function label(key) {
+    return String(key).replace(/_/g, ' ');
+  }
+
+  // Time of day only — the date is the heading the row sits under.
+  function clock(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return 'time not recorded';
+    return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  function dayOf(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return 'Date not recorded';
+    var today = new Date();
+    var same = d.toDateString() === today.toDateString();
+    var yesterday = new Date(today.getTime() - 86400000);
+    if (same) return 'Today';
+    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  /* ── rubric version and approval ─────────────────────────────────────── */
+
+  function renderRubric(campaign, version) {
+    var role = campaign.job_title || campaign.name || 'this campaign';
+    if (!version) {
+      say('a-rubric-title', 'No rubric version is approved yet');
+      say('a-rubric-where', 'Nothing is being scored until a version is approved.');
+      say('a-rubric-lock', 'An approval is written here as soon as one is given, ' +
+                           'with the approver and the time.');
+      return;
+    }
+    say('a-rubric-title', 'Version ' + version.version_number + ' — ' + role);
+    say('a-rubric-where',
+        'Approved by ' + actorName(version.approved_by) +
+        (version.approved_at ? ' on ' + when(version.approved_at).split(',')[0] : '') +
+        ' · applied to this campaign');
+    say('a-rubric-lock', version.status === 'LOCKED'
+      ? 'This version is locked. A change needs a new version and a new approval, ' +
+        'recorded the same way.'
+      : 'This approval is recorded. A change needs a new version and a new ' +
+        'approval, recorded the same way.');
+  }
+
+  /* ── decisions and overrides ─────────────────────────────────────────── */
+
+  function renderDecisions(trail) {
+    var decisions = trail.filter(function (e) {
+      return DECISION_ACTIONS.indexOf(e.action) !== -1;
+    });
+    var overrides = decisions.filter(function (e) {
+      return e.action === 'RECOMMENDATION_OVERRIDDEN';
+    });
+
+    if (!decisions.length) {
+      set('a-decisions',
+        '<div class="log-row"><div class="log-body">No decision has been ' +
+        'recorded on this campaign yet. When one is, it appears here with ' +
+        'the name of the person who made it.</div></div>');
+      say('a-decisions-aside', 'The system recommends; a person decides.');
+      return;
+    }
+
+    say('a-decisions-aside',
+        overrides.length + ' of ' + decisions.length +
+        ' recorded decision' + (decisions.length === 1 ? '' : 's') +
+        ' overruled the recommendation. The system recommends; a person decides.');
+
+    set('a-decisions',
+      '<details open>' +
+        '<summary>' +
+          '<span class="b hold">' + overrides.length + '</span>' +
+          '<span class="t">assessment' + (overrides.length === 1 ? '' : 's') +
+            ' the team overruled</span>' +
+          '<span class="s">' + overrides.length + ' of ' + decisions.length +
+            ' recorded decision' + (decisions.length === 1 ? '' : 's') +
+            ' · a reason is recorded for each override</span>' +
+          chevron() +
+        '</summary>' +
+        '<div class="drawer">' +
+          decisions.slice(0, 40).map(logRow).join('') +
+          (decisions.length > 40
+            ? '<div class="dfoot"><span class="note">Showing the 40 most ' +
+              'recent of ' + decisions.length + '. The rest are in the record ' +
+              'and can be read by campaign.</span></div>'
+            : '') +
+        '</div>' +
+      '</details>');
+  }
+
+  /* ── everything else, newest first ───────────────────────────────────── */
+
+  function renderTrail(trail) {
+    var rest = trail.filter(function (e) {
+      return DECISION_ACTIONS.indexOf(e.action) === -1;
+    });
+
+    if (!rest.length) {
+      set('a-log',
+        '<div class="log-row"><div class="log-body">Nothing has been recorded ' +
+        'for this campaign yet.</div></div>');
+      say('a-log-aside', 'Nothing recorded yet');
+      return;
+    }
+
+    say('a-log-aside', rest.length + ' recorded action' +
+        (rest.length === 1 ? '' : 's') + ', newest first');
+
+    // Grouped by day. A flat list of 200 timestamps is a record nobody
+    // reads; "what happened on the 9th" is the question people actually ask.
+    var days = [];
+    var byDay = {};
+    rest.forEach(function (event) {
+      var key = dayOf(event.created_at);
+      if (!byDay[key]) { byDay[key] = { day: key, items: [] }; days.push(byDay[key]); }
+      byDay[key].items.push(event);
+    });
+
+    set('a-log', days.map(function (group) {
+      return '<details open>' +
+        '<summary>' +
+          '<span class="b ok">' + group.items.length + '</span>' +
+          '<span class="t">' + esc(group.day) + '</span>' +
+          '<span class="s">' + group.items.length + ' of ' + rest.length +
+            ' recorded action' + (rest.length === 1 ? '' : 's') + '</span>' +
+          chevron() +
+        '</summary>' +
+        '<div class="drawer">' + group.items.map(logRow).join('') + '</div>' +
+      '</details>';
+    }).join(''));
+  }
+
+  /* ── filters ─────────────────────────────────────────────────────────── */
+
+  function buildFilters(actions) {
+    var select = document.getElementById('a-filter-action');
+    if (select && actions) {
+      actions.forEach(function (item) {
+        var option = document.createElement('option');
+        option.value = item.action;
+        option.textContent = item.label;
+        select.appendChild(option);
+      });
+    }
+    var bar = document.getElementById('a-filters');
+    if (bar) bar.hidden = false;
+
+    var actor = document.getElementById('a-filter-actor');
+    if (select) select.addEventListener('change', reload);
+    if (actor) {
+      var timer = null;
+      actor.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(reload, 350);
+      });
+    }
+  }
+
+  function query() {
+    var parts = ['limit=200'];
+    var action = document.getElementById('a-filter-action');
+    var actor = document.getElementById('a-filter-actor');
+    if (action && action.value) parts.push('action=' + encodeURIComponent(action.value));
+    if (actor && actor.value.trim()) parts.push('actor=' + encodeURIComponent(actor.value.trim()));
+    if (campaignId) parts.push('campaign_id=' + encodeURIComponent(campaignId));
+    return parts.join('&');
+  }
+
+  function reload() {
+    var download = document.getElementById('a-download');
+    if (download) download.href = API_BASE + '/api/audit/export.csv?' + query();
+
+    fetch(API_BASE + '/api/audit?' + query())
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (trail) {
+        renderDecisions(trail || []);
+        renderTrail(trail || []);
+        // The count follows the filter, so it always states what is on screen
+        // rather than what exists.
+        say('a-line', (currentCampaign.job_title || currentCampaign.name ||
+             'This campaign') + ' · showing ' + (trail || []).length +
+             ' recorded action' + ((trail || []).length === 1 ? '' : 's'));
+      })
+      .catch(function () {
+        say('a-line', 'The record could not be loaded.');
+      });
+  }
+
+  var currentCampaign = {};
+
+  /* ── load ────────────────────────────────────────────────────────────── */
+
+  function resolveCampaign() {
+    if (campaignId) return Promise.resolve(campaignId);
+    return fetch(API_BASE + '/api/campaigns')
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (list) {
+        return (list && list.length) ? list[0].id : null;
+      });
+  }
+
+  resolveCampaign()
+    .then(function (id) {
+      if (!id) throw new Error('no campaign');
+      campaignId = id;
+      var base = API_BASE + '/api/campaigns/' + encodeURIComponent(id);
+      return Promise.all([
+        fetch(base).then(function (r) { return r.ok ? r.json() : {}; }),
+        fetch(base + '/audit?limit=200').then(function (r) {
+          if (!r.ok) throw new Error('no trail');
+          return r.json();
+        }),
+        fetch(base + '/rubric/active').then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+      ]);
+    })
+    .then(function (results) {
+      var campaign = results[0];
+      var trail = results[1] || [];
+      var version = results[2];
+
+      currentCampaign = campaign;
+      say('a-line', (campaign.job_title || campaign.name || 'This campaign') +
+          ' · ' + trail.length + ' action' + (trail.length === 1 ? '' : 's') +
+          ' recorded');
+
+      renderRubric(campaign, version);
+      renderDecisions(trail);
+      renderTrail(trail);
+
+      fetch(API_BASE + '/api/audit/actions')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(buildFilters)
+        .catch(function () { /* the record still reads without filters */ });
+
+      var download = document.getElementById('a-download');
+      if (download) download.href = API_BASE + '/api/audit/export.csv?' + query();
+    })
+    .catch(function () {
+      say('a-line', 'The record could not be loaded, so what is shown below ' +
+                    'is the shipped default and is not this campaign\'s.');
+    });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [consolidated, azure-provider, main]
+  pull_request:
+    branches: [consolidated, azure-provider, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GROQ_API_KEY: test-key-not-used-in-tests
+      QUEUE_BACKEND: inline
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.15"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Alembic upgrade (single-head, clean-chain check)
+        env:
+          DATABASE_URL: sqlite:///${{ runner.temp }}/ci_migration_check.db
+        run: alembic upgrade head
+
+      - name: Run test suite
+        run: pytest -q

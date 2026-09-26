@@ -1,0 +1,36 @@
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.faiss
+.DS_Store
+outputs/
+logs/
+*.egg-info/
+.streamlit/secrets.toml
+
+frontend/node_modules/
+frontend/dist/
+
+# Retained CV documents (Phase C)
+storage/
+
+*.db
+
+*.patch
+
+sample_cvs/
+
+sample_cvs/
+storage/
+inspect*.py
+.gstack/
+
+# Leftover full-repo checkouts from merged agent worktrees — not source.
+.claude/worktrees/
+
+# Demo video pipeline: per-environment ids and generated media, not source.
+scripts/demo_video/config.json
+scripts/demo_video/_work/
+scripts/demo_video/output/

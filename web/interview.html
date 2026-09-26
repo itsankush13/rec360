@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Interviews · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* ---- page-specific: campaign picker, row list inside folds ---- */
+  .picker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .picker label{font-size:13.5px;color:var(--ink-2);font-weight:400}
+  .picker select{
+    min-width:280px;font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:11px 14px;
+  }
+
+  .int-row{
+    display:flex;align-items:center;gap:14px;padding:14px 20px;
+    border-bottom:1px solid var(--hair-soft);font-size:14.5px;cursor:pointer;
+  }
+  .int-row:last-child{border-bottom:0}
+  .int-row:hover{background:#FBF8F4}
+  .int-row .nm{flex:1;color:var(--ink);font-weight:400}
+  .int-row .meta{color:var(--ink-3);font-size:13px;font-weight:300}
+  .int-row.selected{background:var(--maroon-soft)}
+  .int-row.nonint{cursor:default}
+  .int-row.nonint:hover{background:transparent}
+
+  .cand-picked{
+    font-size:14.5px;color:var(--ink-2);font-weight:300;margin-bottom:14px;
+  }
+  .cand-picked b{color:var(--ink);font-weight:500}
+
+  .scores-grid{display:flex;gap:12px;flex-wrap:wrap}
+  .scores-grid .fld{min-width:140px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date">Interviews</div>
+    <h1>Who is <b>waiting to be scheduled</b>, who is <b>in an interview</b>, and whose feedback has come back.</h1>
+    <p>Arrange an interview, record it, and capture feedback. <span id="invite-sendnote">Checking how this environment sends invites…</span></p>
+  </section>
+
+  <section class="band">
+    <div class="picker">
+      <label for="campaign-select">Campaign</label>
+      <select id="campaign-select"><option value="">Loading campaigns…</option></select>
+      <span id="interview-load-status" role="status"></span>
+      <span id="delivery-status" role="status"></span>
+    </div>
+  </section>
+
+  <section class="band" id="summary-section" hidden>
+    <div class="label">
+      <h2>Where things stand</h2>
+      <span class="aside" id="summary-aside"></span>
+    </div>
+    <div class="chartcard">
+      <div class="ct">Interviews by outcome</div>
+      <div class="hbars" id="outcome-bars"></div>
+      <div class="cs" id="attention-line"></div>
+    </div>
+  </section>
+
+  <section class="band" id="waiting-section" hidden>
+    <div class="label">
+      <h2>Waiting to be scheduled</h2>
+      <span class="aside">With the hiring manager, no interview arranged yet</span>
+    </div>
+    <div class="fold">
+      <details open>
+        <summary>
+          <span class="b hold" id="waiting-count">0</span>
+          <span class="t">candidate(s)</span>
+          <span class="s">with the hiring manager</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer" id="waiting-rows"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="band" id="scheduled-section" hidden>
+    <div class="label">
+      <h2>Scheduled</h2>
+      <span class="aside">Interview arranged, feedback not yet in</span>
+    </div>
+    <div class="fold">
+      <details open>
+        <summary>
+          <span class="b run" id="scheduled-count">0</span>
+          <span class="t">interview(s)</span>
+          <span class="s">awaiting feedback</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer" id="scheduled-rows"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="band" id="done-section" hidden>
+    <div class="label">
+      <h2>Feedback in</h2>
+      <span class="aside">The hiring manager's verdict, against the interview</span>
+    </div>
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b ok" id="done-count">0</span>
+          <span class="t">interview(s)</span>
+          <span class="s">with feedback recorded</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer" id="done-rows"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="band" id="schedule-section" hidden>
+    <div class="label">
+      <h2>Arrange an interview</h2>
+      <span class="aside">Schedule and check Outlook delivery</span>
+    </div>
+    <div class="cand-picked" id="schedule-for"></div>
+    <form class="form" id="schedule-form">
+      <div class="fr">
+        <div class="fld">
+          <label for="s-when">Date and time (IST)</label>
+          <input type="datetime-local" id="s-when" required>
+        </div>
+        <div class="fld">
+          <label for="s-duration">Duration (minutes)</label>
+          <input type="number" id="s-duration" value="45" min="1" required>
+        </div>
+        <div class="fld">
+          <label for="s-round">Round</label>
+          <input type="number" id="s-round" value="1" min="1" required>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fld">
+          <label for="s-mode">Mode</label>
+          <select id="s-mode">
+            <option value="VIDEO">Video</option>
+            <option value="IN_PERSON">In person</option>
+            <option value="PHONE">Phone</option>
+          </select>
+        </div>
+        <div class="fld" style="flex:2">
+          <label for="s-location">Location or link</label>
+          <input type="text" id="s-location" placeholder="Meeting room, or a video link">
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fld">
+          <label for="s-co-manager">Co-hiring manager</label>
+          <select id="s-co-manager" required>
+            <option value="daipayan.r@protivitiglobal.in">Daipayan — daipayan.r@protivitiglobal.in</option>
+            <option value="ankush.saxena@protivitiglobal.in">Ankush — ankush.saxena@protivitiglobal.in</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="s-recipient">Interview recipient</label>
+          <select id="s-recipient" required>
+            <option value="chiranjib.sarma@protivitiglobal.in">Chiranjib — chiranjib.sarma@protivitiglobal.in</option>
+            <option value="preetam.c@protivitiglobal.me">Preetam — preetam.c@protivitiglobal.me</option>
+            <option value="ankush.saxena@protivitiglobal.in">Ankush — ankush.saxena@protivitiglobal.in</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fld" style="flex:2">
+          <label for="s-panel">Panel record</label>
+          <select id="s-panel" multiple size="4"></select>
+          <span class="hint">Optional record only. Email goes to the two named recipients above.</span>
+        </div>
+        <div class="fld">
+          <label for="s-actor">Arranged by</label>
+          <select id="s-actor"></select>
+        </div>
+      </div>
+      <div class="simnote">Outlook sends only to the selected co-hiring manager and interview recipient. Candidate CV email is never used. Delivery result appears above.</div>
+      <div class="err" id="schedule-err" hidden></div>
+      <div class="facts">
+        <button type="submit" class="cta">Schedule interview</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="band" id="feedback-section" hidden>
+    <div class="label">
+      <h2>Record interview feedback</h2>
+      <span class="aside">What the hiring manager decided, and why</span>
+    </div>
+    <div class="cand-picked" id="feedback-for"></div>
+    <form class="form" id="feedback-form">
+      <div class="fr">
+        <div class="fld">
+          <label for="f-recommendation">Recommendation</label>
+          <select id="f-recommendation">
+            <option value="PROCEED">Proceed</option>
+            <option value="ANOTHER_ROUND">Another round</option>
+            <option value="DECLINE">Decline</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="f-actor">Recorded by</label>
+          <select id="f-actor"></select>
+        </div>
+      </div>
+      <div class="fr scores-grid">
+        <div class="fld">
+          <label for="f-score-technical">Technical (1-5)</label>
+          <input type="number" id="f-score-technical" min="1" max="5" value="3">
+        </div>
+        <div class="fld">
+          <label for="f-score-communication">Communication (1-5)</label>
+          <input type="number" id="f-score-communication" min="1" max="5" value="3">
+        </div>
+        <div class="fld">
+          <label for="f-score-culture">Culture fit (1-5)</label>
+          <input type="number" id="f-score-culture" min="1" max="5" value="3">
+        </div>
+      </div>
+      <div class="fld">
+        <label for="f-strengths">Strengths</label>
+        <textarea id="f-strengths"></textarea>
+      </div>
+      <div class="fld">
+        <label for="f-concerns">Concerns</label>
+        <textarea id="f-concerns"></textarea>
+      </div>
+      <div class="fld" id="f-reason-wrap">
+        <label for="f-reason">Reason (required to decline)</label>
+        <textarea id="f-reason"></textarea>
+      </div>
+      <div class="err" id="feedback-err" hidden></div>
+      <div class="facts">
+        <button type="submit" class="cta">Record feedback</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="band" id="empty-section" hidden>
+    <div class="empty">
+      <b>No candidates are with the hiring manager yet in this campaign.</b>
+      Send a shortlisted candidate to a hiring manager before an interview can be arranged.
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var STORAGE_KEY = 'recruitment360.interviewsCampaign';
+  var requestedCampaign = new URLSearchParams(location.search).get('campaign') ||
+    new URLSearchParams(location.search).get('campaign_id');
+
+  var campaignSelect = document.getElementById('campaign-select');
+  var loadStatus = document.getElementById('interview-load-status');
+  var deliveryStatus = document.getElementById('delivery-status');
+
+  var summarySection = document.getElementById('summary-section');
+  var summaryAside = document.getElementById('summary-aside');
+  var outcomeBars = document.getElementById('outcome-bars');
+  var attentionLine = document.getElementById('attention-line');
+
+  var waitingSection = document.getElementById('waiting-section');
+  var waitingCount = document.getElementById('waiting-count');
+  var waitingRows = document.getElementById('waiting-rows');
+
+  // Truthfulness fix (2026-09-14 demo): this subtitle used to hardcode
+  // "the Outlook invite is simulated". It now asks the API which calendar
+  // backend is really active, so it cannot lie once Outlook goes live.
+  (function () {
+    var note = document.getElementById('invite-sendnote');
+    window.__r360SendMode('calendar').then(function (mode) {
+      if (mode === 'outlook' || mode === 'simulated') note.textContent = 'The Outlook invite sends for real.';
+      else note.textContent = 'Could not confirm the calendar send mode — treat the Outlook invite as if it may send for real.';
+    });
+  })();
+
+  var scheduledSection = document.getElementById('scheduled-section');
+  var scheduledCount = document.getElementById('scheduled-count');
+  var scheduledRows = document.getElementById('scheduled-rows');
+
+  var doneSection = document.getElementById('done-section');
+  var doneCount = document.getElementById('done-count');
+  var doneRows = document.getElementById('done-rows');
+
+  var emptySection = document.getElementById('empty-section');
+
+  var scheduleSection = document.getElementById('schedule-section');
+  var scheduleFor = document.getElementById('schedule-for');
+  var scheduleForm = document.getElementById('schedule-form');
+  var scheduleErr = document.getElementById('schedule-err');
+  var sPanel = document.getElementById('s-panel');
+  var sActor = document.getElementById('s-actor');
+
+  var feedbackSection = document.getElementById('feedback-section');
+  var feedbackFor = document.getElementById('feedback-for');
+  var feedbackForm = document.getElementById('feedback-form');
+  var feedbackErr = document.getElementById('feedback-err');
+  var fActor = document.getElementById('f-actor');
+
+  var currentCampaignId = '';
+  var currentPeople = [];
+  var currentCandidates = [];
+  var pickedForSchedule = null;   // {id, name}
+  var pickedForFeedback = null;   // {id, name}
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function when(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return String(iso || '');
+    var hh = ('0' + d.getHours()).slice(-2);
+    var mm = ('0' + d.getMinutes()).slice(-2);
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ', ' + hh + ':' + mm;
+  }
+  var MODE_LABELS = { VIDEO: 'Video', IN_PERSON: 'In person', PHONE: 'Phone' };
+
+  // ---- campaign picker ----
+  function loadCampaigns() {
+    fetch(API_BASE + '/api/campaigns')
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (campaigns) {
+        campaignSelect.innerHTML = '<option value="">Choose a campaign…</option>';
+        campaignOptions(campaigns).forEach(function (entry) {
+          var option = document.createElement('option');
+          option.value = entry.id;
+          option.textContent = entry.label;
+          campaignSelect.appendChild(option);
+        });
+        var remembered = requestedCampaign || localStorage.getItem(STORAGE_KEY);
+        if (remembered && (campaigns || []).some(function (c) { return c.id === remembered; })) {
+          campaignSelect.value = remembered;
+          localStorage.setItem(STORAGE_KEY, remembered);
+          loadCampaignData(remembered);
+        } else {
+          loadStatus.textContent = campaigns.length ? 'Choose a campaign.' : 'No campaigns yet.';
+        }
+      })
+      .catch(function () {
+        campaignSelect.innerHTML = '<option value="">Could not load campaigns — start the API</option>';
+        loadStatus.textContent = 'Could not load campaigns.';
+      });
+  }
+
+  campaignSelect.addEventListener('change', function () {
+    var id = campaignSelect.value;
+    if (!id) return;
+    localStorage.setItem(STORAGE_KEY, id);
+    loadCampaignData(id);
+  });
+
+  // ---- loading a campaign's people, lifecycle and interviews ----
+  function loadCampaignData(campaignId) {
+    currentCampaignId = campaignId;
+    hidePicked();
+    [summarySection, waitingSection, scheduledSection, doneSection, emptySection].forEach(function (section) {
+      section.hidden = true;
+    });
+    loadStatus.textContent = 'Loading campaign…';
+    function read(path) {
+      return fetch(API_BASE + path).then(function (response) {
+        if (!response.ok) throw new Error('Campaign data could not be loaded. Retry when the API is available.');
+        return response.json();
+      });
+    }
+    Promise.all([
+      read('/api/users'),
+      read('/api/campaigns/' + encodeURIComponent(campaignId) + '/lifecycle'),
+      read('/api/campaigns/' + encodeURIComponent(campaignId) + '/interviews'),
+      read('/api/campaigns/' + encodeURIComponent(campaignId) + '/candidates'),
+    ]).then(function (results) {
+      currentPeople = results[0] || [];
+      currentCandidates = results[3] || [];
+      render(results[1] || [], results[2] || []);
+      loadStatus.textContent = 'Current campaign loaded.';
+    }).catch(function (error) {
+      loadStatus.textContent = error.message || 'Could not load campaign data.';
+    });
+  }
+
+  function hidePicked() {
+    pickedForSchedule = null;
+    pickedForFeedback = null;
+    scheduleSection.hidden = true;
+    feedbackSection.hidden = true;
+  }
+
+  function fillActorSelect(select, roleFilter) {
+    select.innerHTML = '';
+    currentPeople
+      .filter(function (p) { return !roleFilter || roleFilter.indexOf(p.role) !== -1; })
+      .forEach(function (p) {
+        var option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = p.full_name + ' (' + p.role_label + ')';
+        select.appendChild(option);
+      });
+  }
+
+  function render(lifecycleRows, interviewRows) {
+    var pendingIds = interviewRows.filter(function (r) { return !r.feedback_in; })
+      .map(function (r) { return r.candidate_id; });
+    var waiting = lifecycleRows.filter(function (r) {
+      return r.status === 'WITH_HIRING_MANAGER' ||
+        (r.status === 'INTERVIEW_SCHEDULED' && pendingIds.indexOf(r.candidate_id) === -1);
+    });
+    var scheduled = interviewRows.filter(function (r) { return !r.feedback_in; });
+    var done = interviewRows.filter(function (r) { return r.feedback_in; });
+
+    var anyData = waiting.length || interviewRows.length;
+    emptySection.hidden = !!anyData;
+
+    renderSummary(scheduled, done);
+    renderWaiting(waiting);
+    renderScheduled(scheduled);
+    renderDone(done);
+  }
+
+  function renderSummary(scheduled, done) {
+    var proceed = done.filter(function (r) { return r.recommendation === 'PROCEED'; }).length;
+    var another = done.filter(function (r) { return r.recommendation === 'ANOTHER_ROUND'; }).length;
+    var decline = done.filter(function (r) { return r.recommendation === 'DECLINE'; }).length;
+    var awaiting = scheduled.length;
+    var total = awaiting + proceed + another + decline;
+
+    summarySection.hidden = false;
+    summaryAside.textContent = total + ' interview' + (total === 1 ? '' : 's') + ' recorded';
+
+    function bar(cls, label, value) {
+      var pct = total ? Math.round((value / total) * 100) : 0;
+      return '<div class="hbar ' + cls + (value ? '' : ' zero') + '">' +
+        '<div class="k">' + label + '</div>' +
+        '<div class="t"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="n">' + value + '</div>' +
+        '</div>';
+    }
+    outcomeBars.innerHTML =
+      bar('s3', 'Awaiting feedback', awaiting) +
+      bar('teal', 'Proceed', proceed) +
+      bar('gold', 'Another round', another) +
+      bar('s4', 'Declined', decline);
+
+    attentionLine.innerHTML = awaiting
+      ? '<b>' + awaiting + '</b> interview' + (awaiting === 1 ? '' : 's') +
+        (awaiting === 1 ? ' has' : ' have') + ' happened with no feedback recorded yet.'
+      : 'No interview is waiting on feedback right now.';
+  }
+
+  function renderWaiting(waiting) {
+    waitingSection.hidden = waiting.length === 0;
+    waitingCount.textContent = waiting.length;
+    // B28: scheduling the interview is HR's step, not the hiring manager's
+    // — he can see who is waiting but the row does not open the scheduling
+    // form for him, same convention as canRecordFeedback() below.
+    var locked = window.__r360Locked && window.__r360Locked();
+    waitingRows.innerHTML = waiting.map(function (row) {
+      var candidate = currentCandidates.find(function (c) { return c.id === row.candidate_id; });
+      var name = candidate ? candidate.full_name : 'Candidate';
+      var action = locked ? '' : ' data-action="schedule"';
+      return '<div class="int-row' + (locked ? ' nonint' : '') + '" data-candidate="' + esc(row.candidate_id) + '" data-name="' +
+        esc(name) + '"' + action + '>' +
+        '<span class="nm">' + esc(name) + '</span>' +
+        '<span class="meta">with ' + esc(row.owner_name || 'the hiring manager') + '</span>' +
+        '<span class="tag sm plain">Not yet scheduled</span>' +
+        (locked ? '<span class="tag sm hold">HR to schedule</span>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  function canRecordFeedback() {
+    // Recording interview feedback is the hiring manager's call, not HR's —
+    // same convention as web/handoff.html's verdict gate. ADMIN can stand in
+    // for a hiring manager (X66).
+    var me = window.__r360Me;
+    return !!me && (me.role === 'HIRING_MANAGER' || me.role === 'ADMIN');
+  }
+
+  function renderScheduled(scheduled) {
+    scheduledSection.hidden = scheduled.length === 0;
+    scheduledCount.textContent = scheduled.length;
+    var canFeedback = canRecordFeedback();
+    scheduledRows.innerHTML = scheduled.map(function (row) {
+      var action = canFeedback ? ' data-action="feedback"' : '';
+      return '<div class="int-row' + (canFeedback ? '' : ' nonint') + '" data-candidate="' + esc(row.candidate_id) + '" data-name="' +
+        esc(row.candidate_name) + '"' + action + '>' +
+        '<span class="nm"><b>' + esc(row.candidate_name || row.candidate_id) + '</b></span>' +
+        '<span class="meta">Round ' + esc(row.round) + ' · ' + esc(when(row.when)) + ' · ' +
+        esc(MODE_LABELS[row.mode] || row.mode) + '</span>' +
+        '<span class="tag sm hold">' + (row.invite_sent ? 'Invite sent' : 'Invite not sent') + '</span>' +
+        (canFeedback ? '' : '<span class="tag sm plain">Awaiting hiring manager’s feedback</span>') +
+        '</div>';
+    }).join('');
+  }
+
+  function renderDone(done) {
+    doneSection.hidden = done.length === 0;
+    doneCount.textContent = done.length;
+    var words = { PROCEED: 'Proceed', ANOTHER_ROUND: 'Another round', DECLINE: 'Declined' };
+    doneRows.innerHTML = done.map(function (row) {
+      return '<div class="int-row">' +
+        '<span class="nm"><b>' + esc(row.candidate_name || row.candidate_id) + '</b></span>' +
+        '<span class="meta">Round ' + esc(row.round) + ' · ' + esc(when(row.when)) + '</span>' +
+        '<span class="tag sm ok">' + esc(words[row.recommendation] || row.recommendation) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  // ---- picking a candidate row opens the matching form ----
+  document.addEventListener('click', function (event) {
+    var row = event.target.closest('.int-row[data-action]');
+    if (!row) return;
+    var candidateId = row.getAttribute('data-candidate');
+    var name = row.getAttribute('data-name');
+    var action = row.getAttribute('data-action');
+
+    document.querySelectorAll('.int-row').forEach(function (r) { r.classList.remove('selected'); });
+    row.classList.add('selected');
+
+    if (action === 'schedule') {
+      pickedForSchedule = { id: candidateId, name: name };
+      scheduleSection.hidden = false;
+      feedbackSection.hidden = true;
+      scheduleFor.innerHTML = 'Scheduling for <b>' + esc(name) + '</b>.';
+      fillActorSelect(sPanel);
+      fillActorSelect(sActor);
+      var sender = currentPeople.find(function (person) {
+        return (person.email || '').toLowerCase() === 'subhadeep.m@protivitiglobal.in';
+      });
+      if (sender) sActor.value = sender.id;
+      scheduleErr.hidden = true;
+      scheduleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (action === 'feedback') {
+      pickedForFeedback = { id: candidateId, name: name };
+      feedbackSection.hidden = false;
+      scheduleSection.hidden = true;
+      feedbackFor.innerHTML = 'Recording feedback for <b>' + esc(name) + '</b>.';
+      fillActorSelect(fActor);
+      feedbackErr.hidden = true;
+      feedbackSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // ---- schedule form ----
+  scheduleForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    if (!pickedForSchedule || !currentCampaignId) return;
+    var panel = Array.prototype.slice.call(sPanel.selectedOptions).map(function (o) { return o.value; });
+    var body = {
+      when: document.getElementById('s-when').value,
+      duration_minutes: Number(document.getElementById('s-duration').value),
+      mode: document.getElementById('s-mode').value,
+      location_or_link: document.getElementById('s-location').value,
+      co_manager_email: document.getElementById('s-co-manager').value,
+      recipient_email: document.getElementById('s-recipient').value,
+      panel: panel,
+      round: Number(document.getElementById('s-round').value),
+      actor_id: sActor.value,
+    };
+    fetch(API_BASE + '/api/campaigns/' + currentCampaignId + '/interviews/' + pickedForSchedule.id + '/schedule', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          scheduleErr.hidden = false;
+          scheduleErr.textContent = result.body.detail || 'Could not schedule this interview.';
+          return;
+        }
+        deliveryStatus.textContent = result.body.invite_sent
+          ? 'Outlook invite sent to the selected co-hiring manager and interview recipient.'
+          : (result.body.invite_detail || 'Interview recorded; invite was not sent.');
+        loadCampaignData(currentCampaignId);
+      })
+      .catch(function () {
+        scheduleErr.hidden = false;
+        scheduleErr.textContent = 'Could not reach the API.';
+      });
+  });
+
+  // ---- feedback form ----
+  feedbackForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    if (!pickedForFeedback || !currentCampaignId) return;
+    var body = {
+      recommendation: document.getElementById('f-recommendation').value,
+      scores: {
+        technical: Number(document.getElementById('f-score-technical').value),
+        communication: Number(document.getElementById('f-score-communication').value),
+        culture: Number(document.getElementById('f-score-culture').value),
+      },
+      strengths: document.getElementById('f-strengths').value,
+      concerns: document.getElementById('f-concerns').value,
+      reason: document.getElementById('f-reason').value,
+      actor_id: fActor.value,
+    };
+    fetch(API_BASE + '/api/campaigns/' + currentCampaignId + '/interviews/' + pickedForFeedback.id + '/feedback', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          feedbackErr.hidden = false;
+          feedbackErr.textContent = result.body.detail || 'Could not record this feedback.';
+          return;
+        }
+        loadCampaignData(currentCampaignId);
+      })
+      .catch(function () {
+        feedbackErr.hidden = false;
+        feedbackErr.textContent = 'Could not reach the API.';
+      });
+  });
+
+  loadCampaigns();
+})();
+</script>
+</body>
+</html>

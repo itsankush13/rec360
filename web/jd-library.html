@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JD Library · Recruitment 360</title><link rel="stylesheet" href="assets/app.css?v=27"><link rel="stylesheet" href="assets/campaign-home.css?v=18"><link rel="manifest" href="manifest.webmanifest"></head>
+<body><div class="bar"><a class="id" href="index.html"><div class="q">360</div><div><b>Recruitment 360</b><span>Talent Acquisition</span></div></a><nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav><div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div></div>
+<main class="page campaign-home" data-cascade-disabled>
+<section class="arch slim"><div class="lattice" aria-hidden="true"></div><div><h1>JD library</h1><p>Saved job descriptions, ready to reuse. Picking one prefills a new campaign — nothing is created here until you continue into setup.</p></div></section>
+<section aria-labelledby="jd-title"><div class="map-heading"><h2 id="jd-title">Saved job descriptions</h2><p id="jd-list-status" role="status">Loading the JD library…</p></div><div id="jd-list" class="saved-campaigns"></div></section>
+<p class="campaign-footnote"><a href="start-campaign.html">← Back to Start Campaign</a></p>
+</main>
+<script>
+(function () {
+  var base = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var list = document.getElementById('jd-list');
+  var status = document.getElementById('jd-list-status');
+  function esc(value) { return String(value == null ? '' : value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  function node(tag, html, cls) { var el = document.createElement(tag); el.innerHTML = html; if (cls) el.className = cls; return el; }
+  fetch(base + '/api/jd-library', { signal: AbortSignal.timeout(15000) })
+    .then(function (response) { if (!response.ok) throw new Error('The JD library could not be loaded'); return response.json(); })
+    .then(function (templates) {
+      if (!templates.length) { status.textContent = 'No JD templates saved yet.'; return; }
+      status.textContent = templates.length + ' saved job description' + (templates.length === 1 ? '' : 's');
+      templates.forEach(function (t) {
+        var card = node('article', '', 'saved-campaign');
+        card.appendChild(node('h3', esc(t.role_title)));
+        card.appendChild(node('p', esc(t.summary || 'No summary saved.') + (t.tags ? ' · ' + esc(t.tags) : '')));
+        var link = document.createElement('a');
+        link.className = 'cta campaign-resume';
+        link.textContent = 'Use for a new campaign';
+        link.href = 'new-campaign.html?jd_template_id=' + encodeURIComponent(t.id);
+        card.appendChild(link);
+        list.appendChild(card);
+      });
+    })
+    .catch(function (error) {
+      status.textContent = 'Could not load the JD library: ' + error.message;
+    });
+})();
+</script>
+</body></html>

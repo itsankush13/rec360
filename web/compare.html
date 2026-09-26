@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Compare · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* page-specific — compare candidates list (B16). Uses only the app.css variables. */
+  .breadcrumb{font-size:14px;color:var(--ink-3);font-weight:300;margin-bottom:18px}
+  .breadcrumb a{color:var(--maroon);text-decoration:none}
+  .breadcrumb a:hover{text-decoration:underline}
+
+  /* ---- header: the same maroon/lattice band as candidate.html and
+     leaderboard.html's page-state, so all three journey screens read as one
+     colour scheme (2026-09-13, supersedes the earlier decision to leave this
+     page on the plain light `.page-state` — see DECISIONS.md, B16/B08). ---- */
+  .page-state{position:relative;padding:26px 32px 22px;background:var(--maroon);
+    color:#fff;border-radius:var(--r-xl);overflow:hidden;margin-bottom:14px}
+  .page-state::before{content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background-image:url("assets/pattern-arch.svg");background-size:230px 230px}
+  .page-state > *{position:relative}
+  /* Same size, weight and casing as every other page's banner title
+     (.arch h1 in app.css, e.g. Start Campaign, Today) — not a heavier
+     one-off treatment just for this page. */
+  .page-state .kicker{font-size:42px;font-weight:600;letter-spacing:-.035em;
+    color:#fff;line-height:1.14}
+  .page-state p{margin-top:16px;font-size:17.5px;color:rgba(255,255,255,.78);font-weight:300;max-width:52ch;line-height:1.5}
+  .cx-head-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .cx-count{flex:none;font-size:13.5px;font-weight:500;color:#fff;background:rgba(255,255,255,.16);
+    padding:7px 18px;border-radius:var(--r-pill);white-space:nowrap;margin-top:2px}
+
+  /* ---- toolbar: search + four filters, one row that wraps ---- */
+  .cx-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .cx-search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-pill);
+    padding:11px 18px}
+  .cx-search svg{flex:none;color:var(--ink-3)}
+  .cx-search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;
+    font-size:14.5px;color:var(--ink);font-weight:300}
+  .cx-search input:focus{outline:0}
+  .cx-search input::placeholder{color:var(--ink-3)}
+  .cx-select{
+    flex:none;border:1px solid var(--hair);border-radius:var(--r-pill);background:var(--surface);
+    padding:10px 34px 10px 18px;font:inherit;font-size:14px;font-weight:400;color:var(--ink-2);
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='11' height='7'><path d='M1 1l4.5 4.5L10 1' stroke='%239B9186' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  .cx-select:focus{outline:2.5px solid var(--maroon);outline-offset:2px}
+
+  /* ---- table ---- */
+  .cx-wrap{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow-x:auto}
+  .cx-tbl{width:100%;border-collapse:collapse;min-width:820px}
+  .cx-tbl thead th{
+    background:var(--sand);color:var(--ink-3);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+    font-weight:500;text-align:left;padding:15px 18px;border-bottom:1px solid var(--hair);white-space:nowrap;
+  }
+  .cx-tbl thead th.num,.cx-tbl td.num{text-align:right}
+  .cx-tbl tbody td{padding:15px 18px;border-bottom:1px solid var(--hair-soft);vertical-align:middle;font-size:14.5px}
+  .cx-tbl tbody tr:last-child td{border-bottom:0}
+  .cx-tbl tbody tr:hover{background:#FBF8F4}
+  .cx-rank{color:var(--ink-3);font-weight:300;font-variant-numeric:tabular-nums}
+  .cx-who{display:flex;align-items:center;gap:12px}
+  .cx-who input[type="checkbox"]{flex:none;width:17px;height:17px;accent-color:var(--maroon);cursor:pointer}
+  .cx-who a{color:var(--ink);font-weight:400;text-decoration:none;letter-spacing:-.01em}
+  .cx-who a:hover{color:var(--maroon);text-decoration:underline}
+  .cx-num{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:400}
+  .cx-num.muted{color:var(--ink-3);font-weight:300}
+  .cx-num.t-good{color:var(--teal);font-weight:500}
+  .cx-num.t-fair{color:var(--gold-ink);font-weight:500}
+  .cx-num.t-poor{color:var(--red-ink);font-weight:500}
+
+  /* Evidence — the AI's ordinal read (strong/mixed/weak). Reuses the site's
+     ordinal verdict scale (maroon/gold/red), never the recruiter's own
+     green/yellow/red decision colours below — those are a different axis. */
+  .cx-tbl .verdict{font-size:12.5px;padding:5px 13px}
+
+  /* Fit — how good a match/score actually is, on this page only. Driven by
+     the number itself (>=80 / 60-79 / <60), not by which category label sits
+     next to it: a "Potential fit" pill or a percentage cell must not read as
+     red just because it shares a class name with the AI's ordinal evidence
+     scale above. Green/amber/red/grey, matching the site's own status-colour
+     convention (green=confirmed, amber=attention, red=critical, grey=no
+     data) — B08's rule, applied here rather than the maroon/gold/grey scale
+     that stays reserved for the Evidence column's separate axis. */
+  .fit{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;padding:5px 13px;border-radius:var(--r-pill)}
+  .fit:before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+  .fit.good{background:var(--teal-soft);color:var(--teal)} .fit.good:before{background:var(--teal)}
+  .fit.fair{background:var(--gold-soft);color:var(--gold-ink)} .fit.fair:before{background:var(--gold)}
+  .fit.poor{background:var(--red-soft);color:var(--red-ink)} .fit.poor:before{background:var(--red)}
+  .fit.muted{background:var(--sand-2);color:var(--ink-2)} .fit.muted:before{background:var(--v-nodata)}
+
+  /* Decision — the recruiter's own recorded outcome. Green/yellow/red/grey,
+     per the app.css convention (--red exists specifically for this), kept
+     visually distinct from the AI verdict pills above. */
+  .dcell{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:400}
+  .dcell:before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+  .dcell .ic{font-size:13px;line-height:1}
+  .dcell.shortlist{color:var(--teal)} .dcell.shortlist:before{background:var(--teal)}
+  .dcell.hold{color:var(--gold-ink)} .dcell.hold:before{background:var(--gold)}
+  .dcell.reject{color:var(--red-ink)} .dcell.reject:before{background:var(--red)}
+  .dcell.pending{color:var(--ink-3)} .dcell.pending:before{background:var(--v-nodata)}
+  .dcell a{color:inherit;text-decoration:none}
+  .dcell a:hover{text-decoration:underline}
+
+  .cx-empty{padding:48px 24px;text-align:center;color:var(--ink-2);font-size:15px;font-weight:300}
+
+  /* ---- pager ---- */
+  .cx-pager{display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:16px;flex-wrap:wrap}
+  .cx-pager .rng{font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .cx-pager .nums{display:flex;gap:6px}
+  .cx-pager button{
+    min-width:34px;height:34px;padding:0 8px;border-radius:var(--r-pill);border:1px solid var(--hair);
+    background:var(--surface);color:var(--ink-2);font-size:13.5px;font-weight:400;
+  }
+  .cx-pager button:hover:not(:disabled){background:var(--sand-2)}
+  .cx-pager button.on{background:var(--maroon);border-color:var(--maroon);color:#fff}
+  .cx-pager button:disabled{opacity:.35;cursor:default}
+
+  /* ---- sticky selection bar for the criterion-level compare below ---- */
+  .cx-selectbar{
+    position:sticky;bottom:18px;z-index:30;margin-top:18px;display:flex;align-items:center;gap:14px;
+    background:var(--ink);color:#fff;border-radius:var(--r-pill);padding:12px 12px 12px 22px;
+    box-shadow:0 14px 34px -14px rgba(36,31,28,.5);width:fit-content;
+  }
+  .cx-selectbar[hidden]{display:none}
+  .cx-selectbar span{font-size:14px;font-weight:300}
+  .cx-selectbar .cta{padding:10px 20px;font-size:14px}
+  .cx-selectbar .ghost{padding:9px 16px;font-size:13px;background:transparent;border-color:rgba(255,255,255,.3);color:#fff}
+  .cx-selectbar .ghost:hover{background:rgba(255,255,255,.12)}
+
+  /* ---- compact compare — one column per candidate (as many as the
+     recruiter picks above, no cap), one row per summary metric. Candidates
+     in columns (not rows) keeps this legible at a handful of people; a
+     row-per-candidate table was considered and dropped — with only a
+     handful of metrics either orientation reads fine, but columns match
+     the rest of this page's .cmp-* naming and needed no new CSS. Wide
+     selections scroll horizontally via .cmp-wrap's overflow-x. Name only,
+     no photo. ---- */
+  .cmp-wrap{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+    overflow-x:auto;box-shadow:0 1px 0 rgba(36,31,28,.02)}
+  .cmp{width:100%;border-collapse:collapse;min-width:560px}
+  .cmp thead th{background:var(--sand);padding:22px 22px 20px;border-bottom:1px solid var(--hair);vertical-align:top}
+  .cmp thead th:first-child{width:180px;background:var(--sand);vertical-align:bottom}
+  .cmp-crit-label{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+  .colhead{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .coldial{width:60px;height:60px;position:relative;display:grid;place-items:center}
+  .coldial svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .coldial .n{font-size:19px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+  .colname{font-size:16.5px;font-weight:500;letter-spacing:-.015em;color:var(--ink)}
+
+  .cmp tbody th{
+    text-align:left;padding:14px 22px;border-bottom:1px solid var(--hair-soft);
+    font-size:13.5px;font-weight:500;color:var(--ink-2);white-space:nowrap;vertical-align:top;
+    position:sticky;left:0;background:var(--surface);box-shadow:1px 0 0 var(--hair-soft)
+  }
+  .cmp tbody td{padding:14px 22px;border-bottom:1px solid var(--hair-soft);vertical-align:top;font-size:14px}
+  .cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:0}
+  .cmp tbody tr:nth-child(odd) td{background:#FDFBF8}
+  .cmp tbody tr:nth-child(odd) th{background:#FDFBF8}
+  .cmp tbody tr:hover td{background:#FBF8F4}
+  .cmp tbody tr:hover th{background:#FBF8F4}
+  .cmp-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .cmp-tag{font-size:12px;font-weight:400;color:var(--ink-2);background:var(--sand);
+    border-radius:var(--r-pill);padding:3px 11px;white-space:nowrap}
+  .cmp-tag-toggle,.cmp-note-toggle{border:0;font:inherit;cursor:pointer;color:var(--maroon);font-weight:500}
+  .cmp-tag-toggle:hover,.cmp-note-toggle:hover{background:var(--sand-2)}
+  .cmp-muted{color:var(--ink-3);font-weight:300}
+
+  /* ---- section grouping — colspan header rows breaking the compact
+     compare table into the scannable groups the sections it lists map to
+     (Overall Performance / Skills & Qualifications / Experience / Candidate
+     Details / Evaluation Insights). Purely a visual grouping of the same
+     real rows already rendered below; no new data source. ---- */
+  .cmp tbody tr.cmp-section th{
+    position:static;box-shadow:none;background:var(--sand) !important;color:var(--ink-3);
+    font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+    padding:10px 22px;white-space:nowrap
+  }
+  .cmp tbody tr.cmp-section:first-child th{border-top:0}
+  .cmp tbody tr.cmp-section:hover th{background:var(--sand) !important}
+
+  /* ---- Evaluation Insights — short prose/notes cells, same expand pattern
+     as the key-skills tags above (first few shown, "+N" reveals the rest). ---- */
+  .cmp-notes{display:flex;flex-direction:column;align-items:flex-start;gap:7px;max-width:34ch}
+  .cmp-note{margin:0;font-size:13.5px;font-weight:300;color:var(--ink-2);line-height:1.5}
+  .cmp-note-more[hidden]{display:none}
+
+  .scroll-hint{display:none;font-size:13px;color:var(--ink-3);font-weight:300;margin-bottom:10px}
+
+  @media (max-width:980px){
+    .cx-tbl{min-width:680px}
+    .cmp{min-width:640px}
+    .cmp thead th{padding:20px 14px 16px}
+    .cmp thead th:first-child{width:150px}
+    .cmp tbody th,.cmp tbody td{padding:14px 14px}
+    .scroll-hint{display:block}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page wide">
+
+  <p class="breadcrumb"><a href="leaderboard.html">Candidates</a> · <span id="cx-crumb">Compare candidates</span></p>
+
+  <!-- ═══════ HEADER — the screen's name, and how many people are in it ═══════ -->
+  <div class="page-state">
+    <div class="cx-head-top">
+      <div>
+        <div class="kicker">Compare Candidates</div>
+        <p id="cx-role">Loading this campaign's candidates…</p>
+      </div>
+      <span class="cx-count" id="cx-count">— candidates</span>
+    </div>
+  </div>
+
+  <!-- ═══════ TOOLBAR — search, then narrow by status/score/experience/skills ═══════ -->
+  <section class="band" style="margin-top:0">
+    <div class="cx-toolbar">
+      <label class="cx-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="search" id="cx-search" placeholder="Search candidates" aria-label="Search candidates">
+      </label>
+      <select class="cx-select" id="cx-f-status" aria-label="Filter by status">
+        <option value="">Status</option>
+        <option value="STRONG_FIT">Strong fit</option>
+        <option value="POTENTIAL_FIT">Potential fit</option>
+        <option value="REVIEW_REQUIRED">Review required</option>
+        <option value="NOT_RECOMMENDED">Not recommended</option>
+      </select>
+      <select class="cx-select" id="cx-f-score" aria-label="Filter by score">
+        <option value="">Score</option>
+        <option value="90">90% and up</option>
+        <option value="75">75%–89%</option>
+        <option value="60">60%–74%</option>
+        <option value="0">Below 60%</option>
+      </select>
+      <select class="cx-select" id="cx-f-exp" aria-label="Filter by experience">
+        <option value="">Experience</option>
+        <option value="8">8+ years</option>
+        <option value="5">5–7.9 years</option>
+        <option value="2">2–4.9 years</option>
+        <option value="0">Under 2 years</option>
+      </select>
+      <select class="cx-select" id="cx-f-skills" aria-label="Filter by skills match">
+        <option value="">Skills</option>
+        <option value="90">90% and up</option>
+        <option value="75">75%–89%</option>
+        <option value="60">60%–74%</option>
+        <option value="0">Below 60%</option>
+      </select>
+      <select class="cx-select" id="cx-f-sort" aria-label="Sort candidates">
+        <option value="score-desc">Score: high to low</option>
+        <option value="score-asc">Score: low to high</option>
+        <option value="exp-desc">Experience: most first</option>
+        <option value="skills-desc">Skills: high to low</option>
+        <option value="name-asc">Name: A to Z</option>
+      </select>
+    </div>
+
+    <p class="scroll-hint">Swipe sideways to see every column</p>
+    <div class="cx-wrap">
+      <table class="cx-tbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Candidate</th>
+            <th class="num">Score</th>
+            <th class="num">Experience</th>
+            <th class="num">Skills</th>
+            <th>Evidence</th>
+            <th>Decision</th>
+          </tr>
+        </thead>
+        <tbody id="cx-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="cx-pager" id="cx-pager"></div>
+  </section>
+
+  <div class="cx-selectbar" id="cx-selectbar" hidden>
+    <span id="cx-select-count"></span>
+    <button type="button" class="cta sm" id="cx-compare-btn">Compare selected</button>
+    <button type="button" class="ghost sm" id="cx-clear-btn">Clear</button>
+  </div>
+
+  <!-- ═══════ COMPACT COMPARE — one summary row per metric, for however many are picked above ═══════ -->
+  <section class="band" id="cx-detail" hidden>
+    <div class="label">
+      <h2 id="c-title">Candidate comparison</h2>
+      <span class="aside" id="c-summary"></span>
+    </div>
+    <div class="cmp-wrap" id="c-table"></div>
+  </section>
+
+</div>
+
+<script>
+/* Candidate comparison list (B16) — a searchable, filterable, paginated table
+   over one campaign's evaluations, plus the existing criterion-by-criterion
+   compare for however many rows a recruiter actually picks (no cap).
+
+   The full evaluation list is still fetched in one call — the backend has no
+   limit/offset on GET /api/campaigns/{id}/evaluations yet (X12). Search,
+   filtering and paging below happen over that fetched set; only the visible
+   page's recruiter decisions are fetched (bounded to page size), not the
+   whole campaign, so this does not compound into one request per candidate. */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var Q = new URLSearchParams(location.search);
+  var PAGE_SIZE = 10;
+
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function set(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
+  function txt(id, s) { var el = document.getElementById(id); if (el) el.textContent = s; }
+  function getJSON(p) {
+    return fetch(API_BASE + p).then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    });
+  }
+
+  var STATUS = {
+    STRONG_FIT: { cls: 'strong', label: 'Strong fit' },
+    POTENTIAL_FIT: { cls: 'potential', label: 'Potential fit' },
+    REVIEW_REQUIRED: { cls: 'review', label: 'Review required' },
+    NOT_RECOMMENDED: { cls: 'no', label: 'Not recommended' }
+  };
+  function statusOf(code) { return STATUS[code] || STATUS.REVIEW_REQUIRED; }
+
+  /* Evidence = the checking agent's own confidence in its read. Ordinal
+     (strong/mixed/weak), so it reuses the site's maroon/gold/red verdict
+     scale — never the recruiter's own green/yellow/red decision colour below,
+     even though weak now happens to render in the same red family. */
+  var EVIDENCE = {
+    HIGH: { cls: 'strong', label: 'Strong' },
+    MEDIUM: { cls: 'review', label: 'Mixed' },
+    LOW: { cls: 'no', label: 'Weak' }
+  };
+  function evidenceOf(band) { return EVIDENCE[band] || null; }
+
+  /* Decision = the recruiter's own recorded outcome, fetched separately per
+     candidate (see loadDecisions) since it lives outside the evaluation. */
+  var DECISION = {
+    SHORTLIST: { cls: 'shortlist', ic: '\u2713', label: 'Shortlist' },
+    INTERVIEW: { cls: 'shortlist', ic: '\u2713', label: 'Interview' },
+    HOLD: { cls: 'hold', ic: '\u25cb', label: 'Review' },
+    REQUEST_REVIEW: { cls: 'hold', ic: '\u25cb', label: 'Review' },
+    WAITLIST: { cls: 'hold', ic: '\u25cb', label: 'Waitlist' },
+    REJECT: { cls: 'reject', ic: '\u2715', label: 'Reject' }
+  };
+
+  var state = {
+    campaign: null,
+    evals: [],       // full fetched set for this campaign
+    filtered: [],     // after search + filters
+    page: 1,
+    decisions: {},    // candidate_id -> disposition string ('' once checked and none recorded)
+    selected: {}      // candidate_id -> evaluation, no cap — pick as many as needed
+  };
+
+  function years(ev) {
+    var v = ev.experience_years_relevant != null ? ev.experience_years_relevant : ev.experience_years_total;
+    return v == null ? null : Number(v);
+  }
+  function skillsPct(ev) { return ev.skills_score == null ? null : Number(ev.skills_score); }
+  function scorePct(ev) { return ev.overall_score == null ? null : Number(ev.overall_score); }
+
+  function matchesFilters(ev) {
+    var q = (document.getElementById('cx-search').value || '').trim().toLowerCase();
+    if (q && (ev.candidate_name || '').toLowerCase().indexOf(q) === -1) return false;
+
+    var status = document.getElementById('cx-f-status').value;
+    if (status && ev.recommendation !== status) return false;
+
+    var scoreFloor = document.getElementById('cx-f-score').value;
+    if (scoreFloor !== '') {
+      var s = scorePct(ev);
+      var floor = Number(scoreFloor);
+      var ceil = floor === 90 ? 101 : floor === 75 ? 90 : floor === 60 ? 75 : 60;
+      if (s == null || s < floor || s >= ceil) return false;
+    }
+
+    var expFloor = document.getElementById('cx-f-exp').value;
+    if (expFloor !== '') {
+      var y = years(ev);
+      var yFloor = Number(expFloor);
+      var yCeil = yFloor === 8 ? Infinity : yFloor === 5 ? 8 : yFloor === 2 ? 5 : 2;
+      if (y == null || y < yFloor || y >= yCeil) return false;
+    }
+
+    var skFloor = document.getElementById('cx-f-skills').value;
+    if (skFloor !== '') {
+      var sk = skillsPct(ev);
+      var skF = Number(skFloor);
+      var skC = skF === 90 ? 101 : skF === 75 ? 90 : skF === 60 ? 75 : 60;
+      if (sk == null || sk < skF || sk >= skC) return false;
+    }
+    return true;
+  }
+
+  var SORTERS = {
+    'score-desc': function (a, b) { return (scorePct(b) || 0) - (scorePct(a) || 0); },
+    'score-asc': function (a, b) { return (scorePct(a) || 0) - (scorePct(b) || 0); },
+    'exp-desc': function (a, b) { return (years(b) || 0) - (years(a) || 0); },
+    'skills-desc': function (a, b) { return (skillsPct(b) || 0) - (skillsPct(a) || 0); },
+    'name-asc': function (a, b) { return (a.candidate_name || '').localeCompare(b.candidate_name || ''); }
+  };
+
+  function applyFilters() {
+    state.filtered = state.evals.filter(matchesFilters);
+    var sortSelect = document.getElementById('cx-f-sort');
+    var sorter = SORTERS[sortSelect ? sortSelect.value : ''] || SORTERS['score-desc'];
+    state.filtered.sort(sorter);
+    state.page = 1;
+    renderPage();
+  }
+
+  function renderPage() {
+    var total = state.filtered.length;
+    var pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    state.page = Math.min(Math.max(1, state.page), pages);
+    var start = (state.page - 1) * PAGE_SIZE;
+    var slice = state.filtered.slice(start, start + PAGE_SIZE);
+
+    var tbody = document.getElementById('cx-tbody');
+    if (!slice.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="cx-empty">No candidates match these filters.</div></td></tr>';
+    } else {
+      tbody.innerHTML = slice.map(function (ev, i) {
+        var rank = start + i + 1;
+        var st = statusOf(ev.recommendation);
+        var ev_ = evidenceOf(ev.confidence_band);
+        var s = scorePct(ev), y = years(ev), sk = skillsPct(ev);
+        var checked = state.selected[ev.candidate_id] ? 'checked' : '';
+        return '<tr data-cid="' + esc(ev.candidate_id) + '">' +
+          '<td class="cx-rank">' + rank + '</td>' +
+          '<td><span class="cx-who">' +
+            '<input type="checkbox" data-select="' + esc(ev.candidate_id) + '" ' + checked + ' aria-label="Select ' + esc(ev.candidate_name || 'candidate') + ' to compare">' +
+            '<a href="candidate.html?evaluation=' + encodeURIComponent(ev.id) + '">' + esc(ev.candidate_name || 'Name unavailable') + '</a>' +
+          '</span></td>' +
+          '<td class="num"><span class="cx-num' + (s == null ? ' muted' : ' t-' + fitTier(s)) + '">' + (s == null ? '\u2014' : Math.round(s) + '%') + '</span></td>' +
+          '<td class="num"><span class="cx-num' + (y == null ? ' muted' : '') + '">' + (y == null ? '\u2014' : y.toFixed(1) + ' yrs') + '</span></td>' +
+          '<td class="num"><span class="cx-num' + (sk == null ? ' muted' : ' t-' + fitTier(sk)) + '">' + (sk == null ? '\u2014' : Math.round(sk) + '%') + '</span></td>' +
+          '<td>' + (ev_ ? '<span class="verdict ' + ev_.cls + '">' + ev_.label + '</span>' : '<span class="cx-num muted">\u2014</span>') + '</td>' +
+          '<td class="cx-decision" data-cid="' + esc(ev.candidate_id) + '">' + decisionCell(ev) + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    renderPager(total, pages);
+    wireRowEvents();
+    loadDecisions(slice);
+  }
+
+  function decisionCell(ev) {
+    var recorded = state.decisions[ev.candidate_id];
+    if (recorded === undefined) return '<span class="dcell pending"><span class="ic">\u2026</span> Checking</span>';
+    var d = recorded && DECISION[recorded];
+    if (!d) return '<a class="dcell pending" href="candidate.html?evaluation=' + encodeURIComponent(ev.id) + '"><span class="ic">\u25cb</span> Pending</a>';
+    return '<a class="dcell ' + d.cls + '" href="candidate.html?evaluation=' + encodeURIComponent(ev.id) + '"><span class="ic">' + d.ic + '</span> ' + d.label + '</a>';
+  }
+
+  function loadDecisions(slice) {
+    var campaignId = state.campaign && state.campaign.id;
+    if (!campaignId) return;
+    var need = slice.filter(function (ev) { return state.decisions[ev.candidate_id] === undefined; });
+    if (!need.length) return;
+    need.forEach(function (ev) {
+      getJSON('/api/campaigns/' + encodeURIComponent(campaignId) + '/candidates/' + encodeURIComponent(ev.candidate_id) + '/recommendation')
+        .then(function (rec) {
+          state.decisions[ev.candidate_id] = (rec && rec.disposition) || null;
+        })
+        .catch(function () { state.decisions[ev.candidate_id] = null; })
+        .then(function () {
+          var cell = document.querySelector('.cx-decision[data-cid="' + cssEscape(ev.candidate_id) + '"]');
+          if (cell) cell.innerHTML = decisionCell(ev);
+        });
+    });
+  }
+
+  function cssEscape(s) { return String(s).replace(/["\\]/g, '\\$&'); }
+
+  function renderPager(total, pages) {
+    var html = '<span class="rng">Page ' + state.page + ' of ' + pages + '</span><span class="nums">';
+    html += '<button type="button" data-page="prev" ' + (state.page <= 1 ? 'disabled' : '') + '>\u2190</button>';
+    var from = Math.max(1, state.page - 2), to = Math.min(pages, from + 3);
+    from = Math.max(1, to - 3);
+    for (var p = from; p <= to; p++) {
+      html += '<button type="button" data-page="' + p + '" class="' + (p === state.page ? 'on' : '') + '">' + p + '</button>';
+    }
+    html += '<button type="button" data-page="next" ' + (state.page >= pages ? 'disabled' : '') + '>\u2192</button></span>';
+    var pager = document.getElementById('cx-pager');
+    pager.innerHTML = html;
+    Array.prototype.forEach.call(pager.querySelectorAll('button[data-page]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var v = btn.getAttribute('data-page');
+        if (v === 'prev') state.page -= 1;
+        else if (v === 'next') state.page += 1;
+        else state.page = Number(v);
+        renderPage();
+        document.querySelector('.cx-wrap').scrollIntoView({ block: 'nearest' });
+      });
+    });
+  }
+
+  function wireRowEvents() {
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-select]'), function (box) {
+      box.addEventListener('change', function () {
+        var cid = box.getAttribute('data-select');
+        var ev = state.evals.find(function (e) { return e.candidate_id === cid; });
+        if (box.checked) {
+          state.selected[cid] = ev;
+        } else {
+          delete state.selected[cid];
+        }
+        renderSelectBar();
+      });
+    });
+  }
+
+  function renderSelectBar() {
+    var ids = Object.keys(state.selected);
+    var bar = document.getElementById('cx-selectbar');
+    if (!ids.length) { bar.hidden = true; return; }
+    bar.hidden = false;
+    txt('cx-select-count', ids.length + (ids.length === 1 ? ' candidate selected' : ' candidates selected'));
+    document.getElementById('cx-compare-btn').disabled = ids.length < 2;
+  }
+
+  document.getElementById('cx-clear-btn').addEventListener('click', function () {
+    state.selected = {};
+    renderSelectBar();
+    Array.prototype.forEach.call(document.querySelectorAll('input[data-select]'), function (box) { box.checked = false; });
+  });
+
+  document.getElementById('cx-search').addEventListener('input', debounce(applyFilters, 200));
+  ['cx-f-status', 'cx-f-score', 'cx-f-exp', 'cx-f-skills', 'cx-f-sort'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', applyFilters);
+  });
+
+  function debounce(fn, ms) {
+    var t;
+    return function () { clearTimeout(t); t = setTimeout(fn, ms); };
+  }
+
+  /* ---- compact summary compare, for however many rows are picked ----
+     One column per candidate, one row per metric \u2014 real fields only
+     (Evaluation.skills_score/experience_score/education_score/
+     certification_score, already weight-rolled server-side per category;
+     see app/db/models.py's Evaluation and app/core/criterion_scorer.py's
+     category map). No fabricated "culture fit"/"notice period"/"current
+     role" rows \u2014 this product's data model has nothing behind them, and
+     this repo treats shown-but-fake fields as a defect (see X37). */
+  /* Fit tier — green (>=80), amber (60-79) or red (<60), for anything driven
+     by an actual score. Kept as one shared source of truth so the dial ring,
+     the percentage cells and the fit-status pill in the compare header all
+     agree with each other for the same candidate. Same thresholds pctCell
+     already used, just renamed off the maroon/gold/grey "strong/review/no"
+     classes so a perfect score never renders in the site's brand-maroon,
+     which reads as a warning colour, not a positive one. */
+  var FIT_TIER_COLOR = { good: 'var(--teal)', fair: 'var(--gold)', poor: 'var(--red)', muted: 'var(--v-nodata)' };
+  function fitTier(v) {
+    if (v == null) return 'muted';
+    var n = Number(v);
+    return n >= 70 ? 'good' : n >= 40 ? 'fair' : 'poor';
+  }
+
+  function dial(score) {
+    var n = Number(score) || 0;
+    var off = Math.max(0, Math.min(170, 170 - (n / 100 * 170)));
+    var stroke = FIT_TIER_COLOR[fitTier(score)];
+    return '<div class="coldial"><svg width="60" height="60" viewBox="0 0 64 64">' +
+      '<circle cx="32" cy="32" r="27" fill="none" stroke="var(--sand-2)" stroke-width="7"/>' +
+      '<circle cx="32" cy="32" r="27" fill="none" stroke="' + stroke + '" stroke-width="7" ' +
+      'stroke-linecap="round" transform="rotate(-90 32 32)" stroke-dasharray="170" ' +
+      'stroke-dashoffset="' + off + '"/></svg><span class="n">' +
+      Math.round(n) + '</span></div>';
+  }
+
+  function pctCell(v) {
+    if (v == null) return '<span class="cmp-muted">Not scored</span>';
+    var n = Math.round(Number(v));
+    return '<span class="fit ' + fitTier(v) + '">' + n + '%</span>';
+  }
+
+  /* Key skills = matched terms from this candidate's SKILL-category
+     criteria in the /compare payload (the only place matched_terms are
+     returned) where the outcome was at least a partial match. */
+  function keySkillsOf(criteria, candidateId) {
+    var terms = [];
+    (criteria || []).forEach(function (row) {
+      if (row.category !== 'SKILL') return;
+      var cell = (row.cells || []).find(function (c) { return c.candidate_id === candidateId; });
+      if (!cell || (cell.outcome !== 'CONFIRMED_MATCH' && cell.outcome !== 'PARTIAL_MATCH')) return;
+      (cell.matched_terms || []).forEach(function (t) { if (terms.indexOf(t) === -1) terms.push(t); });
+    });
+    return terms;
+  }
+
+  function tagsCell(terms) {
+    if (!terms.length) return '<span class="cmp-muted">None recorded</span>';
+    var shown = terms.slice(0, 4);
+    var rest = terms.slice(4);
+    var html = '<div class="cmp-tags">' + shown.map(function (t) {
+      return '<span class="cmp-tag">' + esc(t) + '</span>';
+    }).join('');
+    if (rest.length) {
+      html += rest.map(function (t) {
+        return '<span class="cmp-tag cmp-tag-more" hidden>' + esc(t) + '</span>';
+      }).join('');
+      html += '<button type="button" class="cmp-tag cmp-tag-toggle">+' + rest.length + '</button>';
+    }
+    return html + '</div>';
+  }
+
+  /* Clicking a "+N" toggle reveals the rest of that cell's key-skill tags in
+     place (and lets the recruiter collapse them again). Delegated on
+     #c-table itself, which renderCompact only ever replaces the *contents*
+     of (via set()/innerHTML) — the node the listener is bound to is never
+     replaced, so this is wired once, not on every re-render. */
+  document.getElementById('c-table').addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.cmp-tag-toggle, .cmp-note-toggle');
+    if (!btn) return;
+    var isNote = btn.classList.contains('cmp-note-toggle');
+    var wrap = btn.closest(isNote ? '.cmp-notes' : '.cmp-tags');
+    if (!wrap) return;
+    var more = wrap.querySelectorAll(isNote ? '.cmp-note-more' : '.cmp-tag-more');
+    var expanding = more.length && more[0].hasAttribute('hidden');
+    Array.prototype.forEach.call(more, function (t) {
+      if (expanding) t.removeAttribute('hidden'); else t.setAttribute('hidden', '');
+    });
+    btn.textContent = expanding ? 'Show less' : '+' + more.length + (isNote ? ' more' : '');
+  });
+
+  function statusCell(ev) {
+    var recorded = state.decisions[ev.candidate_id];
+    var d = recorded && DECISION[recorded];
+    if (!d) return '<span class="cmp-muted">Pending</span>';
+    return '<span class="dcell ' + d.cls + '"><span class="ic">' + d.ic + '</span> ' + d.label + '</span>';
+  }
+
+  /* Same value-extraction rule candidate.html's itemText/listItems use for
+     the strengths/gaps dicts evaluation_service.py writes (each keyed by
+     criterion_key/label/score/weight, not a fixed "text" field) — reused
+     here rather than assuming a shape those items don't actually have. */
+  function itemText(item) {
+    if (item == null) return null;
+    if (typeof item === 'string') return item;
+    return item.text || item.description || item.label || item.detail || null;
+  }
+
+  /* Evaluation Insights notes — strengths/gaps/review flags, as a short
+     expandable list (same "first few, then +N" pattern as tagsCell) rather
+     than a wall of text in an already-compact table. */
+  function noteListCell(items) {
+    var texts = (items || []).map(itemText).filter(function (t) { return !!t; });
+    if (!texts.length) return '<span class="cmp-muted">Not available</span>';
+    var shown = texts.slice(0, 2);
+    var rest = texts.slice(2);
+    var html = '<div class="cmp-notes">' + shown.map(function (t) {
+      return '<p class="cmp-note">' + esc(t) + '</p>';
+    }).join('');
+    if (rest.length) {
+      html += rest.map(function (t) {
+        return '<p class="cmp-note cmp-note-more" hidden>' + esc(t) + '</p>';
+      }).join('');
+      html += '<button type="button" class="cmp-note-toggle">+' + rest.length + ' more</button>';
+    }
+    return html + '</div>';
+  }
+
+  function summaryCell(text) {
+    return text ? '<p class="cmp-note">' + esc(text) + '</p>' : '<span class="cmp-muted">Not available</span>';
+  }
+
+  /* Review flags = the two "something's off" signals EvaluationDetail
+     carries beyond strengths/gaps: missing_information (flat strings) and
+     contradictions (dicts) — combined the same way candidate.html's own
+     gaps panel already folds them in (web/candidate.html:798-799). */
+  function flagsOf(detail) {
+    if (!detail) return [];
+    return [].concat(detail.missing_information || [], detail.contradictions || []);
+  }
+
+  function renderCompact(chosen, criteria, locations, details) {
+    var head = '<tr><th><span class="cmp-crit-label">Comparison Criteria</span></th>' + chosen.map(function (e) {
+      var v = statusOf(e.recommendation);
+      return '<th><div class="colhead">' + dial(e.overall_score) +
+        '<div class="colname">' + esc(e.candidate_name || 'Candidate') + '</div>' +
+        '<span class="fit ' + fitTier(e.overall_score) + '">' + esc(v.label) + '</span></div></th>';
+    }).join('') + '</tr>';
+
+    var rank = {};
+    state.evals.forEach(function (ev, i) { rank[ev.candidate_id] = i + 1; });
+
+    /* Section grouping is presentation only — every row below is one of the
+       real metric/detail rows this table already rendered flat; no field
+       here is invented for a candidate the data model doesn't back (see the
+       "shipped example" / X37 note above keySkillsOf). Fields the request
+       asks for but this data model has no backing for (culture fit, notice
+       period, work authorization/arrangement) are left out rather than
+       padded with permanent "Not available" rows. */
+    var sections = [
+      { title: 'Overall Performance', rows: [
+          { label: 'Overall score', cell: function (e) { return pctCell(e.overall_score); } },
+          { label: 'Rank in campaign', cell: function (e) {
+              var r = rank[e.candidate_id];
+              return r ? '#' + r + ' of ' + state.evals.length : '<span class="cmp-muted">Not available</span>';
+            } },
+          { label: 'AI confidence', cell: function (e) {
+              var ev_ = evidenceOf(e.confidence_band);
+              return ev_ ? '<span class="verdict ' + ev_.cls + '">' + esc(ev_.label) + '</span>' : '<span class="cmp-muted">Not available</span>';
+            } },
+          { label: 'Status', cell: function (e) { return statusCell(e); } }
+      ] },
+      { title: 'Skills & Qualifications', rows: [
+          { label: 'Skills match', cell: function (e) { return pctCell(e.skills_score); } },
+          { label: 'Key skills', cell: function (e) { return tagsCell(keySkillsOf(criteria, e.candidate_id)); } },
+          { label: 'Education match', cell: function (e) { return pctCell(e.education_score); } },
+          { label: 'Certification match', cell: function (e) { return pctCell(e.certification_score); } }
+      ] },
+      { title: 'Experience', rows: [
+          { label: 'Experience match', cell: function (e) { return pctCell(e.experience_score); } },
+          { label: 'Years of experience', cell: function (e) {
+              var y = years(e);
+              return y == null ? '<span class="cmp-muted">Not recorded</span>' : y.toFixed(1) + ' yrs';
+            } }
+      ] },
+      { title: 'Candidate Details', rows: [
+          { label: 'Location', cell: function (e) {
+              var loc = locations[e.candidate_id];
+              return loc ? esc(loc) : '<span class="cmp-muted">Not recorded</span>';
+            } }
+      ] },
+      { title: 'Evaluation Insights', rows: [
+          { label: 'Strengths', cell: function (e) { return noteListCell((details[e.candidate_id] || {}).strengths); } },
+          { label: 'Gaps', cell: function (e) { return noteListCell((details[e.candidate_id] || {}).gaps); } },
+          { label: 'Review flags', cell: function (e) { return noteListCell(flagsOf(details[e.candidate_id])); } },
+          { label: 'AI evaluation summary', cell: function (e) { return summaryCell((details[e.candidate_id] || {}).narrative); } }
+      ] }
+    ];
+
+    var body = sections.map(function (section) {
+      var sectionHead = '<tr class="cmp-section"><th colspan="' + (chosen.length + 1) + '">' + esc(section.title) + '</th></tr>';
+      var sectionRows = section.rows.map(function (m) {
+        return '<tr><th>' + esc(m.label) + '</th>' +
+          chosen.map(function (e) { return '<td>' + m.cell(e) + '</td>'; }).join('') + '</tr>';
+      }).join('');
+      return sectionHead + sectionRows;
+    }).join('');
+
+    set('c-table', '<table class="cmp"><thead>' + head + '</thead><tbody>' + body + '</tbody></table>');
+    txt('c-title', 'Candidate comparison');
+    txt('c-summary', chosen.length + ' candidates, same rubric version');
+  }
+
+  document.getElementById('cx-compare-btn').addEventListener('click', function () {
+    var chosen = Object.keys(state.selected).map(function (cid) { return state.selected[cid]; });
+    if (chosen.length < 2) return;
+    var qs = chosen.map(function (e) { return 'candidate_ids=' + encodeURIComponent(e.candidate_id); }).join('&');
+    var detail = document.getElementById('cx-detail');
+
+    Promise.all([
+      fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(state.campaign.id) + '/compare?' + qs)
+        .then(function (res) {
+          return res.json().then(function (j) {
+            if (!res.ok) throw new Error((j && j.detail && j.detail.message) || 'These candidates cannot be compared.');
+            return j;
+          });
+        }),
+      Promise.all(chosen.map(function (e) {
+        return getJSON('/api/processing/candidates/' + encodeURIComponent(e.candidate_id))
+          .then(function (c) { return [e.candidate_id, c && c.location]; })
+          .catch(function () { return [e.candidate_id, null]; });
+      })),
+      /* Evaluation Insights (strengths/gaps/review flags/summary) live on
+         the full evaluation detail, not the list/compare endpoints above —
+         same endpoint candidate.html already reads for the same fields. */
+      Promise.all(chosen.map(function (e) {
+        return getJSON('/api/evaluations/' + encodeURIComponent(e.id))
+          .then(function (d) { return [e.candidate_id, d]; })
+          .catch(function () { return [e.candidate_id, null]; });
+      }))
+    ]).then(function (results) {
+      var body = results[0];
+      var locations = {};
+      results[1].forEach(function (pair) { locations[pair[0]] = pair[1]; });
+      var details = {};
+      results[2].forEach(function (pair) { details[pair[0]] = pair[1]; });
+      detail.hidden = false;
+      renderCompact(chosen, body.criteria || [], locations, details);
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }).catch(function (e) {
+      detail.hidden = false;
+      set('c-table', '<div class="cx-empty">' + esc(e.message || 'The comparison could not be loaded.') + '</div>');
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ---- shipped example: only shown if live data can't be loaded ---- */
+  function showExample(message) {
+    txt('cx-crumb', 'Compare candidates \u00b7 example data');
+    txt('cx-role', message + ' The list below is the shipped example, not a real campaign.');
+    txt('cx-count', '6 candidates');
+    document.getElementById('cx-f-status').closest('.band').querySelector('.cx-toolbar').style.opacity = '.5';
+    Array.prototype.forEach.call(document.querySelectorAll('.cx-toolbar select,.cx-toolbar input'), function (el) { el.disabled = true; });
+    var sample = [
+      ['1', 'Tariq Al-Naimi', '92%', '8.5 yrs', '94%', 'strong', 'Strong', 'shortlist', '\u2713', 'Shortlist'],
+      ['2', 'Sarah Khan', '89%', '7.2 yrs', '91%', 'strong', 'Strong', 'shortlist', '\u2713', 'Shortlist'],
+      ['3', 'John Smith', '87%', '6.8 yrs', '88%', 'strong', 'Strong', 'hold', '\u25cb', 'Review'],
+      ['4', 'Priya Menon', '84%', '6.1 yrs', '82%', 'review', 'Mixed', 'hold', '\u25cb', 'Review'],
+      ['5', 'Daniel Cruz', '78%', '5.4 yrs', '76%', 'no', 'Weak', 'reject', '\u2715', 'Reject'],
+      ['6', 'Abdulrahman', '74%', '4.9 yrs', '71%', 'review', 'Mixed', 'hold', '\u25cb', 'Review']
+    ];
+    document.getElementById('cx-tbody').innerHTML = sample.map(function (r) {
+      return '<tr><td class="cx-rank">' + r[0] + '</td>' +
+        '<td><span class="cx-who"><a href="leaderboard.html">' + r[1] + '</a></span></td>' +
+        '<td class="num"><span class="cx-num">' + r[2] + '</span></td>' +
+        '<td class="num"><span class="cx-num">' + r[3] + '</span></td>' +
+        '<td class="num"><span class="cx-num">' + r[4] + '</span></td>' +
+        '<td><span class="verdict ' + r[5] + '">' + r[6] + '</span></td>' +
+        '<td><span class="dcell ' + r[7] + '"><span class="ic">' + r[8] + '</span> ' + r[9] + '</span></td></tr>';
+    }).join('');
+    txt('cx-pager', '');
+    document.getElementById('cx-pager').innerHTML = '<span class="rng">1\u20136 of 6</span>';
+  }
+
+  (Q.get('campaign')
+    ? Promise.resolve(Q.get('campaign'))
+    : getJSON('/api/runs').then(function (b) {
+        var runs = (b && b.runs) || [];
+        if (!runs.length) throw new Error('no runs');
+        return runs[0].campaign_id;
+      })
+  ).then(function (id) {
+    return Promise.all([
+      getJSON('/api/campaigns/' + id),
+      getJSON('/api/campaigns/' + id + '/evaluations')
+    ]);
+  }).then(function (r) {
+    var campaign = r[0], evals = r[1] || [];
+    if (!evals.length) throw new Error('no evals');
+    state.campaign = campaign;
+    state.evals = evals.slice().sort(function (a, b) { return (b.overall_score || 0) - (a.overall_score || 0); });
+
+    txt('cx-crumb', (campaign.job_title || campaign.name || 'Campaign') + (campaign.location ? ' \u00b7 ' + campaign.location : ''));
+    txt('cx-role', (campaign.job_title || campaign.name || 'This campaign') + (campaign.location ? ' \u00b7 ' + campaign.location : ''));
+    txt('cx-count', state.evals.length + (state.evals.length === 1 ? ' candidate' : ' candidates'));
+
+    applyFilters();
+  }).catch(function (e) {
+    var raw = (e && e.message) || '';
+    if (raw === 'no runs') showExample('No live assessment runs are available yet.');
+    else if (raw === 'no evals') showExample('No candidates have been assessed in this campaign yet.');
+    else showExample('The candidate list could not be loaded.');
+  });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

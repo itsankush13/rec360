@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Comms · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* ---- page-specific: campaign picker, thread rows ---- */
+  .picker{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  .picker select{
+    font-family:inherit;font-size:14.5px;font-weight:300;color:var(--ink);
+    background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:10px 14px;min-width:260px;
+  }
+
+  .msg-row{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft);align-items:flex-start}
+  .msg-row:first-child{border-top:0}
+  .msg-time{flex:none;width:132px;font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.5}
+  .msg-time b{display:block;font-size:14px;color:var(--ink-2);font-weight:400}
+  .msg-body{flex:1;min-width:0;font-size:15px;color:var(--ink);font-weight:300;line-height:1.55}
+  .msg-body span{display:block;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:3px}
+
+  .thread-msg{padding:12px 0;border-top:1px solid var(--hair-soft)}
+  .thread-msg:first-child{border-top:0}
+  .thread-msg .tm-head{display:flex;gap:10px;align-items:baseline;font-size:13.5px;color:var(--ink-3);font-weight:300}
+  .thread-msg .tm-head b{color:var(--ink);font-weight:400}
+  .thread-msg .tm-subject{margin-top:6px;font-size:15px;color:var(--ink);font-weight:400}
+  .thread-msg .tm-body{margin-top:4px;font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.55;white-space:pre-wrap}
+
+  @media (max-width:640px){
+    .msg-row{flex-direction:column;gap:4px}
+    .msg-time{width:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the promise ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date">The communication log</div>
+    <h1>What was <b>actually said</b> to a candidate, on the record.</h1>
+    <p>Every composed message is recorded against the candidate. Whether it is also transmitted depends on how this environment is configured — each message below states which it was.</p>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — campaign picker ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Campaign</h2>
+      <span class="aside">Choose which campaign's log to read</span>
+    </div>
+    <div class="picker">
+      <select id="c-campaign-select"><option value="">Loading campaigns…</option></select>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — summary first ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Messages recorded</h2>
+      <span class="aside" id="c-summary-aside">By template</span>
+    </div>
+    <div class="chartcard">
+      <div class="ct">Messages by template</div>
+      <div class="cs" id="c-summary-line">Choose a campaign to see its message log.</div>
+      <div class="hbars" id="c-hbars"></div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — compose ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Record a message</h2>
+      <span class="aside">Recorded against the candidate. Sent for real only when this environment is configured for live Outlook.</span>
+    </div>
+    <div class="fold">
+      <details id="c-compose-fold">
+        <summary>
+          <span class="b ok">✎</span>
+          <span class="t">Compose</span>
+          <span class="s">Pick a candidate and a template</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="form">
+            <div class="fr">
+              <div class="fld"><label for="c-actor">Acting person</label><select id="c-actor"><option value="">Loading users…</option></select></div>
+              <div class="fld">
+                <label for="c-candidate">Candidate</label>
+                <select id="c-candidate"><option value="">Choose a candidate…</option></select>
+              </div>
+              <div class="fld">
+                <label for="c-template">Template</label>
+                <select id="c-template"><option value="">Choose a template…</option></select>
+              </div>
+              <div class="fld">
+                <label for="c-channel">Channel</label>
+                <select id="c-channel">
+                  <option value="EMAIL">Email</option>
+                  <option value="SMS">SMS</option>
+                  <option value="PHONE_NOTE">Phone note</option>
+                </select>
+              </div>
+            </div>
+            <div id="c-extra-fields"></div>
+            <div class="fr">
+              <div class="fld">
+                <label for="c-recipient">Recipient</label>
+                <input type="text" id="c-recipient" list="c-proxy-list" placeholder="Email address or phone number">
+                <datalist id="c-proxy-list">
+                  <option value="daipayan.r@protivitiglobal.in" label="Daipayan">
+                  <option value="chiranjib.sarma@protivitiglobal.in" label="Chiranjib">
+                  <option value="preetam.c@protivitiglobal.me" label="Preetam">
+                  <option value="ankush.saxena@protivitiglobal.in" label="Ankush">
+                  <option value="subhadeep.m@protivitiglobal.in" label="Subhadeep">
+                </datalist>
+                <div class="hint" id="c-recipient-hint">Shown: the email extracted from the candidate's CV. For a live demo send, pick an approved colleague instead.</div>
+              </div>
+            </div>
+            <div class="fr">
+              <div class="fld">
+                <label for="c-subject">Subject</label>
+                <input type="text" id="c-subject">
+              </div>
+            </div>
+            <div class="fr">
+              <div class="fld">
+                <label for="c-body">Body</label>
+                <textarea id="c-body"></textarea>
+              </div>
+            </div>
+            <div class="form err" id="c-err" hidden></div>
+            <div class="facts">
+              <span class="sim" id="c-sendbadge">Checking how this environment sends…</span>
+              <button type="button" class="cta" id="c-send-btn">Record message</button>
+            </div>
+            <div class="simnote" id="c-sendnote">Checking how this environment sends…</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — the log, grouped by candidate ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Message log</h2>
+      <span class="aside" id="c-log-aside">Grouped by candidate</span>
+    </div>
+    <div class="fold" id="c-log"></div>
+  </section>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+/* Comms — live wiring.
+
+   Summary first: how many messages by template, and how many people have
+   been contacted out of how many are in the campaign. Never a count
+   without its denominator.
+
+   A message never moves the lifecycle. Sending records an audit row and
+   nothing else — the candidate's state is untouched.
+
+   Whether the message is transmitted depends on this environment's email
+   backend. The badge and note ask the API and say so plainly — see
+   window.__r360ApplySendBadge in assets/app.js. */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var CAMPAIGN_KEY = 'recruitment360.comms.campaignId';
+
+  var campaignSelect = document.getElementById('c-campaign-select');
+  var candidateSelect = document.getElementById('c-candidate');
+  var templateSelect = document.getElementById('c-template');
+  var extraFields = document.getElementById('c-extra-fields');
+  var recipientInput = document.getElementById('c-recipient');
+  var subjectInput = document.getElementById('c-subject');
+  var bodyInput = document.getElementById('c-body');
+  var errBox = document.getElementById('c-err');
+  var sendBtn = document.getElementById('c-send-btn');
+  var actorSelect = document.getElementById('c-actor');
+  var actors = [];
+
+  var campaignId = null;
+  var templates = [];
+  var candidates = [];
+  var lastUnresolved = [];
+  var emailMode = null; // 'outlook' | 'simulated' | null (unknown)
+
+  // Truthfulness fix (2026-09-14 demo): the badge used to hardcode
+  // "SIMULATED". It now asks the API which backend is really active.
+  // Only the EMAIL channel ever transmits for real — SMS and phone note
+  // stay recorded-only regardless of backend (see app/api/messages.py).
+  window.__r360ApplySendBadge(
+    document.getElementById('c-sendbadge'),
+    document.getElementById('c-sendnote'),
+    'email',
+    {
+      realBadge: 'SENDS FOR REAL — OUTLOOK LIVE',
+      realNote: 'Email sends for real through Outlook to the recipient above. SMS and phone note are always recorded only, never transmitted.',
+      simBadge: 'SIMULATED — INTEGRATION PENDING',
+      simNote: 'Nothing is transmitted. The message is recorded against the candidate only.',
+    }
+  );
+  window.__r360SendMode('email').then(function (mode) {
+    emailMode = mode;
+    sendBtn.textContent = mode === 'outlook' ? 'Send message' : 'Record message';
+  });
+
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function set(id, h) { var e = document.getElementById(id); if (e) e.innerHTML = h; }
+  function say(id, s) { var e = document.getElementById(id); if (e) e.textContent = s; }
+  function getJSON(p) {
+    return fetch(API_BASE + p).then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    });
+  }
+  function postJSON(p, body) {
+    return fetch(API_BASE + p, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(function (r) {
+      return r.text().then(function (raw) {
+        var j = null; try { j = raw ? JSON.parse(raw) : null; } catch (e) {}
+        if (!r.ok) throw new Error((j && j.detail) || 'That did not save.');
+        return j;
+      });
+    });
+  }
+
+  function when(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d.getTime())) return 'time not recorded';
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ', ' +
+      ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  /* ── campaign picker ─────────────────────────────────────────────────── */
+
+  function loadCampaigns() {
+    return getJSON('/api/campaigns').then(function (list) {
+      var remembered = new URLSearchParams(location.search).get('campaign') || localStorage.getItem(CAMPAIGN_KEY);
+      campaignSelect.innerHTML = campaignOptions(list).map(function (option) {
+        return '<option value="' + esc(option.id) + '">' + esc(option.label) + '</option>';
+      }).join('') || '<option value="">No campaigns yet</option>';
+      var pick = (remembered && list.some(function (c) { return c.id === remembered; }))
+        ? remembered
+        : (list[0] && list[0].id) || '';
+      campaignSelect.value = pick;
+      return pick;
+    }).catch(function () {
+      campaignSelect.innerHTML = '<option value="">Could not load campaigns — start the API</option>';
+      return null;
+    });
+  }
+
+  campaignSelect.addEventListener('change', function () {
+    campaignId = campaignSelect.value;
+    if (campaignId) localStorage.setItem(CAMPAIGN_KEY, campaignId);
+    loadCampaignData();
+  });
+
+  /* ── summary ─────────────────────────────────────────────────────────── */
+
+  function renderSummary(log, allCandidates) {
+    var byTemplate = {};
+    log.forEach(function (m) {
+      var key = m.template_id || 'No template';
+      byTemplate[key] = (byTemplate[key] || 0) + 1;
+    });
+    var keys = Object.keys(byTemplate);
+    var max = Math.max.apply(null, keys.map(function (k) { return byTemplate[k]; }).concat([1]));
+
+    if (!keys.length) {
+      set('c-hbars', '<div class="empty"><b>No messages recorded on this campaign yet.</b>Compose one below.</div>');
+    } else {
+      set('c-hbars', keys.sort(function (a, b) { return byTemplate[b] - byTemplate[a]; })
+        .map(function (k) {
+          var n = byTemplate[k];
+          var pct = Math.round((n / max) * 100);
+          return '<div class="hbar"><div class="k">' + esc(templateName(k)) + '</div>' +
+            '<div class="t"><i style="width:' + pct + '%"></i></div>' +
+            '<div class="n">' + n + '</div></div>';
+        }).join(''));
+    }
+
+    var contactedIds = {};
+    log.forEach(function (m) { if (m.candidate_id) contactedIds[m.candidate_id] = true; });
+    var contacted = Object.keys(contactedIds).length;
+    var total = allCandidates.length;
+    say('c-summary-line', total
+      ? contacted + ' of ' + total + ' shortlisted candidate' + (total === 1 ? '' : 's') +
+        ' have a message recorded.' +
+        (contacted < total
+          ? ' ' + (total - contacted) + ' have had no message at all.'
+          : '')
+      : 'This campaign has no shortlisted candidates yet.');
+    say('c-summary-aside', log.length + ' message' + (log.length === 1 ? '' : 's') + ' recorded, by template');
+  }
+
+  function templateName(id) {
+    var t = templates.filter(function (x) { return x.id === id; })[0];
+    return t ? t.name : (id === 'No template' ? 'No template' : id);
+  }
+
+  /* ── compose ─────────────────────────────────────────────────────────── */
+
+  function loadTemplates() {
+    return getJSON('/api/campaigns/' + campaignId + '/messages/templates').then(function (list) {
+      templates = list || [];
+      templateSelect.innerHTML = '<option value="">Choose a template…</option>' +
+        templates.map(function (t) {
+          return '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>';
+        }).join('');
+    }).catch(function () { templates = []; });
+  }
+
+  function loadCandidates() {
+    return getJSON('/api/campaigns/' + campaignId + '/candidates').then(function (list) {
+      candidates = list || [];
+      candidateSelect.innerHTML = '<option value="">Choose a candidate…</option>' +
+        candidates.map(function (c) {
+          return '<option value="' + esc(c.id) + '">' + esc(c.full_name || c.name || 'Unnamed') + '</option>';
+        }).join('');
+      return candidates;
+    }).catch(function () { candidates = []; return []; });
+  }
+
+  function renderExtraFields(names) {
+    // candidate_name normally comes from the candidate record, so it needs no
+    // input. When extraction left the name blank (a requires_review CV) the
+    // server answers "Not filled in yet: candidate_name" and there was nowhere
+    // to type it. Offer the field in exactly that case.
+    var picked = candidates.filter(function (c) { return c.id === candidateSelect.value; })[0];
+    var known = ['role', 'campaign'];
+    if (picked && (picked.full_name || picked.name)) known.push('candidate_name');
+    var extra = names.filter(function (n) { return known.indexOf(n) === -1; });
+    if (!extra.length) { extraFields.innerHTML = ''; return; }
+    extraFields.innerHTML = '<div class="fr">' + extra.map(function (n) {
+      return '<div class="fld"><label for="c-extra-' + esc(n) + '">' +
+        esc(n.replace(/_/g, ' ')) + '</label>' +
+        '<input type="text" id="c-extra-' + esc(n) + '" data-extra="' + esc(n) + '"></div>';
+    }).join('') + '</div>';
+  }
+
+  function currentExtraValues() {
+    var values = {};
+    Array.prototype.forEach.call(extraFields.querySelectorAll('[data-extra]'), function (el) {
+      values[el.getAttribute('data-extra')] = el.value;
+    });
+    return values;
+  }
+
+  function doRender() {
+    var candidateId = candidateSelect.value;
+    var templateId = templateSelect.value;
+    errBox.hidden = true;
+    if (!candidateId || !templateId) return;
+
+    postJSON('/api/campaigns/' + campaignId + '/messages/templates/' + templateId + '/render', {
+      candidate_id: candidateId, values: currentExtraValues(),
+    }).then(function (rendered) {
+      subjectInput.value = rendered.subject;
+      bodyInput.value = rendered.body;
+      lastUnresolved = rendered.unresolved || [];
+      showUnresolved();
+    }).catch(function () {});
+  }
+
+  function showUnresolved() {
+    if (lastUnresolved.length) {
+      errBox.hidden = false;
+      errBox.textContent = 'Not filled in yet: ' + lastUnresolved.join(', ') + '.';
+    } else {
+      errBox.hidden = true;
+    }
+  }
+
+  templateSelect.addEventListener('change', function () {
+    var t = templates.filter(function (x) { return x.id === templateSelect.value; })[0];
+    renderExtraFields(t ? t.placeholders : []);
+    doRender();
+  });
+  function prefillRecipient() {
+    var c = candidates.filter(function (x) { return x.id === candidateSelect.value; })[0];
+    recipientInput.value = (c && c.email) || '';
+  }
+  candidateSelect.addEventListener('change', function () {
+    // Whether candidate_name needs its own input depends on which candidate is
+    // picked, so the extra fields are rebuilt on a candidate change too.
+    var t = templates.filter(function (x) { return x.id === templateSelect.value; })[0];
+    renderExtraFields(t ? t.placeholders : []);
+    prefillRecipient();
+    doRender();
+  });
+  extraFields.addEventListener('input', doRender);
+
+  // B28: sending candidate/manager comms is HR's job, not the hiring
+  // manager's. Re-applied on r360-auth-ready too — this runs at parse time,
+  // possibly before the portal gate's async auth check has resolved
+  // window.__r360Me; the click handler below re-checks regardless.
+  function applyCommsLock() {
+    if (!(window.__r360Locked && window.__r360Locked())) return;
+    sendBtn.disabled = true;
+    sendBtn.title = "View only — this isn't your action to take.";
+  }
+  applyCommsLock();
+  window.addEventListener('r360-auth-ready', applyCommsLock);
+
+  sendBtn.addEventListener('click', function () {
+    if (window.__r360Locked && window.__r360Locked()) return;
+    if (!actorSelect.value) { errBox.hidden = false; errBox.textContent = 'Choose the acting person first.'; return; }
+    var candidateId = candidateSelect.value;
+    if (!candidateId) {
+      errBox.hidden = false;
+      errBox.textContent = 'Choose a candidate first.';
+      return;
+    }
+    if (lastUnresolved.length) { showUnresolved(); return; }
+
+    sendBtn.disabled = true;
+    var was = sendBtn.textContent;
+    sendBtn.textContent = 'Recording…';
+
+    postJSON('/api/campaigns/' + campaignId + '/messages/' + candidateId + '/send', {
+      channel: document.getElementById('c-channel').value,
+      recipient: recipientInput.value,
+      subject: subjectInput.value,
+      body: bodyInput.value,
+      template_id: templateSelect.value || null,
+      actor_id: (actors.find(function (person) { return person.id === actorSelect.value; }) || {}).full_name || '',
+    }).then(function () {
+      recipientInput.value = '';
+      subjectInput.value = '';
+      bodyInput.value = '';
+      templateSelect.value = '';
+      candidateSelect.value = '';
+      extraFields.innerHTML = '';
+      errBox.hidden = true;
+      return loadCampaignData();
+    }).catch(function (e) {
+      errBox.hidden = false;
+      errBox.textContent = e.message || 'That message could not be recorded.';
+    }).then(function () {
+      sendBtn.disabled = false;
+      sendBtn.textContent = was;
+    });
+  });
+
+  /* ── log, grouped by candidate ───────────────────────────────────────── */
+
+  function chevron() {
+    return '<svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" ' +
+      'stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  }
+
+  function renderLog(log) {
+    if (!log.length) {
+      set('c-log', '<div class="log-row"><div class="log-body">No messages have been recorded on this campaign yet.</div></div>');
+      say('c-log-aside', 'Nothing recorded yet');
+      return;
+    }
+    say('c-log-aside', log.length + ' message' + (log.length === 1 ? '' : 's') + ', newest first');
+
+    var byCandidate = {};
+    var order = [];
+    log.forEach(function (m) {
+      var key = m.candidate_id || 'unknown';
+      if (!byCandidate[key]) { byCandidate[key] = []; order.push(key); }
+      byCandidate[key].push(m);
+    });
+
+    set('c-log', order.map(function (candidateId) {
+      var msgs = byCandidate[candidateId];
+      var name = candidateName(candidateId);
+      var latest = msgs[0];
+      return '<details>' +
+        '<summary>' +
+          '<span class="b ok">' + msgs.length + '</span>' +
+          '<span class="t">' + esc(name) + '</span>' +
+          '<span class="s">' + msgs.length + ' message' + (msgs.length === 1 ? '' : 's') +
+            ' · last: ' + esc(latest.subject) + '</span>' +
+          chevron() +
+        '</summary>' +
+        '<div class="drawer">' +
+          msgs.slice().reverse().map(function (m) {
+            return '<div class="thread-msg">' +
+              '<div class="tm-head"><b>' + esc(when(m.created_at)) + '</b>' +
+              '<span>' + esc(m.channel) + ' · ' + esc(m.actor_id) + '</span></div>' +
+              '<div class="tm-subject">' + esc(m.subject) + '</div>' +
+              '<div class="tm-body">' + esc(m.body) + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</details>';
+    }).join(''));
+  }
+
+  function candidateName(candidateId) {
+    var c = candidates.filter(function (x) { return x.id === candidateId; })[0];
+    return c ? (c.full_name || c.name || 'Unnamed') : 'A candidate no longer on file';
+  }
+
+  /* ── load ────────────────────────────────────────────────────────────── */
+
+  function loadCampaignData() {
+    if (!campaignId) return Promise.resolve();
+    return Promise.all([
+      loadTemplates(),
+      loadCandidates(),
+      getJSON('/api/campaigns/' + campaignId + '/messages').catch(function () { return []; }),
+    ]).then(function (results) {
+      var log = results[2] || [];
+      renderSummary(log, candidates);
+      renderLog(log);
+    }).catch(function () {
+      say('c-summary-line', 'The message log could not be loaded.');
+    });
+  }
+
+  getJSON('/api/users').then(function (list) {
+    actors = list || [];
+    actorSelect.innerHTML = '<option value="">Choose acting person…</option>' +
+      (list || []).map(function (person) { return '<option value="' + esc(person.id) + '">' +
+        esc(person.full_name) + '</option>'; }).join('');
+    actorSelect.value = localStorage.getItem('recruitment360.actor') || '';
+    actorSelect.addEventListener('change', function () { localStorage.setItem('recruitment360.actor', actorSelect.value); });
+  }).catch(function () { actorSelect.innerHTML = '<option value="">Could not load users</option>'; });
+
+  loadCampaigns().then(function (id) {
+    campaignId = id;
+    return loadCampaignData();
+  });
+})();
+</script>
+</body>
+</html>

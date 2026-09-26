@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Haitham Al-Otaibi · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* page-specific — candidate 360. Uses only the app.css variables. */
+  .breadcrumb{font-size:14px;color:var(--ink-3);font-weight:300;margin-bottom:18px}
+  .breadcrumb a{color:var(--maroon);text-decoration:none}
+  .breadcrumb a:hover{text-decoration:underline}
+
+  /* Candidate 360 kicker merged into the same maroon/lattice band as the
+     score hero below it, instead of sitting on it as a separate light strip. */
+  .page-state{position:relative;padding:26px 32px 22px;background:var(--maroon);
+    color:#fff;border-radius:var(--r-xl);overflow:hidden;margin-bottom:14px}
+  .page-state::before{content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background-image:url("assets/pattern-arch.svg");background-size:230px 230px}
+  .page-state > *{position:relative}
+  /* The page's name reads as a title, not an eyebrow — same size, weight and
+     casing as every other page's banner title (.arch h1 in app.css, e.g.
+     Start Campaign, Today), so this reads as one consistent site, not a
+     heavier one-off treatment just for this page. */
+  .page-state .kicker{font-size:42px;font-weight:600;letter-spacing:-.035em;
+    color:#fff;line-height:1.14}
+  .page-state p{margin-top:16px;font-size:17.5px;color:rgba(255,255,255,.78);font-weight:300;max-width:52ch;line-height:1.5}
+
+  /* Merged with the sitewide .arch banner (assets/app.css): same lattice
+     asset/opacity/tile-size and the same bold masthead weights the site
+     bumped to everywhere else ("page names read bold and visible", see
+     00-MASTER-BACKLOG.md B01), not a one-off lighter treatment. */
+  .hero{position:relative;padding:40px 48px 44px;background:var(--maroon);color:#fff;border-radius:var(--r-xl);overflow:hidden}
+  .hero .lattice{
+    position:absolute;inset:0;opacity:.16;pointer-events:none;
+    background-image:url("assets/pattern-arch.svg");
+    background-size:230px 230px;
+  }
+  .hero > *{position:relative}
+  .hero-top{display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+  .herodial-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex:none}
+  .herodial{width:132px;height:132px;flex:none;position:relative;display:grid;place-items:center}
+  .herodial svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .herodial .n{font-size:46px;font-weight:600;letter-spacing:-.04em;color:#fff;line-height:1}
+  .herodial-wrap .u{font-size:12px;color:rgba(255,255,255,.72);letter-spacing:.1em;text-transform:uppercase;font-weight:500;text-align:center}
+  .hero-id .kick{font-size:12.5px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.65);font-weight:600;margin-bottom:8px}
+  .hero-id h1{font-size:40px;font-weight:700;letter-spacing:-.03em}
+  .hero-id .role{margin-top:6px;font-size:16px;color:rgba(255,255,255,.82);font-weight:400}
+  .hero-pill{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:rgba(255,255,255,.16);
+    padding:7px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:600}
+  .hero-pill:before{content:"";width:9px;height:9px;border-radius:50%;background:#fff;flex:none}
+  .hero-say{margin-top:22px;font-size:18px;font-weight:400;color:#fff;max-width:60ch;line-height:1.55;
+    padding-top:20px;border-top:1px solid rgba(255,255,255,.22)}
+  .hero-say b{font-weight:700}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .plist{display:flex;flex-direction:column;gap:16px}
+  .pitem{display:flex;gap:14px;align-items:flex-start}
+  .pitem .dot{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:500;margin-top:1px}
+  .pitem.good .dot{background:var(--teal-soft);color:var(--teal)}
+  .pitem.warn .dot{background:var(--gold-soft);color:var(--gold-ink)}
+  .pitem p{font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.5}
+  .pitem p b{color:var(--ink);font-weight:400}
+  .ask{margin-top:14px;padding:14px 16px;background:var(--sand);border-radius:var(--r-md);font-size:14.5px;color:var(--ink-2);font-weight:300}
+  .ask b{color:var(--ink);font-weight:400;display:block;margin-bottom:4px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+
+  .req-row{padding:22px 0;border-top:1px solid var(--hair-soft)}
+  .req-row:first-child{border-top:0}
+  .req-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .req-tag{font-size:12.5px;font-weight:500;color:var(--maroon);letter-spacing:.03em}
+  .req-name{font-size:16.5px;font-weight:400;letter-spacing:-.01em;flex:1;min-width:180px}
+  .req-kind{font-size:12.5px;color:var(--ink-3);font-weight:300}
+
+  .bars{display:flex;flex-direction:column;gap:16px}
+  .barrow{display:flex;align-items:center;gap:18px}
+  .barrow .nm{width:150px;flex:none;font-size:14.5px;color:var(--ink-2);font-weight:400}
+  .barrow .track{flex:1;height:14px;border-radius:var(--r-pill);background:var(--sand-2);overflow:hidden}
+  .barrow .fill{height:100%;background:var(--maroon);border-radius:var(--r-pill)}
+  .barrow .val{width:70px;flex:none;text-align:right;font-size:14.5px;color:var(--ink);font-weight:400}
+
+  .decision{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:30px 32px}
+  .decbtns{display:flex;gap:12px;flex-wrap:wrap}
+  .decbtn{border:1px solid var(--hair);border-radius:var(--r-pill);padding:13px 24px;font-size:15px;font-weight:400;background:var(--surface);color:var(--ink)}
+  /* Shortlist/Hold/Reject always read green/yellow/red, whether that's just an
+     outline (nothing decided yet), the AI's suggested call (.primary, a light
+     fill) or the recruiter's actual recorded decision (.selected, solid). */
+  .decbtn[data-disposition="SHORTLIST"]{border-color:var(--teal);color:var(--teal)}
+  .decbtn[data-disposition="HOLD"]{border-color:var(--gold);color:var(--gold-ink)}
+  .decbtn[data-disposition="REJECT"]{border-color:var(--red);color:var(--red-ink)}
+  .decbtn.primary[data-disposition="SHORTLIST"]{background:var(--teal-soft)}
+  .decbtn.primary[data-disposition="HOLD"]{background:var(--gold-soft)}
+  .decbtn.primary[data-disposition="REJECT"]{background:var(--red-soft)}
+  .decbtn.selected[data-disposition="SHORTLIST"]{background:var(--teal);border-color:var(--teal);color:#fff}
+  .decbtn.selected[data-disposition="HOLD"]{background:var(--gold);border-color:var(--gold);color:#fff}
+  .decbtn.selected[data-disposition="REJECT"]{background:var(--red);border-color:var(--red);color:#fff}
+  .note{
+    display:block;width:100%;margin-top:18px;border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:14px 16px;font-family:var(--f);font-size:15px;font-weight:300;color:var(--ink);
+    line-height:1.6;min-height:270px;max-height:520px;overflow-y:auto;background:var(--sand)
+  }
+  .note:focus-visible{outline:2.5px solid var(--maroon);outline-offset:2px}
+  .note:empty:before{content:attr(data-placeholder);color:var(--ink-3)}
+  .note p{margin:0 0 10px}
+  .note p:last-child{margin-bottom:0}
+  .note ul{margin:0 0 10px;padding-left:20px}
+  .note ul:last-child{margin-bottom:0}
+  .note li{margin:6px 0}
+  .note strong{font-weight:600;color:var(--ink)}
+  .decfoot{margin-top:16px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+  @media (max-width:980px){
+    .hero{padding:28px 24px 32px}
+    .hero-top{gap:22px}
+    .herodial{width:100px;height:100px}
+    .herodial .n{font-size:36px}
+    .hero-id h1{font-size:27px}
+    .two{grid-template-columns:1fr}
+    .barrow .nm{width:110px;font-size:13.5px}
+    .req-head{flex-direction:column;align-items:flex-start;gap:6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <div class="page-state">
+    <div class="kicker">Candidate 360</div>
+    <p>One candidate in full — the score, the evidence behind it, the checking agent's second pass, and the decision record.</p>
+  </div>
+
+  <p class="breadcrumb" id="c-breadcrumb"><a href="leaderboard.html">Candidates</a> · Control Room Operator · Coastal Terminal</p>
+
+  <!-- ═══════ CHUNK 1 — hero. One person, one number, one recommendation. ═══════ -->
+  <section class="band" style="margin-top:0">
+    <div class="hero">
+      <div class="lattice"></div>
+      <div class="hero-top">
+        <div class="herodial-wrap" id="c-score-wrap">
+          <div class="herodial">
+            <svg width="132" height="132" viewBox="0 0 132 132">
+              <circle cx="66" cy="66" r="54" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="11"/>
+              <circle id="c-score-arc" cx="66" cy="66" r="54" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="339.29" style="transition:stroke-dashoffset .6s ease"/>
+            </svg>
+            <span class="n" id="c-score">91</span>
+          </div>
+          <span class="u" id="c-score-unit">out of 100</span>
+        </div>
+        <div class="hero-id" id="c-hero-id">
+          <div class="kick" id="c-kick">Rank 1 of 24 · Control Room Operator</div>
+          <h1 id="c-name">Haitham Al-Otaibi</h1>
+          <div class="role" id="c-role">Applied for Control Room Operator, Coastal Terminal</div>
+          <div class="hero-pill" id="c-pill">Strong fit · 5 of 5 mandatory met · confidence high</div>
+        </div>
+      </div>
+      <p class="hero-say" id="c-narrative">Recommend for interview. <b>He meets every mandatory requirement</b> and
+        his console and turnaround experience is a close match for this unit — a person should
+        still confirm the two points listed below.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 1B — where he stands on the rubric, one bar per weighted
+       requirement so a reader sees the shape of the match at a glance, plus
+       the strongest reason and the single biggest gap in two lines below.
+       The same rows are traced to CV evidence in full in CHUNK 3. ═══════ -->
+  <section class="band">
+    <div class="chartcard">
+      <div class="ct">Where he stands on the rubric</div>
+      <div class="legend">
+        <span class="teal">Confirmed</span>
+        <span class="gold">Partial match</span>
+        <span class="red">Contradicts CV</span>
+        <span>Not shown</span>
+      </div>
+      <div class="hbars" id="c-rubric-chart"></div>
+      <div class="rubric-callout" id="c-rubric-cs">
+        <p><span class="rubric-callout-label">Strongest reason to see him</span> Seven years on a live DCS console.</p>
+        <p><span class="rubric-callout-label">Biggest gap</span> The CV does not say if he has written or owned an operating procedure.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — what he brings / what to check, in full ═══════ -->
+  <section class="band">
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b ok">✓</span>
+          <span class="t">The full case — what he brings and what to check</span>
+          <span class="s" id="c-case-s">3 strengths · 2 open questions</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+    <div class="two">
+      <div class="card pad-lg">
+        <h2 style="font-size:18px;font-weight:400;margin-bottom:18px">What he brings</h2>
+        <div class="plist" id="c-strengths">
+          <div class="pitem good"><span class="dot">✓</span><p><b>Seven years on a live DCS console</b>, on an ethylene unit — well past the 3-year minimum.</p></div>
+          <div class="pitem good"><span class="dot">✓</span><p><b>Two full turnarounds completed</b>, on the same console he ran day to day.</p></div>
+          <div class="pitem good"><span class="dot">✓</span><p><b>Named permit-to-work authority</b> for the olefins area — a responsibility, not just a course.</p></div>
+        </div>
+      </div>
+      <div class="card pad-lg">
+        <h2 style="font-size:18px;font-weight:400;margin-bottom:18px">What to check</h2>
+        <div class="plist" id="c-gaps">
+          <div class="pitem warn"><span class="dot">?</span><p>The CV does not say if he has <b>written or owned an operating procedure</b>.</p></div>
+          <div class="pitem warn"><span class="dot">?</span><p>The CV does not confirm his <b>Arabic and English</b> working level.</p></div>
+        </div>
+        <div class="ask" id="c-ask">
+          <b>Suggested questions</b>
+          <div id="c-ask-questions">
+          "Have you personally written or owned an operating procedure?"<br>
+          "Do you work confidently in both Arabic and English on shift?"
+          </div>
+        </div>
+      </div>
+    </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — the evidence. The point of the product.
+       Folded to one click, never fولded further: every citation stays next
+       to the claim it supports, inside its own req-row. ═══════ -->
+  <section class="band">
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b run">10</span>
+          <span class="t">Every point, traced to a line in his CV</span>
+          <span class="s" id="c-criteria-s">10 of 10 requirements checked</span>
+          <!-- Opens the CV as it was sent. Every quote below cites a page or a
+               section, and a quote is only checkable if the page can be seen. -->
+          <a class="aside" id="c-cv" href="#" hidden style="margin-left:auto">Open the original CV</a>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer" id="c-criteria">
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-01</span>
+          <span class="req-name">Right to work, or transferable sponsorship</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Mandatory</span>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-02</span>
+          <span class="req-name">Diploma or higher in a process, chemical or mechanical discipline</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Mandatory</span>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-03</span>
+          <span class="req-name">Console hours on a live continuous-process unit — minimum 3 years</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Mandatory</span>
+        </div>
+        <div class="evidence">
+          <div class="q">Held a <mark>DCS console licence</mark> on a live ethylene unit for <mark>seven years</mark>, including two full turnarounds.</div>
+          <div class="cite"><span class="src">CV page 2, Experience</span><span class="arrow">→</span><span class="req">REQ-03</span><span>Mandatory</span></div>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-04</span>
+          <span class="req-name">Trained on a distributed control system (DCS)</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Mandatory</span>
+        </div>
+        <div class="evidence">
+          <div class="q">Held a <mark>DCS console licence</mark> on a live ethylene unit for seven years, including two full turnarounds.</div>
+          <div class="cite"><span class="src">CV page 2, Experience</span><span class="arrow">→</span><span class="req">REQ-04</span><span>Mandatory</span></div>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-05</span>
+          <span class="req-name">Fitness-to-work and offshore/onshore medical clearance</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Mandatory</span>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-06</span>
+          <span class="req-name">Ethylene, polyethylene or olefins experience</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Preferred · weight 20</span>
+        </div>
+        <div class="evidence">
+          <div class="q">Held a DCS console licence on a live <mark>ethylene unit</mark> for seven years, including two full turnarounds.</div>
+          <div class="cite"><span class="src">CV page 2, Experience</span><span class="arrow">→</span><span class="req">REQ-06</span><span>Preferred</span></div>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-07</span>
+          <span class="req-name">Wrote or owned an operating procedure</span>
+          <span class="verdict no">Not shown</span>
+          <span class="req-kind">Preferred · weight 12</span>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-08</span>
+          <span class="req-name">Turnaround or shutdown participation</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Preferred · weight 10</span>
+        </div>
+        <div class="evidence">
+          <div class="q">Held a DCS console licence on a live ethylene unit for seven years, including <mark>two full turnarounds</mark>.</div>
+          <div class="cite"><span class="src">CV page 2, Experience</span><span class="arrow">→</span><span class="req">REQ-08</span><span>Preferred</span></div>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-09</span>
+          <span class="req-name">Permit-to-work authority</span>
+          <span class="verdict good">Confirmed</span>
+          <span class="req-kind">Preferred · weight 8</span>
+        </div>
+        <div class="evidence">
+          <div class="q">Named <mark>permit-to-work authority</mark> for the olefins area.</div>
+          <div class="cite"><span class="src">CV page 2, Responsibilities</span><span class="arrow">→</span><span class="req">REQ-09</span><span>Preferred</span></div>
+        </div>
+      </div>
+
+      <div class="req-row">
+        <div class="req-head">
+          <span class="req-tag">REQ-10</span>
+          <span class="req-name">Arabic and English</span>
+          <span class="verdict no">Not shown</span>
+          <span class="req-kind">Preferred · weight 6</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — the score, broken down ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>How the score is made up</h2>
+      <span class="aside" id="c-rubric-version">Rubric version 4.2 · weights approved 2 September</span>
+    </div>
+    <div class="card pad-lg" id="c-score-breakdown">
+      <div class="bars">
+        <div class="barrow"><span class="nm">Mandatory</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">45 of 45</span></div>
+        <div class="barrow"><span class="nm">Skills</span><div class="track"><div class="fill" style="width:80%"></div></div><span class="val">18 of 20</span></div>
+        <div class="barrow"><span class="nm">Experience</span><div class="track"><div class="fill" style="width:71%"></div></div><span class="val">16 of 18</span></div>
+        <div class="barrow"><span class="nm">Qualifications</span><div class="track"><div class="fill" style="width:36%"></div></div><span class="val">8 of 10</span></div>
+        <div class="barrow"><span class="nm">Certifications</span><div class="track"><div class="fill" style="width:18%"></div></div><span class="val">4 of 7</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — the checking agent ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>What the checking agent found</h2>
+      <span class="aside" id="c-challenge-aside"></span>
+    </div>
+    <div class="card pad-lg" id="c-challenge">
+      <p style="font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch">
+        A second pass re-read this assessment against the CV, line by line. It found no claim that
+        the CV does not support. Every confirmed score above cites a specific line the checker
+        could see.
+      </p>
+      <p style="font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch;margin-top:12px">
+        Across the whole campaign, high scores the checker could not justify are held back for a
+        person to look at — that happens to <b style="color:var(--ink);font-weight:400">0.3%</b> of
+        all 3,420 applications this period. This assessment was not one of them.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 6 — the decision ═══════ -->
+  <section class="band">
+    <div class="decision">
+      <div class="label" style="margin-bottom:16px">
+        <h2>Your decision</h2>
+      </div>
+      <div class="decbtns" id="c-actions">
+        <button type="button" class="decbtn" data-disposition="SHORTLIST">Shortlist</button>
+        <button type="button" class="decbtn" data-disposition="HOLD">Hold</button>
+        <button type="button" class="decbtn" data-disposition="REJECT">Reject</button>
+      </div>
+      <div class="note" id="c-comment" contenteditable="true" role="textbox" aria-multiline="true"
+           data-placeholder="Add a comment for the hiring team (optional)"></div>
+      <p class="decfoot" id="c-decision-status"></p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var campaignId = params.get('campaign') || params.get('campaign_id');
+  var evaluationId = params.get('evaluation') || params.get('evaluation_id');
+  var candidateId = params.get('candidate') || params.get('candidate_id');
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function text(value, fallback) {
+    return value == null || value === '' ? (fallback || 'Not recorded') : String(value);
+  }
+
+  function get(path) {
+    return fetch(API_BASE + path).then(function (response) {
+      if (!response.ok) {
+        return response.json().catch(function () { return {}; }).then(function (body) {
+          var detail = body.detail || body.error || body.message || 'The information could not be loaded.';
+          if (typeof detail === 'object') detail = detail.message || 'The information could not be loaded.';
+          throw new Error(detail);
+        });
+      }
+      return response.json();
+    });
+  }
+
+  function set(id, html) {
+    var element = document.getElementById(id);
+    if (element) element.innerHTML = html;
+  }
+
+  // Renders the AI-suggested rationale (a score line, then "- " bullet
+  // lines, the first one wrapped in **double asterisks**) as real markup —
+  // a bulleted list with the main point bolded — rather than a wall of
+  // plain text. Escapes content first, then reintroduces only the tags this
+  // function itself adds, so nothing evaluation- or LLM-authored can inject
+  // markup of its own.
+  function renderRationale(raw) {
+    var bold = function (line) {
+      return esc(line).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    };
+    var html = '';
+    var inList = false;
+    String(raw || '').split('\n').forEach(function (line) {
+      if (!line.trim()) return;
+      if (line.indexOf('- ') === 0) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += '<li>' + bold(line.slice(2)) + '</li>';
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += '<p>' + bold(line) + '</p>';
+      }
+    });
+    if (inList) html += '</ul>';
+    return html;
+  }
+
+  function recommendationClass(value) {
+    return {
+      STRONG_FIT: 'strong',
+      POTENTIAL_FIT: 'potential',
+      REVIEW_REQUIRED: 'review',
+      NOT_RECOMMENDED: 'no'
+    }[value] || 'review';
+  }
+
+  // B04/B05: which decision button the AI recommendation highlights as primary.
+  // Mapping recorded in DECISIONS.md — STRONG_FIT/POTENTIAL_FIT -> SHORTLIST,
+  // REVIEW_REQUIRED -> HOLD, NOT_RECOMMENDED -> REJECT.
+  function recommendedDisposition(value) {
+    return {
+      STRONG_FIT: 'SHORTLIST',
+      POTENTIAL_FIT: 'SHORTLIST',
+      REVIEW_REQUIRED: 'HOLD',
+      NOT_RECOMMENDED: 'REJECT'
+    }[value] || 'HOLD';
+  }
+
+  function recommendationText(value) {
+    return {
+      STRONG_FIT: 'Strong fit',
+      POTENTIAL_FIT: 'Potential fit',
+      REVIEW_REQUIRED: 'Review required',
+      NOT_RECOMMENDED: 'Not recommended'
+    }[value] || 'Review required';
+  }
+
+  function outcomeText(value) {
+    return {
+      CONFIRMED_MATCH: 'Confirmed',
+      PARTIAL_MATCH: 'Partial or adjacent match',
+      NOT_DEMONSTRATED: 'Not shown in the CV',
+      CONTRADICTORY_EVIDENCE: 'CV contradicts this',
+      INSUFFICIENT_EVIDENCE: 'Not enough in the CV to judge'
+    }[value] || 'Not enough in the CV to judge';
+  }
+
+  function outcomeClass(value) {
+    return value === 'CONFIRMED_MATCH' ? 'good' :
+      (value === 'PARTIAL_MATCH' ? 'potential' : 'review');
+  }
+
+  function dispositionText(value) {
+    return {
+      SHORTLIST: 'shortlisted',
+      REJECT: 'not taken forward',
+      HOLD: 'put on hold',
+      REQUEST_REVIEW: 'sent for a second look',
+      INTERVIEW: 'invited to interview',
+      WAITLIST: 'kept as a backup candidate'
+    }[value] || 'recorded';
+  }
+
+  function confidenceText(value, band) {
+    var label = { HIGH: 'High confidence', MEDIUM: 'Medium confidence', LOW: 'Low confidence' }[band];
+    return label || (value == null ? 'Confidence not recorded' : 'Confidence recorded');
+  }
+
+  // Same value-extraction rule as listItems, reused so the callout below
+  // quotes the real evaluation rather than the shipped example sentence.
+  function itemText(item) {
+    return typeof item === 'string' ? item : (item.text || item.description || item.label || item.detail || null);
+  }
+
+  // app.css sets an explicit display on these classes, which beats the
+  // browser's default [hidden]{display:none} rule (an author stylesheet
+  // always outranks the user-agent one). Setting style.display directly
+  // is what actually hides the element.
+  function hide(el) { if (el) el.style.display = 'none'; }
+  function unhide(el) { if (el) el.style.display = ''; }
+
+  function renderRubricCallout(strengths, gaps) {
+    var host = document.getElementById('c-rubric-cs');
+    if (!host) return;
+    var strongest = strengths && strengths.length ? itemText(strengths[0]) : null;
+    var biggestGap = gaps && gaps.length ? itemText(gaps[0]) : null;
+    if (!strongest && !biggestGap) { hide(host); return; }
+    unhide(host);
+    host.innerHTML =
+      (strongest ? '<p><span class="rubric-callout-label">Strongest reason to see them</span> ' + esc(strongest) + '</p>' : '') +
+      (biggestGap ? '<p><span class="rubric-callout-label">Biggest gap</span> ' + esc(biggestGap) + '</p>' : '');
+  }
+
+  function renderSuggestedQuestions(questions) {
+    var box = document.getElementById('c-ask');
+    var host = document.getElementById('c-ask-questions');
+    if (!box || !host) return;
+    if (!questions || !questions.length) { hide(box); return; }
+    unhide(box);
+    host.innerHTML = questions.map(function (q) {
+      return '"' + esc(q.question || itemText(q) || '') + '"';
+    }).join('<br>');
+  }
+
+  function renderRubricVersion(versionNumber) {
+    var el = document.getElementById('c-rubric-version');
+    if (!el) return;
+    if (versionNumber == null) { hide(el); return; }
+    unhide(el);
+    el.textContent = 'Rubric version ' + versionNumber;
+  }
+
+  function listItems(items, good) {
+    if (!items || !items.length) return '<div class="pitem ' + (good ? 'good' : 'warn') + '"><span class="dot">' + (good ? '✓' : '?') + '</span><p>Nothing recorded.</p></div>';
+    return items.map(function (item) {
+      var value = typeof item === 'string' ? item : (item.text || item.description || item.label || item.detail || JSON.stringify(item));
+      return '<div class="pitem ' + (good ? 'good' : 'warn') + '"><span class="dot">' + (good ? '✓' : '?') + '</span><p>' + esc(value) + '</p></div>';
+    }).join('');
+  }
+
+  function evidenceMarkup(evidence) {
+    return (evidence || []).map(function (item) {
+      var source = item.page_number != null
+        ? 'CV page ' + item.page_number + (item.section ? ', ' + item.section : '')
+        : (item.section || 'CV section not recorded');
+      return '<div class="evidence"><div class="q">&ldquo;' + esc(item.excerpt) + '&rdquo;</div>' +
+        '<div class="cite"><span class="src">' + esc(source) + '</span><span class="arrow">→</span>' +
+        '<span>' + esc(item.match_type === 'EQUIVALENT' ? 'Related skill' : 'CV evidence') + '</span></div></div>';
+    }).join('');
+  }
+
+  // Bar length is how strong the match is, not a copy of the score — a
+  // contradiction is drawn short (little genuine match) but red, so it still
+  // reads as "this is a problem" rather than blending into the "not shown" grey.
+  function outcomeBar(value) {
+    return {
+      CONFIRMED_MATCH: { pct: 100, cls: 'teal' },
+      PARTIAL_MATCH: { pct: 55, cls: 'gold' },
+      CONTRADICTORY_EVIDENCE: { pct: 12, cls: 'red' },
+      NOT_DEMONSTRATED: { pct: 4, cls: 'zero' },
+      INSUFFICIENT_EVIDENCE: { pct: 4, cls: 'zero' }
+    }[value] || { pct: 4, cls: 'zero' };
+  }
+
+  // A fixed short set, not one bar per weighted criterion — a real campaign
+  // can carry 30+, which reads as a wall of bars rather than "the shape of
+  // the match at a glance". Highest-weight criteria are the ones that moved
+  // the score most, so they are what a reader should see first.
+  var RUBRIC_CHART_MAX_BARS = 6;
+
+  function renderRubricChart(criteria) {
+    var chart = document.getElementById('c-rubric-chart');
+    if (!chart) return;
+    var weighted = (criteria || []).filter(function (c) { return c.weight > 0; })
+      .sort(function (a, b) { return b.weight - a.weight; })
+      .slice(0, RUBRIC_CHART_MAX_BARS);
+    if (!weighted.length) {
+      chart.innerHTML = '<p class="cs">No weighted requirements to chart yet.</p>';
+      return;
+    }
+    chart.innerHTML = weighted.map(function (criterion) {
+      var bar = outcomeBar(criterion.outcome);
+      return '<div class="hbar ' + bar.cls + '"><span class="k">' + esc(criterion.label) + '</span>' +
+        '<div class="t"><i style="width:' + bar.pct + '%"></i></div>' +
+        '<span class="n">' + esc(outcomeText(criterion.outcome)) + '</span></div>';
+    }).join('');
+  }
+
+  function renderCriteria(criteria) {
+    var html = '<div class="label"><h2>Every point, traced to a line in the CV</h2><span class="aside">' +
+      criteria.length + ' of ' + criteria.length + ' requirements checked</span></div>';
+    html += criteria.map(function (criterion) {
+      var matched = (criterion.matched_terms || []).length ? '<br>Matched: ' + esc(criterion.matched_terms.join(', ')) : '';
+      var missing = (criterion.missing_terms || []).length ? '<br>Missing: ' + esc(criterion.missing_terms.join(', ')) : '';
+      return '<div class="req-row"><div class="req-head"><span class="req-tag">' + esc(criterion.criterion_key) + '</span>' +
+        '<span class="req-name">' + esc(criterion.label) + '</span><span class="verdict ' + outcomeClass(criterion.outcome) + '">' +
+        esc(outcomeText(criterion.outcome)) + '</span><span class="req-kind">' + esc(criterion.requirement_type === 'MANDATORY' ? 'Mandatory' : 'Preferred') +
+        ' · ' + esc(confidenceText(criterion.confidence, criterion.confidence_band)) + '</span></div>' +
+        '<div class="evidence"><div class="q">' + esc(criterion.rationale || 'No explanation was recorded.') + matched + missing + '</div></div>' +
+        evidenceMarkup(criterion.evidence) + '</div>';
+    }).join('');
+    set('c-criteria', html);
+  }
+
+  function renderBreakdown(detail) {
+    var scores = detail.category_scores || {};
+    var values = [
+      ['Mandatory', detail.mandatory_score, 100],
+      ['Skills', scores.skills_score != null ? scores.skills_score : detail.skills_score, 100],
+      ['Experience', scores.experience_score != null ? scores.experience_score : detail.experience_score, 100],
+      ['Qualifications', scores.education_score != null ? scores.education_score : detail.education_score, 100],
+      ['Certifications', scores.certification_score != null ? scores.certification_score : detail.certification_score, 100]
+    ];
+    var html = '<div class="label"><h2>How the score is made up</h2><span class="aside">Scores are recommendations for a person to review</span></div><div class="card pad-lg"><div class="bars">';
+    values.forEach(function (item) {
+      var assessed = item[1] != null;
+      var score = assessed ? Number(item[1]) : 0;
+      html += '<div class="barrow"><span class="nm">' + item[0] + '</span><div class="track"><div class="fill" style="width:' + (assessed ? Math.max(0, Math.min(100, score)) : 0) + '%"></div></div><span class="val">' + (assessed ? esc(score.toFixed(1)) + ' of ' + item[2] : 'Not assessed') + '</span></div>';
+    });
+    html += '</div></div>';
+    set('c-score-breakdown', html);
+  }
+
+  // The Challenge Agent's severities, in the words a recruiter would use.
+  // An enum value must never reach the screen.
+  function severityText(value) {
+    return {
+      HIGH: 'Worth checking before you decide',
+      MEDIUM: 'Worth a look',
+      LOW: 'Minor point',
+      INFO: 'For information'
+    }[value] || 'Worth a look';
+  }
+
+  // The six checks, in the words a recruiter would use. An enum value must
+  // never reach the screen.
+  function checkText(value) {
+    return {
+      CONTRADICTION: 'Contradiction',
+      UNSUPPORTED_CONCLUSION: 'Score not supported by the evidence',
+      MISSING_EVIDENCE: 'No evidence found',
+      WEAK_EVIDENCE: 'Thin evidence',
+      INCONSISTENT_SCORING: 'Scored inconsistently',
+      WEIGHTING_ANOMALY: 'Rubric weighting',
+      OUTLIER_RECOMMENDATION: 'Stands apart from the rest'
+    }[value] || 'Worth checking';
+  }
+
+  function renderChallenge(detail) {
+    var findings = detail.challenge_findings || [];
+    var lead = '<p style="font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch">' +
+      'The Challenge Agent re-reads the assessment against the CV. It raises ' +
+      'questions for a person; it never changes a score.</p>';
+
+    if (!findings.length) {
+      set('c-challenge-aside', 'nothing to raise');
+      set('c-challenge', lead +
+        '<p style="font-size:15.5px;color:var(--ink-2);font-weight:300;line-height:1.6;max-width:70ch;margin-top:12px">' +
+        'The six checks ran and raised nothing on this assessment. That is a ' +
+        'result, not a gap.</p>');
+      return;
+    }
+
+    // Grouped by the kind of concern, worst first. The API already sorts by
+    // severity, so preserving encounter order keeps that ordering intact.
+    var groups = [];
+    var byCheck = {};
+    findings.forEach(function (finding) {
+      var key = finding.check;
+      if (!byCheck[key]) {
+        byCheck[key] = { check: key, items: [] };
+        groups.push(byCheck[key]);
+      }
+      byCheck[key].items.push(finding);
+    });
+
+    var html = lead + groups.map(function (group) {
+      return '<div class="kick" style="margin-top:22px">' +
+        esc(checkText(group.check)) +
+        (group.items.length > 1 ? ' · ' + group.items.length : '') +
+        '</div>' +
+        group.items.map(function (finding) {
+          var where = finding.criterion_key
+            ? criterionLabel(detail, finding.criterion_id, finding.criterion_key)
+            : 'This assessment as a whole';
+          return '<div class="evidence" style="margin-top:14px">' +
+            '<div class="q"><b>' + esc(finding.title) + '</b><br>' +
+            esc(finding.detail) + '</div>' +
+            '<div class="cite"><span class="src">' + esc(where) + '</span>' +
+            '<span class="arrow">\u2192</span>' +
+            '<span>' + esc(finding.recommendation) + '</span>' +
+            '<span>' + esc(severityText(finding.severity)) + '</span></div>' +
+          '</div>';
+        }).join('');
+    }).join('');
+
+    set('c-challenge-aside', findings.length + ' point' +
+      (findings.length === 1 ? '' : 's') + ' raised across ' +
+      groups.length + ' kind' + (groups.length === 1 ? '' : 's') +
+      ' of check');
+    set('c-challenge', html);
+  }
+
+  // The finding names a criterion by key; the reader knows it by its label.
+  function criterionLabel(detail, criterionId, criterionKey) {
+    var match = (detail.criteria || []).filter(function (c) {
+      return c.id === criterionId || c.criterion_key === criterionKey;
+    })[0];
+    return (match && (match.label || match.criterion_key)) || criterionKey;
+  }
+
+  function renderDecision(campaign, candidate, evaluation, recommendation, actions, benchmark) {
+    var ai = recommendation.ai_recommendation || evaluation.recommendation;
+    var effective = recommendation.effective_recommendation || ai;
+    var rankText = benchmark && benchmark.position != null ? ' · ' + esc(benchmark.position.statement || ('Position ' + benchmark.position.rank + ' of ' + benchmark.position.of)) : '';
+    set('c-kick', 'Candidate assessment · ' + esc(confidenceText(evaluation.overall_confidence, evaluation.confidence_band)) + rankText);
+    set('c-name', esc(text(recommendation.candidate_name || evaluation.candidate_name, candidate.full_name || 'Candidate')));
+    set('c-role', 'Applied for ' + esc(campaign.job_title || campaign.name || 'this campaign') + (campaign.location ? ', ' + esc(campaign.location) : ''));
+    set('c-score', esc(Number(evaluation.overall_score).toFixed(1)));
+    (function () {
+      var arc = document.getElementById('c-score-arc');
+      if (!arc) return;
+      var C = 2 * Math.PI * 54;
+      var pct = Number(evaluation.overall_score);
+      if (!isFinite(pct)) { arc.style.display = 'none'; return; }
+      pct = Math.max(0, Math.min(100, pct));
+      arc.setAttribute('stroke-dasharray', C.toFixed(2));
+      arc.setAttribute('stroke-dashoffset', (C * (1 - pct / 100)).toFixed(2));
+    })();
+    set('c-pill', '<span class="verdict ' + recommendationClass(effective) + '">' + esc(recommendationText(effective)) + '</span> · AI: ' + esc(recommendationText(ai)) + ' · ' + esc(confidenceText(evaluation.overall_confidence, evaluation.confidence_band)));
+    set('c-narrative', esc(evaluation.narrative || 'This assessment is decision support. A person decides.'));
+    set('c-breadcrumb', '<a href="leaderboard.html?campaign=' + encodeURIComponent(campaign.id) + '">Candidates</a> · ' + esc(campaign.job_title || campaign.name || 'Campaign') + ' · ' + esc(candidate.full_name || 'Candidate'));
+    set('c-strengths', listItems(evaluation.strengths, true));
+    var gaps = (evaluation.gaps || []).concat(evaluation.missing_information || [], evaluation.contradictions || []);
+    set('c-gaps', listItems(gaps, false));
+    renderRubricChart(evaluation.criteria || []);
+    renderCriteria(evaluation.criteria || []);
+    renderBreakdown(evaluation);
+    renderChallenge(evaluation);
+    renderRubricCallout(evaluation.strengths, gaps);
+    renderSuggestedQuestions(evaluation.validation_questions);
+    renderRubricVersion(evaluation.rubric_version_number);
+
+    var comment = document.getElementById('c-comment');
+    if (comment && !comment.textContent.trim() && recommendation.suggested_rationale) {
+      comment.innerHTML = renderRationale(recommendation.suggested_rationale);
+    }
+
+    var recommended = recommendedDisposition(ai);
+    document.querySelectorAll('#c-actions .decbtn').forEach(function (btn) {
+      btn.classList.toggle('primary', btn.dataset.disposition === recommended);
+    });
+
+    // The original CV, if it is still on file. Hidden rather than disabled
+    // when it is not: a link that cannot work is worse than no link.
+    // Opens in cv-viewer.html rather than linking straight at the API — a
+    // browser has no built-in way to display a Word document inline, so a
+    // direct link just downloads it (tried 2026-09-16, reverted same day: the
+    // recruiter wants to *view* the CV in the new tab, not collect a file to
+    // open in a separate app). The viewer renders PDF in its native browser
+    // viewer and DOCX via docx-preview's real paginated layout, both inline in
+    // the new tab, and only falls back to a download link for formats it
+    // cannot render (see web/cv-viewer.html).
+    var cv = document.getElementById('c-cv');
+    if (cv) {
+      if (evaluation.cv_available) {
+        cv.href = 'cv-viewer.html?evaluation=' + encodeURIComponent(evaluation.id);
+        cv.target = '_blank';
+        cv.rel = 'noopener';
+        cv.hidden = false;
+      } else {
+        cv.hidden = true;
+      }
+    }
+    var status = document.getElementById('c-decision-status');
+    var buttons = document.querySelectorAll('#c-actions [data-disposition]');
+    function selectButton(disposition) {
+      Array.prototype.forEach.call(buttons, function (button) {
+        button.classList.toggle('selected', button.getAttribute('data-disposition') === disposition);
+      });
+    }
+    // B28: shortlisting/holding/rejecting at first screen is HR's decision,
+    // not the hiring manager's — he can read the whole assessment above,
+    // the buttons just don't act for him. Re-checked at click time too (not
+    // just here at render time), since window.__r360Me may not be resolved
+    // yet the instant this renders.
+    function applyDecisionLock() {
+      if (!(window.__r360Locked && window.__r360Locked())) return;
+      Array.prototype.forEach.call(buttons, function (button) { button.disabled = true; button.title = "View only — this isn't your decision to make."; });
+      if (status) status.textContent = 'This is the recruiter’s decision to record, not yours.';
+    }
+    applyDecisionLock();
+    window.addEventListener('r360-auth-ready', applyDecisionLock);
+    Array.prototype.forEach.call(buttons, function (button) {
+      button.addEventListener('click', function () {
+        if (window.__r360Locked && window.__r360Locked()) return;
+        var disposition = button.getAttribute('data-disposition');
+        var commentEl = document.getElementById('c-comment');
+        var body = { disposition: disposition, comment: commentEl ? commentEl.innerText.trim() : '', actor: window.__r360ActorName ? window.__r360ActorName() : 'Unknown user', actor_role: 'Talent Acquisition' };
+        fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(campaign.id) + '/candidates/' + encodeURIComponent(candidate.id) + '/disposition', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+          .then(function (response) { if (!response.ok) throw new Error('The decision could not be recorded.'); return response.json(); })
+          .then(function (result) {
+            // X58: a SHORTLIST here never used to enter the candidate into
+            // the hiring lifecycle, so handoff/interview/approvals/offer all
+            // showed an empty queue even after a real decision was recorded.
+            // enter() only accepts SHORTLIST/INTERVIEW (true here) and is
+            // idempotent, so this is safe on every SHORTLIST click; a
+            // failure here is swallowed rather than surfacing as an error on
+            // top of a disposition that already saved.
+            if (disposition === 'SHORTLIST') {
+              var actorId = window.__r360Me && window.__r360Me.id;
+              return fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(campaign.id) + '/lifecycle/' + encodeURIComponent(candidate.id) + '/enter?actor_id=' + encodeURIComponent(actorId || ''), { method: 'POST' })
+                .catch(function () {})
+                .then(function () { return result; });
+            }
+            return result;
+          })
+          .then(function () {
+            if (status) status.textContent = 'Decision recorded — ' + dispositionText(disposition) + '. The audit trail has been updated.';
+            selectButton(disposition);
+          })
+          .catch(function (error) { if (status) status.textContent = error.message; });
+      });
+    });
+    if (actions && actions.length) {
+      var latest = actions[0];
+      if (status && latest.disposition) status.textContent = 'Last recorded: ' + dispositionText(latest.disposition) + '.';
+      selectButton(latest.disposition);
+    }
+  }
+
+  function renderUnavailable() {
+    var el = document.getElementById('c-decision-status');
+    if (el) el.textContent = 'Candidate data could not be loaded. Nothing is being shown.';
+    // Neutralise the static hero markup so no fabricated name or score
+    // is left on screen once we know live data did not load.
+    set('c-score', '—'); set('c-name', 'Not available');
+    set('c-role', 'Data unavailable'); set('c-pill', 'Data unavailable');
+    set('c-kick', 'Data unavailable'); set('c-narrative', 'Candidate data could not be loaded.');
+    // Same neutralisation for the rubric callout, the per-requirement
+    // evidence rows, and the checking agent narrative — all static
+    // example content that must not survive a failed load.
+    hide(document.getElementById('c-rubric-cs'));
+    set('c-criteria', '');
+    set('c-challenge-aside', ''); set('c-challenge', '');
+    // Same neutralisation for the strengths/gaps lists, their count, and
+    // the score breakdown card — all static example content.
+    set('c-strengths', ''); set('c-gaps', ''); set('c-case-s', '');
+    set('c-score-breakdown', '');
+    // Same rule for the suggested questions and the rubric version line —
+    // both static example content, hidden rather than left with fake text.
+    hide(document.getElementById('c-ask'));
+    hide(document.getElementById('c-rubric-version'));
+  }
+
+  function start() {
+    /* Resolving which candidate to show, strongest signal first.
+
+       The previous version treated GET /api/runs as an array. It returns
+       {contract_version, runs: [...]}, so `runs.length` was undefined, the
+       promise threw, and the page fell back to the shipped example — which
+       is why both the nav link and a leaderboard link landed on the design
+       sample rather than real data.
+
+       An explicit ?evaluation= is now resolved directly, so a deep link
+       works for ANY candidate in ANY campaign, not just the newest one. */
+    var campaignPromise;
+    if (evaluationId) {
+      campaignPromise = get('/api/evaluations/' + encodeURIComponent(evaluationId))
+        .then(function (evaluation) {
+          campaignId = evaluation.campaign_id;
+          if (campaignId) return { id: campaignId };
+          /* Older API builds omitted campaign_id from the assessment
+             payload. Fall back to the newest run rather than failing. */
+          return get('/api/runs').then(function (body) {
+            var runs = (body && body.runs) || [];
+            if (!runs.length) throw new Error('No campaign run is available.');
+            campaignId = runs[0].campaign_id;
+            return { id: campaignId };
+          });
+        });
+    } else if (campaignId) {
+      campaignPromise = Promise.resolve({ id: campaignId });
+    } else {
+      campaignPromise = get('/api/runs').then(function (body) {
+        var runs = (body && body.runs) || [];
+        if (!runs.length) throw new Error('No campaign run is available.');
+        campaignId = runs[0].campaign_id;
+        return { id: campaignId };
+      });
+    }
+    campaignPromise.then(function (campaign) {
+      return get('/api/campaigns/' + encodeURIComponent(campaign.id)).then(function (fullCampaign) {
+        campaign = fullCampaign;
+        return get('/api/campaigns/' + encodeURIComponent(campaign.id) + '/evaluations').then(function (evaluations) {
+          var chosen = evaluationId ? evaluations.filter(function (item) { return item.id === evaluationId; })[0] : evaluations.filter(function (item) { return !candidateId || item.candidate_id === candidateId; })[0];
+          if (!chosen) {
+            throw new Error(candidateId || evaluationId
+              ? 'That candidate has no assessment in this campaign.'
+              : 'No candidate has been assessed on this campaign yet.');
+          }
+          evaluationId = chosen.id;
+          return Promise.all([
+            get('/api/evaluations/' + encodeURIComponent(evaluationId)),
+            get('/api/campaigns/' + encodeURIComponent(campaign.id) + '/candidates/' + encodeURIComponent(chosen.candidate_id) + '/recommendation'),
+            get('/api/campaigns/' + encodeURIComponent(campaign.id) + '/candidates/' + encodeURIComponent(chosen.candidate_id) + '/benchmark'),
+            get('/api/campaigns/' + encodeURIComponent(campaign.id) + '/candidates/' + encodeURIComponent(chosen.candidate_id) + '/actions'),
+            get('/api/processing/candidates/' + encodeURIComponent(chosen.candidate_id))
+          ]).then(function (parts) { renderDecision(campaign, parts[4], parts[0], parts[1], parts[3], parts[2]); });
+        });
+      });
+    }).catch(renderUnavailable);
+  }
+
+  start();
+}());
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

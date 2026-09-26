@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rubric · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .approvalstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .approvalstrip .figure{padding:24px 26px}
+  .approvalstrip .v{font-size:26px}
+  @media (max-width:980px){.approvalstrip{grid-template-columns:1fr}}
+
+  .musthave{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .mrow{display:flex;align-items:flex-start;gap:18px;padding:20px 28px;border-top:1px solid var(--hair-soft)}
+  .mrow:first-child{border-top:0}
+  .mrow .id{
+    flex:none;width:34px;height:34px;border-radius:var(--r-pill);background:var(--maroon-soft);color:var(--maroon);
+    display:grid;place-items:center;font-size:13px;font-weight:500;
+  }
+  .mrow .tx{flex:1;font-size:15.5px;font-weight:400;letter-spacing:-.01em}
+  .mrow .w{flex:none;width:30px;text-align:right;font-size:14.5px;color:var(--ink-2);font-weight:400}
+  .mrow .tag{flex:none}
+  .mustnote{padding:18px 28px;background:var(--sand);font-size:14px;color:var(--ink-2);font-weight:300;border-top:1px solid var(--hair-soft)}
+  .mustnote b{color:var(--ink);font-weight:500}
+
+  .prefs{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:8px 28px}
+  .prow{display:flex;align-items:center;gap:20px;padding:16px 0;border-top:1px solid var(--hair-soft)}
+  .prow:first-child{border-top:0}
+  .prow .tx{flex:1;font-size:15.5px;font-weight:400;letter-spacing:-.01em;min-width:0}
+  .prow .tx span{display:block;font-size:13px;color:var(--ink-3);font-weight:300;margin-top:2px}
+  .prow .pbar{width:220px;flex:none}
+  .prow .pbar .t{height:9px;border-radius:var(--r-pill);background:var(--sand-2);overflow:hidden}
+  .prow .pbar .t i{display:block;height:100%;background:var(--gold);border-radius:var(--r-pill)}
+  .prow .w{flex:none;width:34px;text-align:right;font-size:14.5px;color:var(--ink-2);font-weight:400}
+
+  .stackbar{height:34px;border-radius:var(--r-pill);overflow:hidden;display:flex;background:var(--sand-2)}
+  .stackbar i{display:block;height:100%}
+  .sb-mand{background:var(--maroon)}
+  .sb-skill{background:var(--maroon-mid)}
+  .sb-exp{background:var(--gold)}
+  .sb-qual{background:var(--teal)}
+  .sb-cert{background:var(--navy)}
+  .legend{display:flex;flex-wrap:wrap;gap:18px 26px;margin-top:18px}
+  .legend .li{display:flex;align-items:center;gap:9px;font-size:14.5px;color:var(--ink-2);font-weight:300}
+  .legend .sw{width:11px;height:11px;border-radius:3px;flex:none}
+  .legend b{color:var(--ink);font-weight:400}
+  .scorenote{margin-top:16px;font-size:14px;color:var(--ink-2);font-weight:300}
+
+  .elig{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);
+    border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden;
+  }
+  .elig .cell{background:var(--surface);padding:26px 28px}
+  .elig h4{font-size:16.5px;font-weight:400;letter-spacing:-.015em;margin-bottom:10px}
+  .elig p{font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.6}
+  .elig .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+  .histrow{display:flex;align-items:baseline;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft)}
+  .histrow:first-child{border-top:0}
+  .histrow .ver{flex:none;width:64px;font-size:15px;font-weight:500;color:var(--ink)}
+  .histrow .tx{flex:1;font-size:14.5px;color:var(--ink-2);font-weight:300}
+  .histrow .tx b{color:var(--ink);font-weight:400}
+
+  @media (max-width:980px){
+    .elig{grid-template-columns:1fr}
+    .prow{flex-wrap:wrap}
+    .prow .pbar{width:100%;order:3}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the rules, and who signed off on them ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date" id="r-campaign">Control Room Operator · CAM-2611</div>
+    <h1>These are the rules the system scores against. <b>A person approved them.</b></h1>
+    <p>Nothing scores a CV until a rule for it has been signed off. This is what was signed off, and by whom.</p>
+  </section>
+
+  <section class="band">
+    <div class="approvalstrip" id="r-approval">
+      <div class="figure">
+        <div class="k">Approved by</div>
+        <div class="v">F. Al-Rashid</div>
+      </div>
+      <div class="figure">
+        <div class="k">Approved on</div>
+        <div class="v">2 September</div>
+      </div>
+      <div class="figure">
+        <div class="k">Version in use</div>
+        <div class="v maroon">4.2</div>
+      </div>
+      <div class="figure">
+        <div class="k">Applied to</div>
+        <div class="v">6 of 6 campaigns</div>
+        <div class="b">Every open campaign uses an approved version.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — must have ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Must have</h2>
+      <span class="aside">Missing one means not eligible. It is not a low score.</span>
+    </div>
+
+    <div class="musthave" id="r-musthave">
+      <div class="mrow">
+        <div class="id">01</div>
+        <div class="tx">Valid Right to work, or sponsorship that can be transferred</div>
+        <div class="w">—</div>
+        <span class="tag run">Not eligible if missing</span>
+      </div>
+      <div class="mrow">
+        <div class="id">02</div>
+        <div class="tx">Diploma or higher in a process, chemical or mechanical discipline</div>
+        <div class="w">15</div>
+        <span class="tag plain">Mandatory</span>
+      </div>
+      <div class="mrow">
+        <div class="id">03</div>
+        <div class="tx">At least 3 years of console hours on a live, continuous-process unit</div>
+        <div class="w">25</div>
+        <span class="tag run">Not eligible if missing</span>
+      </div>
+      <div class="mrow">
+        <div class="id">04</div>
+        <div class="tx">Trained on a distributed control system (DCS)</div>
+        <div class="w">40</div>
+        <span class="tag plain">Mandatory</span>
+      </div>
+      <div class="mrow">
+        <div class="id">05</div>
+        <div class="tx">Fitness-to-work and offshore or onshore medical clearance</div>
+        <div class="w">20</div>
+        <span class="tag plain">Mandatory</span>
+      </div>
+      <div class="mustnote">A CV that fails either of the two <b>not eligible if missing</b> rows above is marked <b>not eligible</b> and is not scored further. The rest are mandatory and scored, but on their own do not rule a candidate out.</div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — counts in their favour ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Counts in their favour</h2>
+      <span class="aside" id="r-prefs-aside">Preferred, not required. Weighted out of 56.</span>
+    </div>
+
+    <div class="prefs" id="r-prefs">
+      <div class="prow">
+        <div class="tx">Ethylene, polyethylene or olefins experience<span>REQ-06</span></div>
+        <div class="pbar"><div class="t"><i style="width:100%"></i></div></div>
+        <div class="w">20</div>
+      </div>
+      <div class="prow">
+        <div class="tx">Wrote or owned an operating procedure<span>REQ-07</span></div>
+        <div class="pbar"><div class="t"><i style="width:60%"></i></div></div>
+        <div class="w">12</div>
+      </div>
+      <div class="prow">
+        <div class="tx">Took part in a turnaround or shutdown<span>REQ-08</span></div>
+        <div class="pbar"><div class="t"><i style="width:50%"></i></div></div>
+        <div class="w">10</div>
+      </div>
+      <div class="prow">
+        <div class="tx">Holds permit-to-work authority<span>REQ-09</span></div>
+        <div class="pbar"><div class="t"><i style="width:40%"></i></div></div>
+        <div class="w">8</div>
+      </div>
+      <div class="prow">
+        <div class="tx">Speaks Arabic and English<span>REQ-10</span></div>
+        <div class="pbar"><div class="t"><i style="width:30%"></i></div></div>
+        <div class="w">6</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — how the score is built ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>How the score is built</h2>
+      <span class="aside">Five parts, out of 100</span>
+    </div>
+
+    <div class="stackbar" id="r-stackbar">
+      <i class="sb-mand" style="width:45%"></i>
+      <i class="sb-skill" style="width:20%"></i>
+      <i class="sb-exp" style="width:18%"></i>
+      <i class="sb-qual" style="width:10%"></i>
+      <i class="sb-cert" style="width:7%"></i>
+    </div>
+    <div class="legend" id="r-legend">
+      <div class="li"><span class="sw" style="background:var(--maroon)"></span>Mandatory <b>45</b></div>
+      <div class="li"><span class="sw" style="background:var(--maroon-mid)"></span>Skills <b>20</b></div>
+      <div class="li"><span class="sw" style="background:var(--gold)"></span>Experience <b>18</b></div>
+      <div class="li"><span class="sw" style="background:var(--teal)"></span>Qualifications <b>10</b></div>
+      <div class="li"><span class="sw" style="background:var(--navy)"></span>Certifications <b>7</b></div>
+    </div>
+    <p class="scorenote">Each part's weight is how much it can move the final number — a CV's score is just these parts added up.</p>
+  </section>
+
+  <!-- ═══════ CHUNK 5 — eligibility rules, kept apart from scoring ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Eligibility rules, recorded separately from scoring</h2>
+      <span class="aside">These decide who is in the pool, not how high they score</span>
+    </div>
+
+    <div class="elig">
+      <div class="cell">
+        <h4>National workforce preference</h4>
+        <p>Nationals of the host country are advanced to review automatically. This is a lawful, approved hiring policy, applied openly and the same way every time.</p>
+        <p style="margin-top:10px">It is <b>not</b> a hidden weight inside the score. It is a visible rule, recorded here, with an approver and a date.</p>
+        <div class="badges">
+          <span class="tag ok">Approved</span>
+          <span class="tag ok">Visible</span>
+          <span class="tag ok">Audited</span>
+        </div>
+      </div>
+      <div class="cell">
+        <h4>Protected characteristics</h4>
+        <p>Nationality beyond the rule above, gender, age, religion and family status are excluded from scoring entirely.</p>
+        <p style="margin-top:10px">The rubric never sees them, so they cannot move a score up or down.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 6 — version history, folded ═══════ -->
+  <section class="band">
+    <div class="label">
+      <h2>Version history</h2>
+      <span class="aside">Changing the rules needs a new approval, and every CV is scored again</span>
+    </div>
+
+    <div class="fold" id="r-history">
+      <details>
+        <summary>
+          <span class="b ok">4.2</span>
+          <span class="t">Current version</span>
+          <span class="s">approved 2 September by F. Al-Rashid</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="histrow">
+            <div class="ver">4.2</div>
+            <div class="tx">In use now. <b>Added REQ-09, permit-to-work authority</b>, as a preferred item worth 8 points. Approved by F. Al-Rashid, 2 September.</div>
+          </div>
+          <div class="histrow">
+            <div class="ver">4.1</div>
+            <div class="tx">Raised the console-hours minimum in REQ-03 from 2 years to 3. Approved by F. Al-Rashid, 14 July.</div>
+          </div>
+          <div class="histrow">
+            <div class="ver">4.0</div>
+            <div class="tx">First version to record the National workforce preference as a visible eligibility rule, separate from scoring. Approved by F. Al-Rashid, 2 June.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <p class="sig">Changing a rule needs a new approval, and every CV under it is scored again. Results cannot drift silently.</p>
+
+</div>
+
+<script>
+/* ── Rubric & Requirement Review — live wiring ────────────────────────────
+   Renders the approved rubric from the API into the existing markup.
+
+   Rules followed here:
+   * Only existing classes and CSS custom properties are used. No new
+     colours, fonts or layout. The five stackbar classes (sb-mand, sb-skill,
+     sb-exp, sb-qual, sb-cert) are reused as a fixed palette cycle, so a
+     rubric with different categories still renders in the house colours.
+   * Plain English only, per DATA.md. Enum values like MIN_YEARS_EXPERIENCE
+     never reach the screen.
+   * Never a figure without its denominator.
+   * The static markup above is the shipped design. If the API is
+     unreachable this script leaves the page exactly as authored rather
+     than blanking it, and says so in the campaign line — a page that
+     silently shows one campaign's rules under another campaign's name
+     would be worse than an obvious error.
+   ──────────────────────────────────────────────────────────────────────── */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var params = new URLSearchParams(location.search);
+  var campaignId = params.get('campaign') || params.get('campaign_id');
+
+  var MONTHS = ['January','February','March','April','May','June','July',
+                'August','September','October','November','December'];
+
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function longDate(iso) {
+    if (!iso) return 'not yet approved';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return 'not yet approved';
+    return d.getDate() + ' ' + MONTHS[d.getMonth()];
+  }
+
+  function shortName(name) {
+    var parts = String(name || '').trim().split(/\s+/);
+    if (parts.length < 2) return parts[0] || 'not recorded';
+    return parts[0].charAt(0) + '. ' + parts[parts.length - 1];
+  }
+
+  function num(value) {
+    return Math.round(Number(value || 0) * 10) / 10;
+  }
+
+  /* Rule types in the words a recruiter uses, not the enum. */
+  var RULE_WORDS = {
+    MIN_YEARS_EXPERIENCE: 'Minimum length of experience',
+    MISSING_MANDATORY_SKILL: 'Required skill',
+    MISSING_QUALIFICATION: 'Required qualification',
+    MISSING_CERTIFICATION: 'Required certification',
+    LOCATION_MISMATCH: 'Location requirement',
+    MIN_CRITERION_SCORE: 'Minimum score on a requirement',
+    ELIGIBILITY_FAILURE: 'Eligibility condition',
+    CUSTOM: 'Eligibility condition'
+  };
+
+  var CATEGORY_WORDS = {
+    SKILL: 'Skills', EXPERIENCE: 'Experience', QUALIFICATION: 'Qualifications',
+    CERTIFICATION: 'Certifications', RESPONSIBILITY: 'Responsibilities',
+    INDUSTRY: 'Industry background', FUNCTIONAL: 'Functional experience',
+    SENIORITY: 'Seniority', LOCATION: 'Location', ELIGIBILITY: 'Eligibility',
+    DIFFERENTIATING: 'Differentiators'
+  };
+
+  /* Existing stackbar classes, cycled. Keeps everything in the house palette. */
+  var BAR_CLASSES = ['sb-mand', 'sb-skill', 'sb-exp', 'sb-qual', 'sb-cert'];
+  var BAR_VARS = ['var(--maroon)', 'var(--maroon-mid)', 'var(--gold)',
+                  'var(--teal)', 'var(--navy)'];
+
+  function set(id, html) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  }
+
+  function note(message) {
+    var el = document.getElementById('r-campaign');
+    if (el) el.textContent = message;
+  }
+
+  /* ── renderers ───────────────────────────────────────────────────────── */
+
+  function renderApproval(campaign, version, versions) {
+    var approved = versions.filter(function (v) {
+      return v.approved_at;
+    }).length;
+    var statusWord = version.status === 'LOCKED'
+      ? 'Locked. No further edits.'
+      : (version.status === 'APPROVED'
+          ? 'Approved and in use.'
+          : 'Not yet approved. Nothing is scored against it.');
+
+    set('r-approval',
+      '<div class="figure"><div class="k">Approved by</div>' +
+        '<div class="v">' + esc(shortName(version.approved_by)) + '</div></div>' +
+      '<div class="figure"><div class="k">Approved on</div>' +
+        '<div class="v">' + esc(longDate(version.approved_at)) + '</div></div>' +
+      '<div class="figure"><div class="k">Version in use</div>' +
+        '<div class="v maroon">' + esc(version.version_number) + '</div></div>' +
+      '<div class="figure"><div class="k">Weights total</div>' +
+        '<div class="v">' + num(version.weight_total) + ' of 100</div>' +
+        '<div class="b">' + esc(statusWord) + '</div></div>'
+    );
+
+    var title = campaign.job_title || campaign.name || 'Campaign';
+    note(title + ' · ' + approved + ' of ' + versions.length +
+         ' version' + (versions.length === 1 ? '' : 's') + ' approved');
+  }
+
+  function renderMustHave(version) {
+    var gateByRequirement = {};
+    var reviewRules = [];
+    (version.disqualification_rules || []).forEach(function (rule) {
+      if (!rule.active) return;
+      if (rule.severity === 'HARD_FAIL') {
+        if (rule.requirement_id) gateByRequirement[rule.requirement_id] = rule;
+      } else {
+        reviewRules.push(rule);
+      }
+    });
+
+    var mandatory = (version.weights || []).filter(function (w) {
+      return w.active && w.requirement_type === 'MANDATORY';
+    }).sort(function (a, b) { return b.weight - a.weight; });
+
+    if (!mandatory.length && !reviewRules.length) {
+      set('r-musthave',
+        '<div class="mustnote">No mandatory requirements are recorded on this ' +
+        'version. Every candidate is scored, and none is ruled out ' +
+        'automatically.</div>');
+      return;
+    }
+
+    var gateCount = 0;
+    var rowIndex = 0;
+    var html = mandatory.map(function (w) {
+      var gate = w.requirement_id && gateByRequirement[w.requirement_id];
+      if (gate) gateCount++;
+      rowIndex++;
+      return '<div class="mrow">' +
+        '<div class="id">' + (rowIndex < 10 ? '0' : '') + rowIndex + '</div>' +
+        '<div class="tx">' + esc(w.label) + '</div>' +
+        '<div class="w">' + num(w.weight) + '</div>' +
+        '<span class="tag ' + (gate ? 'run' : 'plain') + '">' +
+          (gate ? 'Not eligible if missing' : 'Mandatory') + '</span>' +
+      '</div>';
+    }).join('') + reviewRules.map(function (rule) {
+      rowIndex++;
+      return '<div class="mrow">' +
+        '<div class="id">' + (rowIndex < 10 ? '0' : '') + rowIndex + '</div>' +
+        '<div class="tx">' + esc(rule.label || RULE_WORDS[rule.rule_type] || 'Eligibility condition') +
+          (rule.threshold != null
+            ? '<span style="display:block;font-size:13px;color:var(--ink-3);font-weight:300;margin-top:2px">' +
+              esc(RULE_WORDS[rule.rule_type] || 'Condition') + ' · ' + num(rule.threshold) + '</span>'
+            : '') +
+        '</div>' +
+        '<div class="w">—</div>' +
+        '<span class="tag hold">Needs a look</span>' +
+      '</div>';
+    }).join('');
+
+    if (gateCount) {
+      html += '<div class="mustnote">' + (gateCount === 1
+          ? 'A CV that fails the <b>one</b> "not eligible if missing" row above is marked '
+          : 'A CV that fails any one of the <b>' + gateCount + '</b> "not eligible if missing" rows above is marked ') +
+        '<b>not eligible</b> and is not scored further. The rest are mandatory and ' +
+        'scored, but on their own do not rule a candidate out.</div>';
+    } else {
+      html += '<div class="mustnote">These are mandatory and scored. None of them ' +
+        'is an automatic eligibility gate on this version.</div>';
+    }
+    set('r-musthave', html);
+  }
+
+  function renderPreferred(version) {
+    var weights = (version.weights || []).filter(function (w) {
+      return w.active && w.requirement_type !== 'MANDATORY' && w.requirement_type !== 'INFORMATIONAL';
+    }).sort(function (a, b) { return b.weight - a.weight; });
+
+    var aside = document.getElementById('r-prefs-aside');
+    if (!weights.length) {
+      set('r-prefs', '<div class="prow"><div class="tx">No preferred ' +
+        'requirements are recorded on this version. The whole score comes ' +
+        'from the mandatory criteria.</div></div>');
+      if (aside) aside.textContent = 'None recorded on this version';
+      return;
+    }
+
+    var total = weights.reduce(function (sum, w) { return sum + w.weight; }, 0);
+    var top = weights[0].weight || 1;
+    if (aside) {
+      aside.textContent = 'Preferred, not required. ' + weights.length +
+        ' recorded, ' + num(total) + ' of the 100 points available.';
+    }
+
+    set('r-prefs', weights.map(function (w) {
+      var pct = w.weight > 0 ? Math.max(2, Math.round(w.weight / top * 100)) : 0;
+      return '<div class="prow">' +
+        '<div class="tx">' + esc(w.label) +
+          '<span>' + esc(CATEGORY_WORDS[w.category] || w.category) + '</span></div>' +
+        '<div class="pbar"><div class="t"><i style="width:' + pct + '%"></i></div></div>' +
+        '<div class="w">' + num(w.weight) + '</div>' +
+      '</div>';
+    }).join(''));
+  }
+
+  function renderComposition(version) {
+    var weights = (version.weights || []).filter(function (w) {
+      return w.active && w.weight > 0;
+    });
+    if (!weights.length) return;
+
+    /* Mandatory is shown as one band, then the rest by category — the same
+       shape the design was drawn for. */
+    var groups = [];
+    var mandatory = weights.filter(function (w) {
+      return w.requirement_type === 'MANDATORY';
+    }).reduce(function (sum, w) { return sum + w.weight; }, 0);
+    if (mandatory > 0) groups.push({ name: 'Mandatory', weight: mandatory });
+
+    var byCategory = {};
+    weights.forEach(function (w) {
+      if (w.requirement_type === 'MANDATORY') return;
+      var key = CATEGORY_WORDS[w.category] || w.category;
+      byCategory[key] = (byCategory[key] || 0) + w.weight;
+    });
+    Object.keys(byCategory).sort(function (a, b) {
+      return byCategory[b] - byCategory[a];
+    }).forEach(function (key) {
+      groups.push({ name: key, weight: byCategory[key] });
+    });
+
+    var total = groups.reduce(function (sum, g) { return sum + g.weight; }, 0) || 1;
+
+    set('r-stackbar', groups.map(function (g, i) {
+      return '<i class="' + BAR_CLASSES[i % BAR_CLASSES.length] +
+        '" style="width:' + (g.weight / total * 100) + '%"></i>';
+    }).join(''));
+
+    set('r-legend', groups.map(function (g, i) {
+      return '<div class="li"><span class="sw" style="background:' +
+        BAR_VARS[i % BAR_VARS.length] + '"></span>' + esc(g.name) +
+        ' <b>' + num(g.weight) + '</b></div>';
+    }).join(''));
+
+    var aside = document.querySelector('#r-stackbar');
+    if (aside) {
+      var label = aside.closest('.band') && aside.closest('.band').querySelector('.label .aside');
+      if (label) {
+        label.textContent = groups.length + ' part' +
+          (groups.length === 1 ? '' : 's') + ', out of ' + num(total);
+      }
+    }
+  }
+
+  function renderHistory(versions, active) {
+    var ordered = versions.slice().sort(function (a, b) {
+      return b.version_number - a.version_number;
+    });
+
+    var rows = ordered.map(function (v) {
+      var bits = [];
+      if (active && v.id === active.id) bits.push('In use now.');
+      if (v.change_reason) bits.push('<b>' + esc(v.change_reason) + '</b>');
+      if (v.approved_at) {
+        bits.push('Approved by ' + esc(v.approved_by || 'not recorded') +
+                  ', ' + esc(longDate(v.approved_at)) + '.');
+      } else if (v.status === 'DRAFT') {
+        bits.push('Draft. Not approved, so nothing is scored against it.');
+      } else if (v.status === 'REJECTED') {
+        bits.push('Rejected' + (v.rejection_reason ? ': ' + esc(v.rejection_reason) : '') + '.');
+      } else if (v.status === 'SUPERSEDED') {
+        bits.push('Superseded by a later version. Results scored under it are kept.');
+      }
+      if (v.reevaluation_required && !v.reevaluation_acknowledged_at) {
+        bits.push('<b>Candidates scored under the previous version need ' +
+                  'assessing again.</b>');
+      }
+      return '<div class="histrow">' +
+        '<div class="ver">' + esc(v.version_number) + '</div>' +
+        '<div class="tx">' + bits.join(' ') + '</div>' +
+      '</div>';
+    }).join('');
+
+    var current = ordered[0];
+    set('r-history',
+      '<details data-id="rubric-history">' +
+        '<summary>' +
+          '<span class="b ok">' + esc(current.version_number) + '</span>' +
+          '<span class="t">' + (active && active.id === current.id
+            ? 'Current version' : 'Latest version') + '</span>' +
+          '<span class="s">' + esc(versions.length) + ' version' +
+            (versions.length === 1 ? '' : 's') + ' recorded</span>' +
+          '<svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" ' +
+            'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" ' +
+            'stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+        '</summary>' +
+        '<div class="drawer">' + rows + '</div>' +
+      '</details>'
+    );
+  }
+
+  /* ── load ────────────────────────────────────────────────────────────── */
+
+  function resolveCampaign() {
+    if (campaignId) return Promise.resolve(campaignId);
+    return fetch(API_BASE + '/api/runs')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (body) {
+        var runs = (body && body.runs) || [];
+        return runs.length ? runs[0].campaign_id : null;
+      });
+  }
+
+  resolveCampaign()
+    .then(function (id) {
+      if (!id) throw new Error('no campaign');
+      campaignId = id;
+      var base = API_BASE + '/api/campaigns/' + encodeURIComponent(id);
+      /* Three calls, because the versions LIST is a summary — it carries no
+         weights or disqualification rules. Those only come from the detail
+         shape, which /rubric/active returns for the version in use. Reading
+         weights off the list silently renders an empty rubric. */
+      return Promise.all([
+        fetch(base).then(function (r) { return r.ok ? r.json() : {}; }),
+        fetch(base + '/rubric/versions').then(function (r) {
+          if (!r.ok) throw new Error('no rubric');
+          return r.json();
+        }),
+        fetch(base + '/rubric/active').then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+      ]);
+    })
+    .then(function (results) {
+      var campaign = results[0];
+      var versions = results[1] || [];
+      var active = results[2];
+      if (!versions.length) throw new Error('no versions');
+
+      /* No approved version yet: the history is still worth showing, but
+         nothing is being scored against, and the page should say so rather
+         than leave the shipped defaults looking authoritative. */
+      if (!active) {
+        renderHistory(versions, null);
+        note((campaign.job_title || campaign.name || 'This campaign') +
+             ' · no approved rubric yet, so no CV is being scored');
+        return;
+      }
+
+      renderApproval(campaign, active, versions);
+      renderMustHave(active);
+      renderPreferred(active);
+      renderComposition(active);
+      renderHistory(versions, active);
+    })
+    .catch(function () {
+      note('No approved rubric could be loaded. The rules shown below are ' +
+           'the shipped defaults and are not this campaign\'s.');
+    });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>

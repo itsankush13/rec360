@@ -1,0 +1,759 @@
+/* ============================================================
+   Recruitment 360 — design system
+   Direction: Mihrab. Arch geometry, mashrabiya lattice,
+   Qatar maroon, generous chunking, progressive disclosure.
+   ============================================================ */
+
+:root{
+  /* surfaces */
+  --sand:#F7F3ED;
+  --sand-2:#EFE8DE;
+  --sand-3:#E4DACB;
+  --surface:#FFFEFC;
+  --hair:#E5DCCE;
+  --hair-soft:#F0E9DE;
+
+  /* brand — sampled from qchem.com.qa */
+  --maroon:#971A3E;
+  --maroon-deep:#6E1030;
+  --maroon-ink:#4E0B22;
+  --maroon-soft:#F6E8EC;
+  --maroon-mid:#C4557A;
+
+  --gold:#B8924E;
+  --gold-soft:#F4ECDC;
+  --gold-ink:#7E611F;
+
+  --teal:#2C6B62;
+  --teal-soft:#E6F0EE;
+
+  /* A recruiter's own SHORTLIST/HOLD/REJECT decision reads as green/yellow/red
+     everywhere it's shown — distinct from the AI verdict scale below, which is
+     deliberately ordinal and not a traffic light. --teal doubles as this green
+     and --gold as this yellow already; --red is the one piece missing. */
+  --red:#A6413A;
+  --red-soft:#F7E7E5;
+  --red-ink:#7A2E28;
+
+  --navy:#22304D;
+  --navy-soft:#EDEFF4;
+
+  /* ink */
+  --ink:#241F1C;
+  --ink-2:#655C53;
+  --ink-3:#9B9186;
+
+  /* verdict scale — ordinal, four steps, never a traffic light. The bottom
+     step (weak/not-recommended) reads as red per product direction, even
+     though the scale is not a literal green/yellow/red traffic light. */
+  --v-strong:#971A3E;
+  --v-potential:#C4557A;
+  --v-review:#B8924E;
+  --v-no:#A6413A;
+
+  /* neutral grey for "no data yet" states (muted fit, pending decision) —
+     kept separate from --v-no now that --v-no means the weak/red tier. */
+  --v-nodata:#B8AFA4;
+
+  /* a terminal outcome that did not end in hire (declined, withdrawn, not
+     proceeding, closed without an offer). Added for the timeline screen,
+     B02 — no negative-state token existed before this page needed one. */
+  --v-negative:#A6413A;
+
+  /* geometry */
+  --r-xl:32px;
+  --r-lg:26px;
+  --r-md:18px;
+  --r-pill:999px;
+  --ease:cubic-bezier(.22,1,.28,1);
+
+  --f:'Readex Pro',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+/* Portal gate (B22 phase 1, see assets/app.js): body stays hidden until the
+   session check against /api/auth/me resolves, so a signed-out visitor never
+   sees a flash of real data before being redirected to login.html. */
+html.auth-pending body{visibility:hidden}
+body{
+  background:var(--sand);color:var(--ink);
+  font-family:var(--f);font-size:16px;line-height:1.6;font-weight:300;
+  font-variant-numeric:lining-nums;
+  position:relative;
+}
+/* The lattice. It sits behind every screen; all content floats above it. */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("pattern-page.svg");
+  background-size:200px 200px;
+  opacity:.038;
+}
+body > *{position:relative;z-index:1}
+/* ============ campaign journey bar — six stops, left to right ============
+   Namespaced `.cjourney-*` (not `.journey-*`): that prefix is already taken,
+   further down this file, by the unrelated funnel-chart bars journey.js
+   builds inside `#journey-chart` (`.journey-bar`/`.journey-track` there mean
+   "one chart row", not "the campaign nav"). Reusing those names silently lost
+   this component's height to the chart's `.journey-track{height:12px}` rule. */
+.cjourney-bar{
+  position:sticky;top:10px;z-index:39;min-height:112px;
+  display:flex;align-items:stretch;gap:0;
+  background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-xl);
+  box-shadow:0 16px 38px -20px #241f1c40;
+  margin:10px clamp(14px,2.35vw,32px) 18px;
+  padding:0 18px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+}
+.cjourney-bar::-webkit-scrollbar{display:none}
+.cjourney-bar[aria-busy="true"]{opacity:.6;pointer-events:none}
+.cjourney-end{
+  flex:none;display:grid;place-items:center;width:40px;
+  font-size:30px;line-height:1;color:var(--maroon);text-decoration:none;
+}
+.cjourney-end[aria-disabled="true"]{opacity:.25;pointer-events:none}
+.cjourney-end:hover{color:var(--maroon-deep)}
+.cjourney-name{
+  flex:none;align-self:center;max-width:180px;margin-right:14px;padding-right:14px;
+  border-right:1px solid var(--hair);
+  font:500 14px var(--f);color:var(--ink-2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.cjourney-track{flex:1;min-width:0;display:flex;align-items:flex-start;justify-content:flex-start;gap:0;padding:18px 4px;flex-wrap:nowrap}
+.cjourney-stopwrap{flex:none;position:relative;display:flex;flex-direction:column;align-items:center}
+.cjourney-stop{
+  flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;
+  font:500 15px var(--f);text-decoration:none;white-space:nowrap;
+  padding:4px 6px;border-radius:16px;color:var(--ink-2);
+}
+.cjourney-caret{
+  margin-top:2px;font-size:11px;line-height:1;color:var(--ink-3);
+  padding:3px 8px;border-radius:99px;
+}
+.cjourney-caret:hover{background:var(--sand-2);color:var(--maroon)}
+.cjourney-caret[aria-expanded="true"]{color:var(--maroon);background:var(--maroon-soft)}
+.cjourney-menu{
+  /* Positioned in JS (fixed, computed from the wrap's own screen position
+     on open) and appended to <body> — nesting it in the bar would put it
+     inside the bar's own horizontal-scroll clip. */
+  position:fixed;transform:translateX(-50%);
+  min-width:220px;max-width:280px;padding:7px;z-index:50;
+  background:var(--surface);border:1px solid var(--hair);border-radius:14px;
+  box-shadow:0 16px 38px -16px #241f1c40;
+}
+.cjourney-menu[hidden]{display:none}
+.cjourney-menu a{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;
+  font:400 13.5px var(--f);color:var(--ink-2);text-decoration:none;white-space:normal;
+}
+.cjourney-menu a:hover{background:var(--sand-2)}
+.cjourney-menu a.current{background:var(--maroon-soft);color:var(--maroon);font-weight:500}
+.cjourney-menu-dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--hair)}
+.cjourney-menu-dot.done{background:#1f8a4c}
+.cjourney-circle{
+  width:48px;height:48px;flex:none;border-radius:50%;position:relative;
+  display:grid;place-items:center;
+  background:var(--sand-2);border:2px solid var(--hair);color:var(--ink-3);
+  transition:background .2s,border-color .2s,color .2s;
+}
+.cjourney-circle svg{width:20px;height:20px;display:block}
+.cjourney-stop.pending .cjourney-circle{background:var(--sand-2);border-color:var(--hair);color:var(--ink-3)}
+.cjourney-stop.done .cjourney-circle{background:var(--maroon-deep);border-color:var(--maroon-deep);color:#fff}
+.cjourney-stop.current .cjourney-circle{background:var(--maroon-soft);border-color:var(--maroon);color:var(--maroon);box-shadow:0 0 0 4px var(--maroon-soft)}
+.cjourney-stop.current{color:var(--maroon);font-weight:700}
+.cjourney-stop.done{color:var(--maroon-deep);font-weight:600}
+.cjourney-stop:hover .cjourney-circle{border-color:var(--maroon-mid)}
+.cjourney-stop:hover{background:var(--sand-2)}
+.cjourney-stop:focus-visible{outline:2px solid var(--maroon);outline-offset:2px}
+.cjourney-arrow{
+  /* A quiet dotted trail between stops — stretches to soak up whatever
+     width the six fixed-size circles don't need, so the bar's own box is
+     always filled edge to edge instead of leaving dead space after the
+     last stop on a wide screen. min-width keeps it from being crushed to
+     nothing once the row has to scroll. */
+  flex:1 1 40px;min-width:24px;align-self:center;margin-top:-26px;
+  border-top:2px dotted var(--maroon-mid);height:0;
+  overflow:hidden;user-select:none;
+}
+.cjourney-error{flex:none;align-self:center;margin-left:10px;font-size:12px;color:var(--maroon)}
+@media(max-width:980px){
+  .cjourney-bar{margin:8px 8px 14px;padding:0 8px;min-height:96px}
+  .cjourney-name{max-width:110px;font-size:12.5px;margin-right:10px;padding-right:10px}
+  .cjourney-circle{width:38px;height:38px}
+  .cjourney-circle svg{width:16px;height:16px}
+  .cjourney-stop{font-size:13px;padding:4px}
+  .cjourney-arrow{margin-top:-22px;min-width:24px}
+}
+
+.page.campaign-empty-stage > :not(.campaign-empty-note){display:none}
+.campaign-empty-note{margin:44px 0;padding:35px;background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg)}
+.campaign-empty-note h1{font-size:clamp(24px,3vw,38px)}
+.campaign-empty-note p{margin:12px 0 20px;color:var(--ink-2)}
+.campaign-empty-note a{color:var(--maroon);font-weight:500}
+
+.page-done-btn{position:fixed;right:18px;bottom:18px;z-index:80;font:400 13.5px var(--f);
+  padding:11px 18px;border-radius:var(--r-pill);border:1px solid var(--hair);
+  background:var(--surface);color:var(--ink-2);cursor:pointer;
+  box-shadow:0 12px 36px #241f1c25;transition:background .2s,color .2s,border-color .2s}
+.page-done-btn:hover{border-color:var(--maroon);color:var(--maroon)}
+.page-done-btn.is-done{background:var(--teal-soft);color:var(--teal);border-color:transparent;cursor:default}
+@media(max-width:980px){.page-done-btn{right:12px;bottom:12px}}
+
+/* ============ page-state — the state name and what this screen is, top of page ============ */
+.page-state{margin-bottom:16px}
+/* Same "name of the page, then a plain-English line on what it does" hero as
+   .arch, just without the full maroon banner — for the denser journey pages
+   where a full-bleed header would crowd out the data below it. */
+/* The kicker text IS the page's name ("Candidate 360", "Compare candidates"),
+   not an eyebrow label above one — it reads as the title, so it gets the
+   title-sized, title-cased treatment; the one-line explanation under it
+   stays smaller so the two don't compete. */
+.page-state .kicker{font-size:26px;letter-spacing:-.01em;color:var(--ink);font-weight:700;margin-bottom:6px}
+.page-state p{font-size:13.5px;color:var(--ink-2);font-weight:300;max-width:64ch;line-height:1.5}
+h1,h2,h3,h4{font-weight:400;letter-spacing:-.025em;line-height:1.18}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--maroon);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ============ app bar ============ */
+.bar{
+  display:flex;align-items:center;gap:18px;
+  padding:18px 44px;background:var(--surface);
+  border-bottom:1px solid var(--hair);
+  position:sticky;top:0;z-index:40;
+}
+.id{display:flex;align-items:center;gap:13px;text-decoration:none}
+.id .q{
+  width:42px;height:42px;flex:none;
+  border-radius:48% 48% 32% 32% / 56% 56% 30% 30%;   /* the arch */
+  background:var(--maroon);color:#fff;display:grid;place-items:center;
+  font-size:19px;font-weight:500;
+}
+.id b{display:block;font-size:17px;font-weight:500;letter-spacing:-.02em;line-height:1.2}
+.id span{font-size:12.5px;color:var(--ink-3);font-weight:300}
+.bar nav{flex:1;min-width:0;margin-left:26px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.bar nav::-webkit-scrollbar{display:none}
+.bar nav a{
+  text-decoration:none;color:var(--ink-2);font-size:14.5px;font-weight:300;
+  padding:9px 17px;border-radius:var(--r-pill);white-space:nowrap;
+}
+.bar nav a:hover{background:var(--sand-2)}
+.bar nav a.on{background:var(--maroon-soft);color:var(--maroon);font-weight:400}
+.me{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:14px;color:var(--ink-2);font-weight:300;white-space:nowrap;flex:none}
+.me .av{
+  width:40px;height:40px;flex:none;border-radius:var(--r-pill);
+  background:var(--sand-3);color:var(--maroon-ink);
+  display:grid;place-items:center;font-size:14px;font-weight:500;
+}
+
+/* ============ page ============ */
+.page{max-width:1640px;margin:0 auto;padding:0 clamp(22px,2.35vw,42px) 88px}
+.page.wide{max-width:1740px}
+
+/* ============ CASCADE SCREENS ============
+   One stable full-width reading order. Opening a story expands in place and
+   pushes everything below it down, so no empty grid cavity can appear. */
+.cascade-page{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:14px;
+  align-items:start;
+}
+.cascade-page > .arch{width:100%;}
+.cascade-page > .story-block{
+  margin-top:0;overflow:hidden;width:100%;
+  background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+  transition:border-color .35s var(--ease),box-shadow .45s var(--ease);
+}
+.cascade-page > .story-always{
+  margin-top:0;padding:0;width:100%;
+  background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.cascade-page > .breadcrumb,
+.cascade-page > .sig{margin-left:2px;margin-right:2px;}
+.cascade-page > .story-block:hover{border-color:var(--sand-3);box-shadow:0 14px 34px -20px rgba(78,11,34,.32);}
+.cascade-page > .story-block.is-open{border-color:var(--maroon);box-shadow:0 18px 38px -24px rgba(78,11,34,.42);}
+.story-trigger{
+  position:relative;display:grid;grid-template-columns:minmax(230px,.85fr) minmax(280px,1.6fr) auto;
+  align-items:center;column-gap:28px;min-height:94px;
+  margin:0!important;padding:19px 68px 19px 28px!important;cursor:pointer;
+}
+.story-trigger h2{grid-column:1;grid-row:1;font-size:21px!important;font-weight:400!important;letter-spacing:-.025em;}
+.story-trigger .count{
+  grid-column:3;grid-row:1;justify-self:end;min-width:72px;
+  padding:0!important;background:transparent!important;border-radius:0!important;
+  color:var(--maroon)!important;font-size:30px!important;font-weight:500!important;
+  letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums;
+}
+.story-trigger .story-summary{
+  grid-column:2;grid-row:1;display:block;max-width:68ch;padding-right:10px;
+  margin-left:0!important;font-size:14px;color:var(--ink-2);font-weight:300;line-height:1.45;
+}
+.story-trigger .story-summary a{color:var(--maroon);font-weight:400;text-decoration:none;}
+.story-trigger .story-summary a:hover{text-decoration:underline;}
+/* A second .aside (e.g. audit.html's #a-filters) never becomes .story-summary —
+   only the first .aside in a .label does (see app.js). Left with no grid
+   placement it auto-flows into the row-1 .count column and blows that
+   column out to its own min-content width, crushing h2. Span it full width
+   and leave the row unset (not a fixed number) so it auto-places into
+   whichever row is actually free — row 2 on desktop, row 3 once the
+   max-width:980px rule below has already pushed .story-summary to row 2. */
+.story-trigger .aside:not(.story-summary){
+  grid-column:1 / -1;margin-left:0;margin-top:10px;
+}
+.story-trigger::after{
+  content:'⌄';position:absolute;right:24px;top:50%;color:var(--ink-3);font-size:22px;line-height:1;
+  transform:translateY(-55%);transition:transform .45s var(--ease),color .25s ease;
+}
+.story-block.is-open > .story-trigger{background:#FBF8F4;}
+.story-block.is-open > .story-trigger::after{color:var(--maroon);transform:translateY(-45%) rotate(180deg);}
+.story-detail{display:grid;grid-template-rows:0fr;transition:grid-template-rows .58s var(--ease);}
+.story-detail-inner{min-height:0;overflow:hidden;padding:0;}
+.story-block.is-open .story-detail{grid-template-rows:1fr;}
+.story-block.is-open .story-detail-inner{padding:0 26px 26px;animation:story-reveal .58s var(--ease) both;}
+@keyframes story-reveal{from{opacity:.2;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.story-detail-inner{animation:none!important}}
+
+/* ---- CHUNKING: every band is one idea, with air around it ---- */
+.band{margin-top:52px}
+.band:first-of-type{margin-top:0}
+.band > .label:not(.story-trigger){
+  display:flex;align-items:baseline;gap:13px;margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.band > .label h2{font-size:21px;font-weight:400;letter-spacing:-.02em}
+.band > .label .count{
+  font-size:13px;font-weight:400;color:var(--maroon);
+  background:var(--maroon-soft);padding:4px 13px;border-radius:var(--r-pill);
+}
+.band > .label .aside{
+  margin-left:auto;font-size:14px;color:var(--ink-3);font-weight:300;
+  flex-shrink:0;
+}
+.band > .label .aside a{color:var(--maroon);text-decoration:none;font-weight:400}
+.band > .label .aside a:hover{text-decoration:underline}
+
+/* ============ the arch — greeting only, one idea ============ */
+.crown{display:none}                      /* retired: the arch is one shape now */
+.arch{
+  position:relative;padding:56px 56px 40px;
+  background:var(--maroon);color:#fff;
+  /* A calm header horizon: the lattice supplies character without a dome. */
+  border-radius:0 0 var(--r-xl) var(--r-xl);
+  overflow:hidden;
+}
+.arch.slim{padding:34px 44px 28px;border-radius:0 0 var(--r-lg) var(--r-lg)}
+.arch .lattice{
+  position:absolute;inset:0;opacity:.16;pointer-events:none;
+  background-image:url("pattern-arch.svg");
+  background-size:230px 230px;
+}
+.arch > *{position:relative}
+.arch .date{
+  font-size:12.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);font-weight:400;margin-bottom:14px;
+}
+/* Every page opens with its own name and a one-line, non-technical
+   explanation of what it does, in this banner — bold enough that a reader
+   never has to guess what screen they're on. */
+.arch h1{font-size:42px;font-weight:600;letter-spacing:-.035em;line-height:1.14;max-width:20ch}
+.arch h1 b{font-weight:800}
+.arch p{margin-top:16px;font-size:17.5px;color:rgba(255,255,255,.78);font-weight:300;max-width:52ch;line-height:1.5}
+.arch-action{margin-top:24px}
+
+/* ============ decision cards ============ */
+.deck{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.deck.three{grid-template-columns:repeat(3,1fr)}
+.card{
+  background:var(--surface);border:1px solid var(--hair);
+  border-radius:var(--r-lg);padding:28px 30px 24px;
+  position:relative;overflow:hidden;
+  transition:box-shadow .22s,transform .22s;
+}
+.card.pad-lg{padding:32px 34px}
+.card:hover{box-shadow:0 14px 34px -20px rgba(78,11,34,.32);transform:translateY(-2px)}
+.card.flat:hover{box-shadow:none;transform:none}
+.card .arcbg{
+  position:absolute;right:-58px;top:-58px;width:186px;height:186px;
+  border-radius:50%;border:26px solid var(--maroon-soft);pointer-events:none;
+}
+.card > *{position:relative}
+.kick{
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);font-weight:500;margin-bottom:10px;
+}
+.card h3{font-size:25px;font-weight:400;letter-spacing:-.03em}
+.card .where{margin-top:7px;font-size:15px;color:var(--ink-2);font-weight:300}
+
+/* the dial — the signature object */
+.meter{display:flex;align-items:center;gap:20px;margin:24px 0 22px}
+.dial{width:82px;height:82px;flex:none;position:relative;display:grid;place-items:center}
+.dial.sm{width:62px;height:62px}
+.dial.lg{width:120px;height:120px}
+.dial svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.dial .n{font-size:27px;font-weight:400;letter-spacing:-.04em;line-height:1}
+.dial.sm .n{font-size:19px}
+.dial.lg .n{font-size:40px}
+.dial .u{font-size:10.5px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.meter .txt{font-size:15px;color:var(--ink-2);font-weight:300;line-height:1.5}
+.meter .txt b{display:block;font-size:16.5px;color:var(--ink);font-weight:400;margin-bottom:3px}
+
+/* ============ buttons ============ */
+.cta{
+  background:var(--maroon);color:#fff;border-radius:var(--r-pill);
+  padding:15px 26px;font-size:15.5px;font-weight:400;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .2s;text-decoration:none;
+}
+.cta:hover{background:var(--maroon-deep)}
+.cta.block{width:100%}
+.cta.sm{padding:11px 20px;font-size:14px}
+.ghost{
+  border:1px solid var(--hair);border-radius:var(--r-pill);
+  padding:11px 21px;font-size:14.5px;font-weight:400;color:var(--ink);
+  background:var(--surface);white-space:nowrap;transition:background .2s;
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+}
+.ghost:hover{background:var(--sand-2)}
+.ghost.sm{padding:8px 16px;font-size:13.5px}
+.ghost.onmaroon{border-color:rgba(255,255,255,.35);background:transparent;color:#fff}
+.ghost.onmaroon:hover{background:rgba(255,255,255,.12)}
+
+/* ============ figure panel — chunked value ============ */
+.figures{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--hair);border:1px solid var(--hair);
+  border-radius:var(--r-lg);overflow:hidden;
+}
+.figures.four{grid-template-columns:repeat(4,1fr)}
+.figures.two{grid-template-columns:repeat(2,1fr)}
+.figure{background:var(--surface);padding:26px 28px 24px}
+.figure .k{
+  font-size:12px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;margin-bottom:14px;
+}
+.figure .v{font-size:44px;font-weight:200;letter-spacing:-.045em;line-height:1;color:var(--ink)}
+.figure .v small{font-size:18px;font-weight:300;letter-spacing:-.01em;color:var(--ink-2);margin-left:5px}
+.figure .v.maroon{color:var(--maroon)}
+.figure .b{margin-top:13px;font-size:14.5px;color:var(--ink-2);font-weight:300;line-height:1.5}
+.figure .b b{font-weight:500;color:var(--ink)}
+.figure .m{margin-top:8px;font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.45}
+
+/* ============ disclosure ============ */
+.fold{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+.fold details{border-bottom:1px solid var(--hair)}
+.fold details:last-child{border-bottom:0}
+.fold summary{
+  list-style:none;cursor:pointer;padding:22px 30px;
+  display:flex;align-items:center;gap:18px;
+}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary:hover,.fold details[open] summary{background:#FBF8F4}
+.fold summary .b{
+  width:38px;height:38px;border-radius:var(--r-pill);flex:none;
+  display:grid;place-items:center;font-size:14.5px;font-weight:500;
+}
+.b.run{background:var(--maroon-soft);color:var(--maroon)}
+.b.hold{background:var(--gold-soft);color:var(--gold-ink)}
+.b.ok{background:var(--teal-soft);color:var(--teal)}
+.fold summary .t{font-size:16.5px;font-weight:400;letter-spacing:-.015em}
+.fold summary .s{font-size:14.5px;color:var(--ink-3);font-weight:300}
+.fold summary .chev{margin-left:auto;color:var(--ink-3);flex:none;transition:transform .25s}
+.fold details[open] .chev{transform:rotate(180deg)}
+.drawer{padding:2px 30px 26px}
+
+/* ============ rows ============ */
+.r{display:flex;align-items:center;gap:20px;padding:16px 0;border-top:1px solid var(--hair-soft)}
+.r:first-child{border-top:0}
+.r .nm{flex:1;min-width:0;font-size:16px;font-weight:400;letter-spacing:-.01em}
+.r .nm span{display:block;font-size:14px;color:var(--ink-3);font-weight:300;margin-top:2px}
+.r .nm em{font-style:normal;color:var(--ink-2)}
+
+/* progress */
+.bar2{width:186px;flex:none}
+.bar2.wide{width:240px}
+.bar2 .t{height:8px;border-radius:var(--r-pill);background:var(--sand-2);display:flex;overflow:hidden}
+.bar2 .t i{height:100%;display:block;border-radius:var(--r-pill)}
+.bar2 .t .d{background:var(--maroon)}
+.bar2 .t .p{background:var(--maroon-mid);opacity:.5}
+.bar2 .t .h{background:var(--gold);opacity:.6}
+.bar2 .l{margin-top:8px;font-size:13.5px;color:var(--ink-3);font-weight:300}
+
+/* tags */
+.tag{
+  flex:none;font-size:13.5px;font-weight:400;padding:6px 15px;
+  border-radius:var(--r-pill);white-space:nowrap;
+}
+.tag.sm{font-size:12.5px;padding:4px 12px}
+.tag.run{background:var(--maroon-soft);color:var(--maroon)}
+.tag.hold{background:var(--gold-soft);color:var(--gold-ink)}
+.tag.ok{background:var(--teal-soft);color:var(--teal)}
+.tag.plain{background:var(--sand-2);color:var(--ink-2)}
+
+/* verdict pills — ordinal */
+.verdict{
+  display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:400;
+  padding:6px 15px;border-radius:var(--r-pill);white-space:nowrap;
+}
+.verdict:before{content:"";width:9px;height:9px;border-radius:50%;flex:none}
+.verdict.strong{background:var(--maroon-soft);color:var(--maroon)}
+.verdict.strong:before{background:var(--v-strong)}
+.verdict.potential{background:#FBF0F3;color:#A03D62}
+.verdict.potential:before{background:var(--v-potential)}
+.verdict.review{background:var(--gold-soft);color:var(--gold-ink)}
+.verdict.review:before{background:var(--v-review)}
+.verdict.no{background:var(--red-soft);color:var(--red-ink)}
+.verdict.no:before{background:var(--v-no)}
+/* A confirmed requirement is a plain yes, not a matter of degree — it gets
+   the same green already used for "good" elsewhere (.pitem.good, .b.ok),
+   not a shade off the ordinal maroon/gold/red scale above. */
+.verdict.good{background:var(--teal-soft);color:var(--teal)}
+.verdict.good:before{background:var(--teal)}
+
+/* verdict spread bar */
+.spread{display:flex;height:12px;border-radius:var(--r-pill);overflow:hidden;background:var(--sand-2)}
+.spread i{display:block;height:100%}
+.spread .s1{background:var(--v-strong)}
+.spread .s2{background:var(--v-potential)}
+.spread .s3{background:var(--v-review)}
+.spread .s4{background:var(--v-no)}
+
+/* ============ evidence — the differentiator ============ */
+.evidence{
+  margin-top:14px;padding:16px 20px;background:var(--sand);
+  border-radius:var(--r-md);border-left:3px solid var(--gold);
+}
+.evidence .q{font-size:16px;font-weight:300;line-height:1.55;color:var(--ink)}
+.evidence .q mark{background:var(--gold-soft);box-shadow:0 1px 0 var(--gold);color:inherit;padding:0 3px;border-radius:3px}
+.evidence .cite{
+  margin-top:11px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-size:13px;color:var(--ink-3);font-weight:300;
+}
+.evidence .cite .src{color:var(--ink-2);border-bottom:1px dotted var(--sand-3)}
+.evidence .cite .arrow{color:var(--gold)}
+.evidence .cite .req{color:var(--maroon);font-weight:400}
+
+/* ============ tables (used sparingly, inside disclosures) ============ */
+table{width:100%;border-collapse:collapse}
+thead th{
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  font-weight:400;text-align:left;padding:12px 16px;border-bottom:1px solid var(--hair);
+  white-space:nowrap;
+}
+thead th.right{text-align:right}
+tbody td{padding:16px;border-bottom:1px solid var(--hair-soft);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#FBF8F4}
+td.right{text-align:right}
+
+/* ============ misc ============ */
+.dfoot{padding-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dfoot .note{margin-left:auto;font-size:14px;color:var(--ink-3);font-weight:300}
+.sig{margin-top:40px;text-align:center;font-size:14px;color:var(--ink-3);font-weight:300}
+.sig b{font-weight:400;color:var(--ink-2)}
+.muted{color:var(--ink-3)}
+.stack{display:flex;flex-direction:column;gap:20px}
+.rowflex{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.grow{flex:1}
+hr.soft{border:0;border-top:1px solid var(--hair-soft);margin:22px 0}
+
+/* ============ responsive ============ */
+@media (max-width:980px){
+  .bar{padding:14px 20px;flex-wrap:wrap;row-gap:12px}
+  .bar nav{margin-left:0;order:3;width:100%;flex:0 0 100%;flex-wrap:wrap;overflow-x:visible;row-gap:4px}
+  .me{margin-left:auto}
+  .page,.page.wide{padding:0 20px 64px}
+  .arch{padding:28px 24px 32px;border-radius:0 0 var(--r-lg) var(--r-lg)}
+  .arch h1{font-size:30px}
+  .arch p{font-size:16px}
+  .deck,.deck.three{grid-template-columns:1fr}
+  .figures,.figures.four,.figures.two{grid-template-columns:1fr}
+  .fold summary{padding:18px 20px}
+  .drawer{padding:2px 20px 22px}
+  .r{flex-wrap:wrap;gap:13px}
+  .bar2,.bar2.wide{width:100%}
+  .band{margin-top:38px}
+  .story-trigger{grid-template-columns:minmax(0,1fr) auto;column-gap:16px;row-gap:5px;padding:17px 52px 17px 20px!important}
+  .story-trigger h2{grid-column:1;grid-row:1}
+  .story-trigger .count{grid-column:2;grid-row:1;min-width:0;font-size:25px!important}
+  .story-trigger .story-summary{grid-column:1 / -1;grid-row:2;max-width:none}
+}
+
+/* ============ charts — shape before number ============
+   Added by the wide pass. The rule the whole product follows: a reader takes
+   a shape in at a glance and a number only when they stop to read it. So a
+   count that exists to be COMPARED is drawn, and a count that exists to be
+   QUOTED is written. A grid of twelve figures is neither — it asks the reader
+   to do the comparing, and they do not.
+
+   Every chart here is CSS and inline SVG. No chart library: the four shapes
+   this product needs are a horizontal bar, a stacked bar (`.spread`, above), a
+   ring (`.dial`, above) and a sparkline, and a library would cost more than
+   all four together.
+
+   Colour comes from the existing verdict scale. It is ordinal on purpose —
+   maroon is "most", sand is "least". It is never a traffic light, because a
+   stage in a hiring funnel is not good or bad. ============ */
+
+.chartcard{
+  background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+  padding:24px 26px 22px;
+}
+
+/* A callout box, not a chart: the strongest reason to see the candidate and
+   the biggest gap each get their own line, set apart so a reader notices
+   them rather than skimming past one run-on sentence. */
+.rubric-callout{background:var(--sand);border-left:3px solid var(--gold);border-radius:var(--r-md);
+  padding:18px 20px;display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.rubric-callout p{margin:0;font-size:15.5px;font-weight:300;line-height:1.5;color:var(--ink-2)}
+.rubric-callout-label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;margin-bottom:3px}
+
+/* Journey workspaces: summary and visual position first; detail opens below. */
+.journey-page{max-width:1120px}
+.journey-control,.journey-surface{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);padding:26px 30px;margin-top:18px}
+.journey-control{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:22px}
+.journey-control label,.journey-form-row label,.journey-actions label{font-size:13px;color:var(--ink-2);font-weight:400}
+.journey-control select,.journey-form-row select,.journey-actions select,.journey-actions input,.journey-actions textarea{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--hair);border-radius:12px;padding:10px 12px;max-width:100%}
+.journey-control select{min-width:min(380px,100%)}
+.journey-control [role="status"],.journey-muted{color:var(--ink-3);font-size:13px}
+.journey-surface h2{font-size:26px;margin:5px 0 8px}
+.journey-surface p{color:var(--ink-2)}
+.journey-kicker{text-transform:uppercase;letter-spacing:.12em;color:var(--maroon);font-size:12px;font-weight:500}
+.journey-chart{display:grid;gap:11px;margin:26px 0 8px}
+.journey-bar{display:grid;grid-template-columns:minmax(130px,210px) minmax(80px,1fr) 80px;gap:14px;align-items:center;font-size:14px}
+.journey-bar>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.journey-bar>b{text-align:right;color:var(--maroon);font-size:18px;font-weight:500}
+.journey-bar small{font-size:11px;color:var(--ink-3);font-weight:300}
+.journey-track{height:12px;border-radius:99px;background:var(--sand-2);overflow:hidden}
+.journey-track i{display:block;height:100%;border-radius:99px;background:var(--maroon)}
+.journey-detail{border-top:1px solid var(--hair);margin-top:22px;padding-top:14px}
+.journey-detail summary,.journey-actions details summary{cursor:pointer;color:var(--maroon);font-weight:400}
+.journey-raw{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:12px 0;border-bottom:1px solid var(--hair-soft);font-size:14px}
+.journey-raw:last-child{border-bottom:0}.journey-raw b{font-weight:400}.journey-raw small{color:var(--ink-3)}
+.journey-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+.journey-grid a{text-decoration:none;display:flex;flex-direction:column;gap:5px;background:var(--sand);padding:19px;border-radius:16px;transition:background .2s}
+.journey-grid a:hover{background:var(--maroon-soft)}.journey-grid b{color:var(--ink);font-weight:400}.journey-grid span{font-size:13px;color:var(--ink-2)}
+.journey-form-row{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}.journey-form-row label{display:grid;gap:5px;flex:1;min-width:230px}
+.journey-actions form{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px;margin:18px 0}.journey-actions form label{display:grid;gap:5px}
+.journey-actions textarea{min-height:88px;resize:vertical}.journey-actions form button{align-self:end;min-height:45px}
+.journey-actions details{border-top:1px solid var(--hair);padding-top:14px;margin-top:14px}
+.journey-simulated{display:inline-block;background:var(--sand-2);color:var(--ink-2);border-radius:99px;padding:5px 12px;font-size:12px;margin-top:9px}
+#action-message{min-height:24px;margin-top:8px;color:var(--maroon)}.journey-back{margin:22px 0}.journey-back a{color:var(--maroon);text-decoration:none}
+@media(max-width:650px){.journey-control,.journey-surface{padding:21px}.journey-bar{grid-template-columns:110px 1fr 60px;gap:8px;font-size:12px}}
+.chartcard .ct{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+/* The takeaway line. A chart with no sentence under it makes the reader do
+   the interpreting, which is the work the screen is supposed to have done. */
+.chartcard .cs{margin-top:10px;font-size:15.5px;font-weight:300;line-height:1.5;color:var(--ink-2)}
+.chartcard .cs b{font-weight:500;color:var(--ink)}
+.chartcard > .hbars,.chartcard > .spread{margin-top:18px}
+
+/* horizontal bars — the default for any categorical count.
+   The label/track/value columns are shared across every row (the whole
+   .hbars block is one grid; each .hbar contributes its three children to it
+   via display:contents) so every bar starts at the same x position — a row
+   with a long label no longer pushes its own track further right than the
+   row above it. */
+.hbars{display:grid;grid-template-columns:minmax(96px,240px) 1fr minmax(42px,auto);
+  align-items:center;column-gap:14px;row-gap:16px}
+.hbar{display:contents}
+/* A criterion label (real JD wording, not a short categorical count) can run
+   much longer than "Interview"/"Offer sent" — cap the label column above and
+   let it wrap, rather than an unbounded auto track eating the bar's own
+   width down to nothing. */
+.hbar .k{font-size:14px;color:var(--ink-2);font-weight:300;line-height:1.3;overflow-wrap:break-word}
+.hbar .t{height:26px;border-radius:8px;background:var(--sand-2);overflow:hidden}
+.hbar .t i{display:block;height:100%;border-radius:8px;background:var(--maroon);
+  transition:width .5s var(--ease)}
+.hbar .n{font-size:16px;font-weight:400;letter-spacing:-.02em;text-align:right;color:var(--ink)}
+/* Ordinal shading, so a funnel reads as one falling sequence rather than five
+   unrelated colours. */
+.hbar.s1 .t i{background:var(--v-strong)}
+.hbar.s2 .t i{background:var(--v-potential)}
+.hbar.s3 .t i{background:var(--v-review)}
+.hbar.s4 .t i{background:var(--v-no)}
+.hbar.gold .t i{background:var(--gold)}
+.hbar.teal .t i{background:var(--teal)}
+.hbar.red .t i{background:var(--red)}
+.hbar.slim .t{height:16px}
+.hbar.zero .n{color:var(--ink-3);font-weight:300}
+/* A stage with nobody in it still draws a row. Dropping empty stages is how a
+   funnel starts lying about its own shape. */
+.hbar.zero .t{background:var(--hair-soft)}
+
+/* legend for a ring or a stacked bar */
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px}
+.legend span{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;
+  color:var(--ink-2);font-weight:300}
+.legend span:before{content:"";width:10px;height:10px;border-radius:3px;flex:none;background:var(--v-no)}
+.legend span.s1:before{background:var(--v-strong)}
+.legend span.s2:before{background:var(--v-potential)}
+.legend span.s3:before{background:var(--v-review)}
+.legend span.s4:before{background:var(--v-no)}
+.legend span.gold:before{background:var(--gold)}
+.legend span.teal:before{background:var(--teal)}
+.legend span.red:before{background:var(--red)}
+.legend span b{font-weight:500;color:var(--ink)}
+
+/* sparkline — trend only, never a value to read off */
+.spark{display:block;width:100%;height:44px;overflow:visible}
+.spark path.ln{fill:none;stroke:var(--maroon);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.spark path.fl{fill:var(--maroon-soft);stroke:none}
+.spark circle.hd{fill:var(--maroon)}
+
+/* headline — ONE number per band, when a number really is the answer */
+.headline{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.headline .hv{font-size:58px;font-weight:200;letter-spacing:-.05em;line-height:.92;color:var(--ink)}
+.headline .hv.maroon{color:var(--maroon)}
+.headline .hd{font-size:15.5px;font-weight:300;color:var(--ink-2);line-height:1.45;padding-bottom:6px}
+.headline .hd b{display:block;font-weight:500;color:var(--ink)}
+
+/* ============ simulated action ============
+   Every wide-pass screen writes real state and a real audit row, and only the
+   outward action — the email, the invite, the signed document — is simulated.
+   Saying so on the screen is not a disclaimer, it is the honest version of a
+   demo, and it is what lets a reviewer trust the parts that are real. */
+.sim{
+  display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:400;
+  letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;
+  border-radius:var(--r-pill);background:var(--sand-2);color:var(--ink-2);
+}
+.sim:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+/* .real: this action genuinely transmits (or its mode could not be
+   confirmed, which must read as a warning, not a reassurance). */
+.sim.real{background:var(--maroon-soft);color:var(--maroon)}
+.sim.real:before{background:var(--maroon)}
+.simnote{
+  margin-top:14px;padding:14px 18px;background:var(--sand);border-radius:var(--r-md);
+  border-left:3px solid var(--sand-3);font-size:14px;font-weight:300;line-height:1.5;color:var(--ink-2);
+}
+.simnote b{font-weight:500;color:var(--ink)}
+.simnote.real{background:var(--maroon-soft);border-left-color:var(--maroon);color:var(--maroon-ink)}
+.journey-simulated.real{background:var(--maroon-soft);color:var(--maroon)}
+
+/* ============ forms — shared, so five wide screens do not each invent one ============ */
+.form{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+  padding:26px 28px;display:flex;flex-direction:column;gap:18px}
+.form .fr{display:flex;gap:14px;flex-wrap:wrap}
+.form .fld{flex:1;min-width:220px;display:flex;flex-direction:column;gap:8px}
+.form label{font-size:13.5px;color:var(--ink-2);font-weight:400}
+.form input,.form select,.form textarea{
+  font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+  background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-md);padding:13px 16px;width:100%;
+}
+.form textarea{min-height:96px;resize:vertical;line-height:1.55}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2.5px solid var(--maroon);outline-offset:1px}
+.form .hint{font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.45}
+.form .err{font-size:13.5px;color:var(--maroon);font-weight:400}
+.form .facts{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+
+/* empty and loading states, shared for the same reason */
+.empty{background:var(--sand);border-radius:var(--r-md);padding:26px 24px;text-align:center;
+  font-size:15px;font-weight:300;color:var(--ink-2);line-height:1.55}
+.empty b{display:block;font-weight:400;color:var(--ink);margin-bottom:6px;font-size:16.5px}
+
+@media (max-width:600px){
+  .hbars{grid-template-columns:1fr;row-gap:6px}
+  .hbar .n{text-align:left}
+  .headline .hv{font-size:46px}
+  .form .fr{flex-direction:column}
+}

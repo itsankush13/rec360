@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Discover CVs · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* ---- page-specific: discovery form, file list, state panels ---- */
+  .discover-form{
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+    padding:26px 28px;display:flex;flex-direction:column;gap:16px;
+  }
+  .discover-form label{font-size:13.5px;color:var(--ink-2);font-weight:400}
+  .discover-form .row{display:flex;gap:12px;flex-wrap:wrap}
+  .discover-form input[type=text],.discover-form select{
+    flex:1;min-width:260px;font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+    background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:13px 16px;
+  }
+  .discover-form input[type=text]:focus,.discover-form select:focus{outline:2.5px solid var(--maroon);outline-offset:1px}
+
+  .state-panel{
+    background:var(--sand);border-radius:var(--r-md);padding:20px 22px;font-size:14.5px;
+    color:var(--ink-2);font-weight:300;line-height:1.55;
+  }
+  .state-panel.error{background:var(--maroon-soft);color:var(--maroon-ink)}
+  .state-panel b{color:var(--ink);font-weight:500}
+  .state-panel.error b{color:var(--maroon)}
+  .state-panel .roots{margin-top:8px;font-size:13px;color:var(--ink-3)}
+  .state-panel.error .roots{color:var(--maroon-ink)}
+
+  .filelist{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden}
+  .filelist .fl-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:16px 20px;border-bottom:1px solid var(--hair);font-size:14px;color:var(--ink-2);
+  }
+  .filelist .fl-head b{color:var(--ink);font-weight:500}
+  .fl-row{
+    display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--hair-soft);
+    font-size:14.5px;
+  }
+  .fl-row:last-child{border-bottom:0}
+  .fl-row .nm{flex:1;color:var(--ink);font-weight:400}
+  .fl-row .meta{color:var(--ink-3);font-size:13px;font-weight:300}
+  .fl-foot{padding:18px 20px;display:flex;justify-content:flex-end}
+
+  @media (max-width:600px){
+    .discover-form .row{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date">Discover CVs</div>
+    <h1>Paste a <b>SharePoint link or a folder path</b>. See what is there before you screen it.</h1>
+    <p>Works for a library already synced to this machine by the OneDrive client. No Microsoft
+      Graph, no sign-in — the folder just needs to already be on disk.</p>
+  </section>
+
+  <section class="band">
+    <div class="label">
+      <h2>Find the CVs</h2>
+      <span class="aside">A SharePoint/OneDrive link or a local folder path, either is accepted</span>
+    </div>
+
+    <div class="discover-form">
+      <div>
+        <label for="location">SharePoint link or folder path</label>
+        <div class="row" style="margin-top:8px">
+          <input type="text" id="location" placeholder="https://yourtenant.sharepoint.com/... or C:\path\to\folder">
+          <button type="button" class="cta" id="resolve-btn">Find CVs</button>
+        </div>
+      </div>
+      <div>
+        <label for="campaign-select">Import into campaign</label>
+        <div class="row" style="margin-top:8px">
+          <select id="campaign-select"><option value="">Loading campaigns…</option></select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="state-section" hidden>
+    <div class="label">
+      <h2 id="state-title">Looking…</h2>
+      <span class="aside" id="state-aside"></span>
+    </div>
+    <div class="state-panel" id="state-panel"></div>
+  </section>
+
+  <section class="band" id="results-section" hidden>
+    <div class="label">
+      <h2>CVs found</h2>
+      <span class="aside" id="resolved-folder"></span>
+    </div>
+    <div class="filelist">
+      <div class="fl-head">
+        <label><input type="checkbox" id="select-all"> <b id="file-count">0 files</b></label>
+        <span id="placeholder-count"></span>
+      </div>
+      <div id="file-rows"></div>
+      <div class="fl-foot">
+        <button type="button" class="cta" id="import-btn" disabled>Import selected CVs</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+
+  var locationInput = document.getElementById('location');
+  var resolveBtn = document.getElementById('resolve-btn');
+  var campaignSelect = document.getElementById('campaign-select');
+  var stateSection = document.getElementById('state-section');
+  var stateTitle = document.getElementById('state-title');
+  var stateAside = document.getElementById('state-aside');
+  var statePanel = document.getElementById('state-panel');
+  var resultsSection = document.getElementById('results-section');
+  var resolvedFolderEl = document.getElementById('resolved-folder');
+  var fileRows = document.getElementById('file-rows');
+  var fileCount = document.getElementById('file-count');
+  var placeholderCount = document.getElementById('placeholder-count');
+  var selectAll = document.getElementById('select-all');
+  var importBtn = document.getElementById('import-btn');
+
+  var currentResolvedRoot = null;
+  var currentFiles = [];
+
+  // B28: sourcing/importing CVs is HR's job, not the hiring manager's. Run
+  // on r360-auth-ready too, not just now — this script runs synchronously at
+  // parse time, before the portal gate's own async /api/auth/me call has
+  // necessarily resolved window.__r360Me.
+  function applyDiscoveryLock() {
+    if (!(window.__r360Locked && window.__r360Locked())) return;
+    resolveBtn.disabled = true;
+    resolveBtn.title = "View only — this isn't your action to take.";
+    importBtn.title = "View only — this isn't your action to take.";
+    updateImportEnabled();
+  }
+  applyDiscoveryLock();
+  window.addEventListener('r360-auth-ready', applyDiscoveryLock);
+
+  // ---- idle state (default; also what shows with no server running) ----
+  function showIdle() {
+    stateSection.hidden = true;
+    resultsSection.hidden = true;
+  }
+
+  function showState(title, aside, panelHtml, isError) {
+    stateSection.hidden = false;
+    resultsSection.hidden = true;
+    stateTitle.textContent = title;
+    stateAside.textContent = aside || '';
+    statePanel.className = 'state-panel' + (isError ? ' error' : '');
+    statePanel.innerHTML = panelHtml;
+  }
+
+  function renderFiles(body) {
+    currentResolvedRoot = body.resolved_folder;
+    currentFiles = body.files || [];
+
+    stateSection.hidden = true;
+    resultsSection.hidden = false;
+    resolvedFolderEl.textContent = 'Resolved to: ' + body.resolved_folder;
+    fileCount.textContent = currentFiles.length + ' file' + (currentFiles.length === 1 ? '' : 's');
+    placeholderCount.textContent = body.skipped_placeholders
+      ? body.skipped_placeholders + ' online-only file' + (body.skipped_placeholders === 1 ? '' : 's') + ' skipped'
+      : '';
+
+    fileRows.innerHTML = '';
+    currentFiles.forEach(function (file, index) {
+      var row = document.createElement('div');
+      row.className = 'fl-row';
+      var meta = file.relevance_score == null
+        ? Math.round(file.size_bytes / 1024) + ' KB'
+        : Math.round(file.relevance_score * 100) + '% match' +
+          (file.matched_terms && file.matched_terms.length ? ' · ' + file.matched_terms.join(', ') : '');
+      row.innerHTML =
+        '<input type="checkbox" class="file-check" data-index="' + index + '"' + (file.recommended ? ' checked' : '') + '>' +
+        '<span class="nm">' + file.filename + '</span>' +
+        '<span class="meta">' + meta + '</span>';
+      fileRows.appendChild(row);
+    });
+    updateImportEnabled();
+  }
+
+  function updateImportEnabled() {
+    if (window.__r360Locked && window.__r360Locked()) { importBtn.disabled = true; return; }
+    var checks = Array.prototype.slice.call(document.querySelectorAll('.file-check:checked'));
+    importBtn.disabled = !(checks.length && campaignSelect.value);
+  }
+
+  fileRows.addEventListener('change', updateImportEnabled);
+  campaignSelect.addEventListener('change', updateImportEnabled);
+  selectAll.addEventListener('change', function () {
+    Array.prototype.forEach.call(document.querySelectorAll('.file-check'), function (box) {
+      box.checked = selectAll.checked;
+    });
+    updateImportEnabled();
+  });
+
+  function loadCampaigns() {
+    fetch(API_BASE + '/api/campaigns')
+      .then(function (response) { if (!response.ok) throw new Error(); return response.json(); })
+      .then(function (campaigns) {
+        campaignSelect.innerHTML = '<option value="">Choose a campaign…</option>';
+        campaignOptions(campaigns).forEach(function (entry) {
+          var option = document.createElement('option');
+          option.value = entry.id;
+          option.textContent = entry.label;
+          campaignSelect.appendChild(option);
+        });
+        var requested = new URLSearchParams(location.search).get('campaign');
+        if (requested && campaigns.some(function (c) { return c.id === requested; })) campaignSelect.value = requested;
+        updateImportEnabled();
+      })
+      .catch(function () {
+        campaignSelect.innerHTML = '<option value="">Could not load campaigns — start the API</option>';
+      });
+  }
+
+  resolveBtn.addEventListener('click', function () {
+    var location = locationInput.value.trim();
+    if (!location) return;
+
+    showState('Resolving…', '', 'Looking for that folder or link.', false);
+
+    fetch(API_BASE + '/discovery/resolve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location: location, campaign_id: campaignSelect.value || null }),
+    })
+      .then(function (response) {
+        return response.json().then(function (body) { return { ok: response.ok, body: body }; });
+      })
+      .then(function (result) {
+        if (!result.ok) {
+          var detail = result.body.detail || {};
+          var roots = detail.searched_roots || [];
+          showState(
+            'That link could not be resolved',
+            'The library may not be synced on this machine',
+            '<b>' + (detail.message || 'Could not resolve this location.') + '</b>' +
+              (roots.length
+                ? '<div class="roots">Searched: ' + roots.join(', ') + '</div>'
+                : '<div class="roots">No OneDrive sync roots were found on this machine.</div>'),
+            true
+          );
+          return;
+        }
+        if (!result.body.files || !result.body.files.length) {
+          showState(
+            'That folder is empty',
+            result.body.resolved_folder,
+            'No CV files were found there. Nothing to import yet.',
+            false
+          );
+          return;
+        }
+        renderFiles(result.body);
+      })
+      .catch(function () {
+        showState(
+          'Something went wrong',
+          '',
+          'Could not reach the API. Confirm it is running at ' + API_BASE + '.',
+          true
+        );
+      });
+  });
+
+  importBtn.addEventListener('click', function () {
+    var checks = Array.prototype.slice.call(document.querySelectorAll('.file-check:checked'));
+    var paths = checks.map(function (box) {
+      return currentFiles[Number(box.getAttribute('data-index'))].path;
+    });
+    var campaignId = campaignSelect.value;
+    if (!paths.length || !campaignId) return;
+
+    importBtn.disabled = true;
+    importBtn.textContent = 'Importing…';
+
+    fetch(API_BASE + '/discovery/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaign_id: campaignId,
+        resolved_root: currentResolvedRoot,
+        paths: paths,
+      }),
+    })
+      .then(function (response) {
+        return response.json().then(function (body) { return { ok: response.ok, body: body }; });
+      })
+      .then(function (result) {
+        if (!result.ok) {
+          importBtn.disabled = false;
+          importBtn.textContent = 'Import selected CVs';
+          showState('Import failed', '', JSON.stringify(result.body.detail || result.body), true);
+          return;
+        }
+        window.location.href = 'leaderboard.html?run_id=' + encodeURIComponent(result.body.batch.id);
+      })
+      .catch(function () {
+        importBtn.disabled = false;
+        importBtn.textContent = 'Import selected CVs';
+      });
+  });
+
+  showIdle();
+  loadCampaigns();
+})();
+</script>
+</body>
+</html>

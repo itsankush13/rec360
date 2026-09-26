@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Campaigns · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* ---- page-specific: campaign cards, stage strip, run detail ---- */
+  .ops{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-lg);overflow:hidden;margin-bottom:0}
+  .ops .figure{padding:24px 26px 22px}
+  .ops .figure .v{font-size:38px}
+
+  .camdeck{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .camcard{
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-lg);
+    padding:26px 28px 22px;position:relative;overflow:hidden;
+  }
+  .camcard.decide{border-color:var(--maroon-mid);box-shadow:0 14px 34px -22px rgba(78,11,34,.28)}
+  .camcard .top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+  .camcard .kick{margin-bottom:8px}
+  .camcard h3{font-size:22px;font-weight:400;letter-spacing:-.02em}
+  .camcard .where{margin-top:5px;font-size:14px;color:var(--ink-2);font-weight:300}
+  .camcard .prog{margin-top:20px}
+  .camcard .prog .l{display:flex;justify-content:space-between;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-bottom:8px}
+  .camcard .stats{margin-top:18px;display:flex;gap:22px;flex-wrap:wrap}
+  .camcard .stat{font-size:14.5px;color:var(--ink-2);font-weight:300}
+  .camcard .stat b{display:block;font-size:20px;color:var(--ink);font-weight:400;letter-spacing:-.02em}
+  .live-files{margin-top:18px;padding:14px 16px;background:var(--sand);border-radius:var(--r-md);font-size:13px;line-height:1.55;color:var(--ink-2);font-weight:300;overflow-wrap:anywhere}
+  .live-files b{color:var(--ink);font-weight:500}
+  .live-files .held{margin-top:7px;color:var(--gold-ink)}
+  .live-files .flagged{margin-top:7px;color:var(--ink-3)}
+  /* Derived from saved records each render, never stored. One line now; the
+     rail in 07-CAMPAIGN-JOURNEY-UX-PROPOSAL.md is the same rule drawn out. */
+  .nextstep{margin-top:14px;font-size:13px;line-height:1.5;color:var(--ink-2);font-weight:300}
+  .nextstep b{color:var(--maroon);font-weight:500}
+
+  /* live run band */
+  .runwrap{background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-xl);overflow:hidden}
+  .runhead{padding:28px 32px 0}
+  .runhead .kick{margin-bottom:8px}
+  .runhead h3{font-size:25px;font-weight:400;letter-spacing:-.02em}
+  .runhead p{margin-top:8px;font-size:15px;color:var(--ink-2);font-weight:300;max-width:60ch}
+
+  .stages{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:26px 32px 8px}
+  .stage{background:var(--sand);border-radius:var(--r-md);padding:18px 16px;text-align:center}
+  .stage .n{font-size:26px;font-weight:400;color:var(--maroon);letter-spacing:-.03em}
+  .stage .t{margin-top:6px;font-size:13px;color:var(--ink-2);font-weight:400}
+  .stage .d{margin-top:3px;font-size:11.5px;color:var(--ink-3);font-weight:300;line-height:1.35}
+
+  .runfoot{
+    margin:22px 32px 28px;padding:20px 24px;background:var(--maroon-soft);border-radius:var(--r-lg);
+    display:flex;flex-wrap:wrap;gap:24px;align-items:center;
+  }
+  .runfoot .rf{font-size:13px;color:var(--maroon-ink);font-weight:400}
+  .runfoot .rf b{display:block;font-size:19px;color:var(--maroon);font-weight:500;letter-spacing:-.02em}
+  .runfoot .rf small{font-weight:300;color:var(--maroon-ink)}
+  .runfoot .eta{margin-left:auto;font-size:14.5px;color:var(--maroon-ink);font-weight:400}
+
+  @media (max-width:980px){
+    .ops{grid-template-columns:repeat(2,1fr)}
+    .camdeck{grid-template-columns:1fr}
+    .stages{grid-template-columns:repeat(2,1fr)}
+    .runhead,.stages{padding-left:20px;padding-right:20px}
+    .runfoot{margin-left:20px;margin-right:20px}
+  }
+  @media (max-width:600px){
+    .ops{grid-template-columns:1fr}
+    .stages{grid-template-columns:1fr}
+    .runfoot .eta{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <!-- ═══════ CHUNK 1 — the whole operation, in one sentence ═══════ -->
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date" id="campaign-date">Six campaigns · Thursday 10 September</div>
+    <h1 id="campaign-headline">Two are <b>waiting for your decision</b>. The rest run on their own.</h1>
+    <p id="campaign-copy">Six open, two waiting on you, three running now, one already handed over.</p>
+    <div class="arch-action"><a class="ghost onmaroon" href="new-campaign.html" data-campaign-create>Start a new campaign</a></div>
+  </section>
+
+  <!-- Unfinished setup comes first: it is the only thing here that is
+       waiting on the recruiter rather than on the system. -->
+  <section class="band" id="draft-campaigns" hidden>
+    <div class="label">
+      <h2>Not finished yet</h2>
+      <span class="aside" id="draft-campaign-summary">Saved role setup you can continue</span>
+    </div>
+    <div class="camdeck" id="draft-campaign-deck"></div>
+  </section>
+
+  <section class="band" id="live-campaigns" hidden>
+    <div class="label">
+      <h2>Every campaign past setup</h2>
+      <span class="aside" id="live-campaign-summary">Loaded from this API session</span>
+    </div>
+    <div class="camdeck" id="live-campaign-deck"></div>
+  </section>
+
+  <section class="band" data-mock-only>
+    <div class="ops">
+      <div class="figure">
+        <div class="k">Open campaigns</div>
+        <div class="v">6</div>
+        <div class="b">Across North Plant, Coastal Terminal and Head Office.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Waiting on you</div>
+        <div class="v maroon">2</div>
+        <div class="b">Shortlists ready. Nothing moves until you decide.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Running</div>
+        <div class="v">3</div>
+        <div class="b">Being read and scored right now.</div>
+      </div>
+      <div class="figure">
+        <div class="k">Handed over</div>
+        <div class="v">1</div>
+        <div class="b">Sent on to SuccessFactors.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 2 — the six campaigns as cards, decisions first ═══════ -->
+  <section class="band" data-mock-only>
+    <div class="label">
+      <h2>All six campaigns</h2>
+      <span class="aside">The two awaiting a decision come first</span>
+    </div>
+
+    <div class="camdeck">
+
+      <article class="camcard decide">
+        <div class="top">
+          <div>
+            <div class="kick">Coastal Terminal · 8 vacancies</div>
+            <h3>Control Room Operator</h3>
+            <div class="where">CAM-2611 · closes 19 September</div>
+          </div>
+          <span class="tag hold">Awaiting decision</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>604 of 622 read</span><span>97%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:97%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>24</b>on the shortlist</div>
+          <div class="stat"><b>58.9</b>median score</div>
+        </div>
+        <a class="cta block" href="rubric.html" style="margin-top:20px">Review the rubric behind this list</a>
+      </article>
+
+      <article class="camcard decide">
+        <div class="top">
+          <div>
+            <div class="kick">Head Office · 2 vacancies</div>
+            <h3>HSE Advisor</h3>
+            <div class="where">CAM-2599 · closes 17 September</div>
+          </div>
+          <span class="tag hold">Awaiting decision</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>188 of 188 read</span><span>100%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:100%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>9</b>on the shortlist</div>
+          <div class="stat"><b>66.7</b>median score</div>
+        </div>
+        <a class="cta block" href="leaderboard.html" style="margin-top:20px">Review shortlist</a>
+      </article>
+
+      <article class="camcard">
+        <div class="top">
+          <div>
+            <div class="kick">North Plant · 3 vacancies</div>
+            <h3>Rotating Equipment Engineer</h3>
+            <div class="where">CAM-2618 · closes 24 September</div>
+          </div>
+          <span class="tag run">Running</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>268 of 412 read</span><span>65%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:65%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>—</b>shortlist not open yet</div>
+          <div class="stat"><b>61.4</b>median score so far</div>
+        </div>
+        <a class="ghost block" href="#run-2618" style="margin-top:20px;justify-content:center">See what is happening now</a>
+      </article>
+
+      <article class="camcard">
+        <div class="top">
+          <div>
+            <div class="kick">North Plant · 12 vacancies</div>
+            <h3>Instrumentation Technician</h3>
+            <div class="where">CAM-2604 · closes 30 September</div>
+          </div>
+          <span class="tag run">Running</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>389 of 941 read</span><span>41%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:41%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>—</b>shortlist not open yet</div>
+          <div class="stat"><b>54.2</b>median score so far</div>
+        </div>
+      </article>
+
+      <article class="camcard">
+        <div class="top">
+          <div>
+            <div class="kick">North Plant · 4 vacancies</div>
+            <h3>Turnaround Planner</h3>
+            <div class="where">CAM-2588 · sent to SuccessFactors</div>
+          </div>
+          <span class="tag ok">Handed over</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>311 of 311 read</span><span>100%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:100%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>11</b>on the shortlist</div>
+          <div class="stat"><b>60.1</b>median score</div>
+        </div>
+      </article>
+
+      <article class="camcard">
+        <div class="top">
+          <div>
+            <div class="kick">North Plant · 5 vacancies</div>
+            <h3>Process Engineer</h3>
+            <div class="where">CAM-2575 · closed</div>
+          </div>
+          <span class="tag plain">Closed</span>
+        </div>
+        <div class="prog">
+          <div class="l"><span>268 of 268 read</span><span>100%</span></div>
+          <div class="bar2 wide"><div class="t"><i class="d" style="width:100%"></i></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>7</b>on the shortlist</div>
+          <div class="stat"><b>63.5</b>median score</div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 3 — one campaign, live, in plain English ═══════ -->
+  <section class="band" id="run-2618" data-mock-only>
+    <div class="label">
+      <h2>Watching one campaign work</h2>
+      <span class="aside">Rotating Equipment Engineer · North Plant</span>
+    </div>
+
+    <div class="runwrap">
+      <div class="runhead">
+        <div class="kick">CAM-2618 · last checked 09:41</div>
+        <h3>Every CV moves through five steps before it reaches you</h3>
+        <p>The system reads each application, checks its own work, then ranks who is left. Nothing is sent to you until this finishes.</p>
+      </div>
+
+      <div class="stages">
+        <div class="stage">
+          <div class="n">412</div>
+          <div class="t">Arrived</div>
+          <div class="d">Applications received for this role</div>
+        </div>
+        <div class="stage">
+          <div class="n">268</div>
+          <div class="t">Read</div>
+          <div class="d">Text taken from the file</div>
+        </div>
+        <div class="stage">
+          <div class="n">268</div>
+          <div class="t">Assessed</div>
+          <div class="d">Scored against the approved rubric</div>
+        </div>
+        <div class="stage">
+          <div class="n">268</div>
+          <div class="t">Checked</div>
+          <div class="d">A second pass looks for scores it cannot justify</div>
+        </div>
+        <div class="stage">
+          <div class="n">268</div>
+          <div class="t">Ranked</div>
+          <div class="d">Placed in order, ready for a shortlist</div>
+        </div>
+      </div>
+
+      <div class="runfoot">
+        <div class="rf"><b>6 of 8</b><small>reading machines are on this campaign now</small></div>
+        <div class="rf"><b>107</b><small>applications still in the queue</small></div>
+        <div class="rf"><b>8.7 s</b><small>average time to read one CV</small></div>
+        <div class="rf"><b>412 / hr</b><small>the pace this campaign is holding</small></div>
+        <div class="eta">Expected to finish today at <b>11:47</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CHUNK 4 — the held files, folded away ═══════ -->
+  <section class="band" data-mock-only>
+    <div class="label">
+      <h2>Files set aside</h2>
+      <span class="aside">31 could not be read automatically. Every campaign carried on without them.</span>
+    </div>
+
+    <div class="fold">
+      <details>
+        <summary>
+          <span class="b hold">31</span>
+          <span class="t">files are waiting on you</span>
+          <span class="s">none of them blocked a campaign</span>
+          <svg class="chev" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="drawer">
+          <div class="r"><div class="nm">Photographs of a CV, with no text to read<span>12 files</span></div></div>
+          <div class="r"><div class="nm">The same person applied twice<span>9 files</span></div><button type="button" class="ghost">Merge them</button></div>
+          <div class="r"><div class="nm">The file is password protected<span>6 files</span></div><button type="button" class="ghost">Ask for it again</button></div>
+          <div class="r"><div class="nm">No employment dates anywhere in the CV<span>4 files</span></div></div>
+          <div class="dfoot"><span class="note">A campaign never stops for these. They wait here until you deal with them.</span></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <p class="sig" data-mock-only>Scoring rules approved by <b>F. Al-Rashid</b> on 2 September · version <b>4.2</b> · applied to all six open campaigns</p>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+
+  function element(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  // A campaign's stored status is what this page reports. It lives on the
+  // campaign row, so it is there for every campaign however many exist. Run
+  // counts come from /api/runs, which caps at 100 — they enrich a card when
+  // that run is in hand and never decide what the card says.
+  var STATUS_WORDS = {
+    DRAFT: 'Draft',
+    AWAITING_RUBRIC_APPROVAL: 'Waiting for rubric approval',
+    APPROVED: 'Ready for CVs',
+    PROCESSING: 'Reading CVs',
+    REVIEW: 'Awaiting your decision',
+    CLOSED: 'Closed'
+  };
+  var STATUS_TAGS = {
+    DRAFT: 'tag',
+    AWAITING_RUBRIC_APPROVAL: 'tag hold',
+    APPROVED: 'tag hold',
+    PROCESSING: 'tag run',
+    REVIEW: 'tag hold',
+    CLOSED: 'tag plain'
+  };
+  function statusLabel(status) {
+    return STATUS_WORDS[status] || 'Status not recorded';
+  }
+  function statusTag(status) {
+    return STATUS_TAGS[status] || 'tag';
+  }
+
+  // The rule itself moved to assets/app.js so new-campaign.html can open the
+  // step it names (07-CAMPAIGN-JOURNEY-UX-PROPOSAL.md section 3). Two copies
+  // of a rule are two rules. These are thin readers of the one rule.
+  function nextStep(campaign, run) {
+    // A browser holding an older cached assets/app.js has no rule to ask.
+    // Render the card without a next step rather than throwing before it.
+    if (!window.CampaignSteps) return '';
+    return window.CampaignSteps.label(campaign, run);
+  }
+
+  // Where this campaign's next step lives. Null when the rule has no better
+  // destination than the card's own default, so a caller never gets a guess.
+  function nextStepHref(campaign, run) {
+    if (!window.CampaignSteps) return null;
+    return window.CampaignSteps.href(campaign, run);
+  }
+
+  // B29: a hiring manager clicking a campaign must land on the page where his
+  // own action is waiting (a shortlist verdict or interview feedback), not
+  // wherever the furthest-progressed candidate happens to be — those can be
+  // different candidates in the same campaign. `awaitingMapPromise` (built
+  // once per render() from the same funnel reads `markAwaitingHisDecision`
+  // already needed for its tag/reorder) supplies that override; HR gets the
+  // unmodified furthest-stage "where did I leave off" result.
+  function resolveButton(link, campaign, awaitingMapPromise) {
+    if (!campaign.id) return; // legacy run summaries already carry their exact run URL
+    link.removeAttribute('href');
+    link.textContent = 'Checking saved stage…';
+    var stepPromise = window.CampaignSteps.resolve(campaign, function (path) {
+      return fetch(API_BASE + path).then(readJson);
+    });
+    Promise.all([stepPromise, awaitingMapPromise || Promise.resolve({})]).then(function (answers) {
+      var result = answers[0];
+      var awaiting = answers[1][campaign.id];
+      if (awaiting && awaiting.withHM > 0) {
+        link.textContent = 'Record your shortlist verdict';
+        link.href = 'handoff.html?campaign=' + encodeURIComponent(campaign.id);
+        return;
+      }
+      if (awaiting && awaiting.interview > 0) {
+        link.textContent = 'Record interview feedback';
+        link.href = 'interview.html?campaign=' + encodeURIComponent(campaign.id);
+        return;
+      }
+      link.textContent = result.label;
+      link.href = result.href;
+    }).catch(function () {
+      link.textContent = 'Could not load stage · Reload to retry';
+    });
+  }
+
+  function nextStepLine(campaign, run) {
+    var step = nextStep(campaign, run);
+    if (!step) return null;
+    var line = element('div', 'nextstep');
+    line.appendChild(element('b', '', 'Next: '));
+    line.appendChild(document.createTextNode(step));
+    return line;
+  }
+
+  // X23: the sample cards used to go only when a run existed. A recruiter with
+  // real campaigns and no run yet — the "I will upload the CVs later" case —
+  // saw six fictional campaigns beside her own.
+  function hideMock() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mock-only]'), function (node) { node.hidden = true; });
+  }
+
+  function renderRuns(runs, awaitingMapPromise) {
+    if (!runs.length) return;
+
+    var deck = document.getElementById('live-campaign-deck');
+    runs.forEach(function (run) {
+      // The run's embedded campaign object carries no id of its own — the
+      // real id lives on the run row itself. Without it, resolveButton()
+      // silently no-ops (it requires campaign.id) and every completed-run
+      // card was stuck on the hardcoded "Review the shortlist" default even
+      // once the campaign had moved on to handoff/interview/offer.
+      var campaign = run.campaign_id
+        ? Object.assign({}, run.campaign || {}, { id: run.campaign_id })
+        : (run.campaign || {});
+      var article = element('article', 'camcard');
+      if (run.campaign_id) article.dataset.campaignId = run.campaign_id;
+      var top = element('div', 'top');
+      var identity = element('div');
+      identity.appendChild(element('div', 'kick', (campaign.site || 'Site not set') + ' · ' + (campaign.vacancies || 1) + ' vacancies'));
+      identity.appendChild(element('h3', '', campaign.title || 'Screening run'));
+      identity.appendChild(element('div', 'where', (campaign.short_id ? campaign.short_id + ' · ' : '') +
+        'JD: ' + (campaign.jd_filename || 'Pasted job description') + ' · run ' +
+        (run.short_id || String(run.run_id || '').slice(0, 8))));
+      top.appendChild(identity);
+      // The campaign's stored status, not the run's. A finished run does not
+      // mean the campaign is finished — someone still has to decide.
+      top.appendChild(campaign.status
+        ? element('span', statusTag(campaign.status), statusLabel(campaign.status))
+        : element('span', 'tag ok', 'Assessment complete'));
+      article.appendChild(top);
+
+      var progress = element('div', 'prog');
+      var progressLabel = element('div', 'l');
+      var pct = run.submitted_count ? Math.round(Number(run.count || 0) / Number(run.submitted_count) * 100) : 0;
+      progressLabel.appendChild(element('span', '', (run.count || 0) + ' of ' + (run.submitted_count || 0) + ' assessed'));
+      progressLabel.appendChild(element('span', '', pct + '%'));
+      progress.appendChild(progressLabel);
+      var bar = element('div', 'bar2 wide');
+      var track = element('div', 't');
+      var fill = element('i', 'd');
+      fill.style.width = pct + '%';
+      track.appendChild(fill);
+      bar.appendChild(track);
+      progress.appendChild(bar);
+      article.appendChild(progress);
+
+      var recommendations = (run.results || []).filter(function (result) {
+        var code = result.score && result.score.recommendation_code;
+        return code === 'STRONG_HIRE' || code === 'HIRE';
+      }).length;
+      var stats = element('div', 'stats');
+      var shortlist = element('div', 'stat');
+      shortlist.appendChild(element('b', '', recommendations));
+      shortlist.appendChild(document.createTextNode('recommended'));
+      var heldStat = element('div', 'stat');
+      heldStat.appendChild(element('b', '', (run.held_files || []).length));
+      heldStat.appendChild(document.createTextNode('held files'));
+      stats.appendChild(shortlist);
+      stats.appendChild(heldStat);
+      article.appendChild(stats);
+
+      var next = nextStepLine(campaign, run);
+      if (next) article.appendChild(next);
+
+      var files = element('div', 'live-files');
+      var jdLine = element('div');
+      jdLine.appendChild(element('b', '', 'JD file: '));
+      jdLine.appendChild(document.createTextNode(campaign.jd_filename || 'Pasted job description'));
+      files.appendChild(jdLine);
+      var cvLine = element('div');
+      cvLine.appendChild(element('b', '', 'CV files: '));
+      cvLine.appendChild(document.createTextNode((run.submitted_files || []).join(', ') || 'None recorded'));
+      files.appendChild(cvLine);
+      if ((run.held_files || []).length) {
+        (run.held_files || []).forEach(function (file) {
+          var line = element('div', 'held');
+          line.appendChild(document.createTextNode(
+            file.filename + ' — ' + (file.reason || file.message || 'held')));
+          // A file held because it could not be read can be tried again. One
+          // rejected at the door — wrong format, too large — cannot: the same
+          // attempt would fail identically, so no button is offered for it
+          // and the recruiter is told what to do instead.
+          if (file.can_retry && file.id) {
+            line.appendChild(document.createTextNode(' · '));
+            var again = element('a', '', 'Try reading it again');
+            again.href = '#';
+            again.addEventListener('click', function (event) {
+              event.preventDefault();
+              again.textContent = 'Trying again…';
+              fetch(API_BASE + '/api/processing/jobs/' +
+                    encodeURIComponent(file.id) + '/retry', { method: 'POST' })
+                .then(function (response) {
+                  again.textContent = response.ok
+                    ? 'Queued — refresh in a moment'
+                    : 'That did not work. The file is still held.';
+                })
+                .catch(function () {
+                  again.textContent = 'That did not work. The file is still held.';
+                });
+            });
+            line.appendChild(again);
+          } else if (file.action) {
+            line.appendChild(document.createTextNode(' · ' + file.action));
+          }
+          files.appendChild(line);
+        });
+      }
+      // Flagged files were screened along with everything else — a scanned
+      // CV, a CV with no name/contact, a repeat applicant already merged
+      // into the existing profile — so this is a note, never a held row
+      // with a retry link or an action to take.
+      if ((run.flagged_files || []).length) {
+        (run.flagged_files || []).forEach(function (file) {
+          var line = element('div', 'flagged');
+          line.appendChild(document.createTextNode(
+            file.filename + ' — ' + file.note +
+            (file.merged ? ' (automatically merged)' : ' (screened)')));
+          files.appendChild(line);
+        });
+      }
+      article.appendChild(files);
+
+      var actions = element('div');
+      actions.style.marginTop = '20px';
+      actions.style.display = 'flex';
+      actions.style.gap = '12px';
+      actions.style.flexWrap = 'wrap';
+
+      var link = element('a', 'cta block', 'Review the shortlist');
+      link.href = 'leaderboard.html?run_id=' + encodeURIComponent(run.run_id);
+      link.style.flex = '1';
+      resolveButton(link, campaign, awaitingMapPromise);
+      actions.appendChild(link);
+
+      if (run.campaign_id) {
+        var rubricLink = element('a', 'ghost', 'Review the rubric behind this list');
+        rubricLink.href = 'rubric.html?campaign=' + encodeURIComponent(run.campaign_id);
+        rubricLink.style.flex = '1';
+        actions.appendChild(rubricLink);
+      }
+
+      article.appendChild(actions);
+      deck.appendChild(article);
+    });
+    document.getElementById('live-campaigns').hidden = false;
+  }
+
+  function renderDrafts(campaigns, awaitingMapPromise) {
+    if (!campaigns.length) return;
+    var deck = document.getElementById('draft-campaign-deck');
+    deck.textContent = '';
+    document.getElementById('draft-campaign-summary').textContent =
+      campaigns.length + ' saved role setup' + (campaigns.length === 1 ? '' : 's') +
+      ' waiting to be finished';
+
+    campaigns.forEach(function (campaign) {
+      var article = element('article', 'camcard decide');
+      var top = element('div', 'top');
+      var identity = element('div');
+      identity.appendChild(element('div', 'kick',
+        (campaign.location || 'Site not set') + ' \u00b7 ' + (campaign.vacancies || 1) + ' vacancies'));
+      identity.appendChild(element('h3', '', campaign.job_title || 'Untitled role'));
+      identity.appendChild(element('div', 'where',
+        (campaign.short_id ? campaign.short_id + ' · ' : '') +
+        (campaign.hiring_manager
+          ? 'Hiring manager: ' + campaign.hiring_manager
+          : 'No hiring manager recorded yet')));
+      top.appendChild(identity);
+      top.appendChild(element('span', 'tag', 'Draft'));
+      article.appendChild(top);
+
+      // Say what is actually missing. A draft that only claims to be a draft
+      // tells the recruiter nothing about what finishing it costs.
+      var missing = [];
+      if (!campaign.job_description) missing.push('the job description');
+      if (!campaign.hiring_manager) missing.push('the hiring manager');
+      if (!campaign.target_completion_date) missing.push('the closing date');
+      var note = element('div', 'live-files');
+      note.appendChild(element('div', '', missing.length
+        ? 'Still needed: ' + missing.join(', ') + '. No CVs have been assessed.'
+        : 'Role details are complete. No CVs have been assessed.'));
+      article.appendChild(note);
+
+      var next = nextStepLine(campaign, null);
+      if (next) article.appendChild(next);
+
+      var actions = element('div');
+      actions.style.marginTop = '20px';
+      var link = element('a', 'cta block', 'Continue this setup');
+      // Land on the step the rule names, not on the top of the form. The
+      // fallback is the old link, so a step the rule cannot place still opens
+      // the campaign rather than nothing.
+      link.href = nextStepHref(campaign, null) ||
+        ('new-campaign.html?campaign_id=' + encodeURIComponent(campaign.id));
+      resolveButton(link, campaign, awaitingMapPromise);
+      actions.appendChild(link);
+      article.appendChild(actions);
+      deck.appendChild(article);
+    });
+    document.getElementById('draft-campaigns').hidden = false;
+  }
+
+  // A campaign that is set up and waiting for CVs has no run, so /api/runs
+  // cannot see it (X22). It still belongs on this page, and its own status
+  // already says where it has got to.
+  function renderWaiting(campaigns, awaitingMapPromise) {
+    var deck = document.getElementById('live-campaign-deck');
+    campaigns.forEach(function (campaign) {
+      var article = element('article', 'camcard');
+      if (campaign.id) article.dataset.campaignId = campaign.id;
+      var top = element('div', 'top');
+      var identity = element('div');
+      identity.appendChild(element('div', 'kick',
+        (campaign.location || 'Site not set') + ' · ' + (campaign.vacancies || 1) + ' vacancies'));
+      identity.appendChild(element('h3', '', campaign.job_title || 'Untitled role'));
+      identity.appendChild(element('div', 'where',
+        (campaign.short_id ? campaign.short_id + ' · ' : '') +
+        (campaign.hiring_manager
+          ? 'Hiring manager: ' + campaign.hiring_manager
+          : 'No hiring manager recorded yet')));
+      top.appendChild(identity);
+      top.appendChild(element('span', statusTag(campaign.status), statusLabel(campaign.status)));
+      article.appendChild(top);
+
+      var note = element('div', 'live-files');
+      note.appendChild(element('div', '', campaign.status === 'CLOSED'
+        ? 'This campaign is closed. No CVs were assessed against it.'
+        : 'No CVs uploaded yet. The role is set up and waiting for them.'));
+      article.appendChild(note);
+
+      // No separate "Next:" line here — on this card the button is the next
+      // step, and saying it twice is noise.
+      // The button says the step the rule names. A fixed "Upload CVs" label
+      // promised the wrong action on a campaign still waiting for its rubric.
+      var actions = element('div');
+      actions.style.marginTop = '20px';
+      var link = element('a', 'cta block', nextStep(campaign, null) || 'Open this campaign');
+      link.href = nextStepHref(campaign, null) ||
+        ('new-campaign.html?campaign_id=' + encodeURIComponent(campaign.id));
+      resolveButton(link, campaign, awaitingMapPromise);
+      actions.appendChild(link);
+      article.appendChild(actions);
+      deck.appendChild(article);
+    });
+  }
+
+  function isHiringManager() {
+    return !!(window.__r360Locked && window.__r360Locked());
+  }
+
+  function render(campaigns, runs) {
+    hideMock();
+    var locked = isHiringManager();
+
+    var claimed = {};
+    runs.forEach(function (run) { if (run.campaign_id) claimed[run.campaign_id] = true; });
+
+    // B28: unfinished setup is HR's own work-in-progress, not something the
+    // hiring manager is ever asked to continue — this whole "Not finished
+    // yet" band stays hidden for him, same as the "Start a new campaign"
+    // button above (data-campaign-create, hidden sitewide by app.js).
+    var drafts = locked ? [] : campaigns.filter(function (campaign) { return campaign.status === 'DRAFT'; });
+    // Every campaign past setup that no run covers. A run whose campaign is
+    // missing from the list still renders below, so nothing that used to show
+    // here disappears.
+    var waiting = campaigns.filter(function (campaign) {
+      return campaign.status !== 'DRAFT' && !claimed[campaign.id];
+    });
+
+    var deck = document.getElementById('live-campaign-deck');
+    deck.textContent = '';
+
+    var submitted = runs.reduce(function (sum, run) { return sum + Number(run.submitted_count || 0); }, 0);
+    var assessed = runs.reduce(function (sum, run) { return sum + Number(run.count || 0); }, 0);
+    var held = runs.reduce(function (sum, run) { return sum + (Array.isArray(run.held_files) ? run.held_files.length : 0); }, 0);
+
+    if (campaigns.length || runs.length) {
+      var total = campaigns.length || runs.length;
+      document.getElementById('campaign-date').textContent =
+        total + ' campaign' + (total === 1 ? '' : 's') + ' · current API session';
+      document.getElementById('campaign-headline').textContent =
+        drafts.length
+          ? drafts.length + ' still need' + (drafts.length === 1 ? 's' : '') + ' finishing. The rest are set up.'
+          : total + ' campaign' + (total === 1 ? '' : 's') + ' set up.';
+      document.getElementById('campaign-copy').textContent =
+        submitted + ' CVs submitted · ' + assessed + ' assessed · ' + held + ' held for attention.';
+      document.getElementById('live-campaign-summary').textContent =
+        (waiting.length + runs.length) + ' campaign' + (waiting.length + runs.length === 1 ? '' : 's') +
+        ' past setup · ' + submitted + ' CV files';
+    }
+
+    // B29: one shared read per campaign of who is waiting on the hiring
+    // manager, built once so both the card tagging below and each card's own
+    // resolveButton() (which redirects him straight to that action instead of
+    // the furthest-progressed candidate) read the same answer — two separate
+    // fetches of the same funnel would race, and whichever finished last
+    // would silently decide the link.
+    var awaitingMapPromise = locked
+      ? fetchAwaitingMap(waiting.concat(runs.map(function (r) { return { id: r.campaign_id }; })))
+      : Promise.resolve({});
+
+    renderDrafts(drafts, awaitingMapPromise);
+    renderWaiting(waiting, awaitingMapPromise);
+    renderRuns(runs, awaitingMapPromise);
+    if (waiting.length || runs.length) document.getElementById('live-campaigns').hidden = false;
+    if (locked) markAwaitingHisDecision(awaitingMapPromise);
+  }
+
+  // B28/B29: which campaigns actually have someone waiting on the hiring
+  // manager (a shortlist verdict or interview feedback), read from the same
+  // funnel counts the pipeline workspace itself uses
+  // (`/api/campaigns/{id}/lifecycle/funnel`), rather than guessing from data
+  // this page already has client-side. Keyed by campaign id so a caller can
+  // look up one campaign's answer directly.
+  function fetchAwaitingMap(campaigns) {
+    var seen = {};
+    var ids = campaigns.map(function (c) { return c.id; }).filter(function (id) {
+      return id && !seen[id] && (seen[id] = true);
+    });
+    return Promise.all(ids.map(function (id) {
+      return fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(id) + '/lifecycle/funnel')
+        .then(readJson).catch(function () { return []; })
+        .then(function (funnel) {
+          var withHM = 0, interview = 0;
+          (funnel || []).forEach(function (row) {
+            if (row.status === 'WITH_HIRING_MANAGER') withHM += Number(row.count || 0);
+            if (row.status === 'INTERVIEW_SCHEDULED') interview += Number(row.count || 0);
+          });
+          return { id: id, withHM: withHM, interview: interview, count: withHM + interview };
+        });
+    })).then(function (results) {
+      var map = {};
+      results.forEach(function (r) { map[r.id] = r; });
+      return map;
+    });
+  }
+
+  // B28: "Campaign" is the hiring manager's whole nav destination — tag and
+  // float to the top whichever campaigns are in `awaitingMapPromise`.
+  function markAwaitingHisDecision(awaitingMapPromise) {
+    awaitingMapPromise.then(function (map) {
+      var awaiting = Object.keys(map).map(function (id) { return map[id]; })
+        .filter(function (r) { return r.count > 0; });
+      var deck = document.getElementById('live-campaign-deck');
+      // Reversed so the first awaiting campaign ends up first in the deck —
+      // each insertBefore(..., firstChild) otherwise stacks in reverse order.
+      awaiting.slice().reverse().forEach(function (r) {
+        var card = deck.querySelector('[data-campaign-id="' + r.id + '"]');
+        if (!card) return;
+        var tag = element('span', 'tag hold', r.count + (r.count === 1 ? ' decision' : ' decisions') + ' waiting on you');
+        var top = card.querySelector('.top');
+        if (top) top.appendChild(tag);
+        deck.insertBefore(card, deck.firstChild);
+      });
+      if (awaiting.length) {
+        document.getElementById('campaign-headline').innerHTML =
+          '<b>' + awaiting.length + '</b> ' + (awaiting.length === 1 ? 'campaign is' : 'campaigns are') + ' waiting for your decision.';
+        document.getElementById('campaign-copy').textContent =
+          'Open one below to record a shortlist verdict or interview feedback.';
+      }
+    });
+  }
+
+  function readJson(response) {
+    if (!response.ok) throw new Error();
+    return response.json();
+  }
+
+  // Two queries, joined here on campaign_id. The campaign list is unbounded;
+  // the runs list is not, so an explicit limit is passed and a campaign is
+  // never judged absent because its run fell off the end.
+  Promise.all([
+    fetch(API_BASE + '/api/campaigns').then(readJson).catch(function () { return []; }),
+    fetch(API_BASE + '/api/runs?limit=100').then(readJson).catch(function () { return { runs: [] }; })
+  ]).then(function (answers) {
+    render(
+      Array.isArray(answers[0]) ? answers[0] : [],
+      answers[1] && Array.isArray(answers[1].runs) ? answers[1].runs : []
+    );
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hiring-manager handoff · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  /* ---- page-specific: campaign picker, group action forms ---- */
+  .picker-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .picker-row select{
+    flex:1;min-width:260px;font-family:inherit;font-size:15px;font-weight:300;color:var(--ink);
+    background:var(--sand);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:13px 16px;
+  }
+  .picker-row select:focus{outline:2.5px solid var(--maroon);outline-offset:1px}
+
+  .q-row{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-top:1px solid var(--hair-soft)}
+  .q-row:first-child{border-top:0}
+  .q-row .nm{flex:1;min-width:0;font-size:16px;font-weight:400;letter-spacing:-.01em}
+  .q-row .nm span{display:block;font-size:14px;color:var(--ink-3);font-weight:300;margin-top:2px}
+  .q-row .question{
+    margin-top:8px;font-size:13.5px;color:var(--ink-2);font-weight:300;
+    background:var(--sand);border-radius:var(--r-md);padding:10px 14px;line-height:1.5;
+  }
+  .q-row .actions{flex:none;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  .action-form{
+    margin-top:10px;background:var(--sand);border-radius:var(--r-md);padding:14px 16px;
+    display:none;flex-direction:column;gap:10px;
+  }
+  .action-form.open{display:flex}
+  .action-form select,.action-form textarea{
+    font-family:inherit;font-size:14.5px;font-weight:300;color:var(--ink);
+    background:var(--surface);border:1px solid var(--hair);border-radius:var(--r-md);
+    padding:10px 13px;width:100%;
+  }
+  .action-form textarea{min-height:64px;resize:vertical;line-height:1.5}
+  .action-form .err{font-size:13px;color:var(--maroon);font-weight:400}
+  .action-form .ok{font-size:13px;color:#2F6B33;font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="id" href="index.html">
+    <div class="q">360</div>
+    <div>
+      <b>Recruitment 360</b>
+      <span>Talent Acquisition</span>
+    </div>
+  </a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+
+<div class="page">
+
+  <div class="crown"></div>
+  <section class="arch">
+    <div class="lattice"></div>
+    <div class="date">Hiring-manager handoff</div>
+    <h1>Who owes what, <b>right now</b>.</h1>
+    <p>Send shortlisted candidates to the hiring manager, record the manager's verdict, and
+      close the file when an offer lands. Every action here writes a real state change and a
+      real record.</p>
+  </section>
+
+  <section class="band">
+    <div class="label">
+      <h2>Campaign</h2>
+      <span class="aside">The handoff queue is scoped to one campaign at a time</span>
+    </div>
+    <div class="picker-row">
+      <select id="campaign-select"><option value="">Loading campaigns…</option></select>
+      <label for="actor-select">Acting person</label>
+      <select id="actor-select"><option value="">Loading users…</option></select>
+    </div>
+  </section>
+
+  <section class="band" id="empty-section" hidden>
+    <div class="empty"><b>Choose a campaign</b>Pick a campaign above to see who owes what.</div>
+  </section>
+
+  <div id="queue-content" hidden>
+
+    <section class="band">
+      <div class="label">
+        <h2>Where the queue stands</h2>
+        <span class="aside" id="queue-total-aside"></span>
+      </div>
+      <div class="chartcard">
+        <div class="ct">Handoff queue</div>
+        <div class="hbars" id="queue-chart"></div>
+        <div class="cs" id="queue-sentence"></div>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="label">
+        <h2>By group</h2>
+        <span class="aside">Open a group to act on a candidate</span>
+      </div>
+      <div class="fold" id="queue-folds"></div>
+    </section>
+
+  </div>
+
+</div>
+
+<script src="assets/app.js?v=39"></script>
+<script>
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+  var CAMPAIGN_KEY = 'recruitment360.handoff.campaignId';
+
+  var campaignSelect = document.getElementById('campaign-select');
+  var emptySection = document.getElementById('empty-section');
+  var queueContent = document.getElementById('queue-content');
+  var queueTotalAside = document.getElementById('queue-total-aside');
+  var queueChart = document.getElementById('queue-chart');
+  var queueSentence = document.getElementById('queue-sentence');
+  var queueFolds = document.getElementById('queue-folds');
+  function esc(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+  // "Ready to send" was removed from this grouping on direct instruction:
+  // sending is now done from decisions.html's "Email the shortlist to
+  // hiring manager", which itself performs the send-to-manager handoff
+  // (see app/api/reports.py::_handoff_to_manager). The backend queue
+  // endpoint still reports `ready_to_send` for anything shortlisted but not
+  // yet emailed to a manager; it is just not shown as its own group here.
+  var GROUPS = [
+    { key: 'with_manager', title: 'With the hiring manager', badge: 'hold', shade: 's2',
+      empty: 'Nobody is currently with a hiring manager.' },
+    { key: 'returned', title: 'Returned, with a question', badge: 'hold', shade: 's3',
+      empty: 'Nobody has been returned to the recruiter.' },
+    { key: 'ready_to_close', title: 'Ready to close', badge: 'ok', shade: 's4',
+      empty: 'Nobody is waiting to be recorded as hired or closed.' },
+  ];
+
+  var managers = [];
+  var lastQueue = null;
+
+  function loadCampaigns() {
+    fetch(API_BASE + '/api/campaigns')
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (campaigns) {
+        campaignSelect.innerHTML = '<option value="">Choose a campaign…</option>';
+        campaignOptions(campaigns).forEach(function (entry) {
+          var option = document.createElement('option');
+          option.value = entry.id;
+          option.textContent = entry.label;
+          campaignSelect.appendChild(option);
+        });
+        var remembered = new URLSearchParams(location.search).get('campaign') || localStorage.getItem(CAMPAIGN_KEY);
+        if (remembered && (campaigns || []).some(function (c) { return c.id === remembered; })) {
+          campaignSelect.value = remembered;
+          loadQueue(remembered);
+        }
+      })
+      .catch(function () {
+        campaignSelect.innerHTML = '<option value="">Could not load campaigns — start the API</option>';
+      });
+  }
+
+  function loadManagers() {
+    // An ADMIN account can also own a lifecycle row as a hiring manager
+    // (see `send_to_hiring_manager`'s role check) — used to stand a real
+    // person in for a hiring manager in a demo/self-test send (X66). Fetch
+    // both roles so, e.g., an admin account promoted for that purpose shows
+    // up here alongside the genuine HIRING_MANAGER accounts.
+    return Promise.all([
+      fetch(API_BASE + '/api/users?role=HIRING_MANAGER').then(function (r) { return r.ok ? r.json() : []; }),
+      fetch(API_BASE + '/api/users?role=ADMIN').then(function (r) { return r.ok ? r.json() : []; }),
+    ])
+      .then(function (results) {
+        var seen = {};
+        managers = results[0].concat(results[1]).filter(function (m) {
+          if (seen[m.id]) return false;
+          seen[m.id] = true;
+          return true;
+        });
+      })
+      .catch(function () { managers = []; });
+  }
+
+  function loadActors() {
+    return fetch(API_BASE + '/api/users').then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (list) {
+        var select = document.getElementById('actor-select');
+        select.innerHTML = '<option value="">Choose acting person…</option>';
+        (list || []).forEach(function (person) {
+          var option = document.createElement('option');
+          option.value = person.id;
+          option.textContent = person.full_name + ' · ' + person.role_label;
+          select.appendChild(option);
+        });
+        select.value = localStorage.getItem('recruitment360.actorId') || '';
+        select.addEventListener('change', function () {
+          localStorage.setItem('recruitment360.actorId', select.value);
+        });
+      });
+  }
+
+  campaignSelect.addEventListener('change', function () {
+    var campaignId = campaignSelect.value;
+    if (!campaignId) {
+      emptySection.hidden = false;
+      queueContent.hidden = true;
+      localStorage.removeItem(CAMPAIGN_KEY);
+      return;
+    }
+    localStorage.setItem(CAMPAIGN_KEY, campaignId);
+    loadQueue(campaignId);
+  });
+
+  function loadQueue(campaignId) {
+    fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(campaignId) + '/handoff/queue')
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (queue) {
+        lastQueue = queue;
+        emptySection.hidden = true;
+        queueContent.hidden = false;
+        renderChart(queue);
+        renderFolds(queue, campaignId);
+      })
+      .catch(function () {
+        emptySection.hidden = false;
+        queueContent.hidden = true;
+      });
+  }
+
+  function renderChart(queue) {
+    var total = queue.total;
+    queueTotalAside.textContent = total + ' candidate' + (total === 1 ? '' : 's') + ' in this campaign’s hiring process';
+
+    var max = Math.max.apply(null, GROUPS.map(function (g) { return (queue[g.key] || []).length; }).concat([1]));
+    queueChart.innerHTML = '';
+    GROUPS.forEach(function (g) {
+      var count = (queue[g.key] || []).length;
+      var pct = Math.round((count / max) * 100);
+      var row = document.createElement('div');
+      row.className = 'hbar ' + g.shade + (count === 0 ? ' zero' : '');
+      row.innerHTML =
+        '<div class="k">' + g.title + '</div>' +
+        '<div class="t"><i style="width:' + (count === 0 ? 2 : pct) + '%"></i></div>' +
+        '<div class="n">' + count + '</div>';
+      queueChart.appendChild(row);
+    });
+
+    var busiest = GROUPS.map(function (g) { return { title: g.title, count: (queue[g.key] || []).length }; })
+      .sort(function (a, b) { return b.count - a.count; })[0];
+    queueSentence.innerHTML = busiest.count
+      ? 'Of ' + total + ' in the process, <b>' + busiest.count + '</b> need action: <b>' + busiest.title.toLowerCase() + '</b>.'
+      : 'Nothing needs action right now, of ' + total + ' in the process.';
+  }
+
+  function fmtDays(n) {
+    return n + ' day' + (n === 1 ? '' : 's');
+  }
+
+  function renderFolds(queue, campaignId) {
+    queueFolds.innerHTML = '';
+    GROUPS.forEach(function (g) {
+      var entries = queue[g.key] || [];
+      var details = document.createElement('details');
+      details.innerHTML =
+        '<summary>' +
+          '<div class="b ' + g.badge + '">' + entries.length + '</div>' +
+          '<div class="t">' + g.title + '</div>' +
+          '<div class="s">' + entries.length + ' of ' + queue.total + '</div>' +
+          '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</summary>' +
+        '<div class="drawer"></div>';
+      var drawer = details.querySelector('.drawer');
+
+      if (!entries.length) {
+        var empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = g.empty;
+        drawer.appendChild(empty);
+      } else {
+        entries.forEach(function (entry) {
+          drawer.appendChild(renderRow(g.key, entry, campaignId));
+        });
+      }
+      queueFolds.appendChild(details);
+    });
+  }
+
+  function renderRow(groupKey, entry, campaignId) {
+    var row = document.createElement('div');
+    row.className = 'q-row';
+    var metaBits = [entry.status_label, fmtDays(entry.days_in_state) + ' in this state'];
+    if (entry.owner_name) metaBits.push('Owner: ' + entry.owner_name);
+
+    var actionsHtml = '';
+    if (groupKey === 'with_manager') {
+      // The verdict on a candidate with the hiring manager is the hiring
+      // manager's call, not HR's -- HR only gets a read-only status here.
+      // HIRING_MANAGER (and ADMIN, which can stand in for one per X66) still
+      // get the real control.
+      var me = window.__r360Me;
+      var canRecordVerdict = !!me && (me.role === 'HIRING_MANAGER' || me.role === 'ADMIN');
+      actionsHtml = canRecordVerdict
+        ? '<button type="button" class="ghost sm" data-act="review">Record verdict</button>'
+        : '<span class="tag sm hold">Pending</span>';
+    } else if (groupKey === 'returned') {
+      // B28: replying to the manager's question, and every other action
+      // below, is HR's own step, not the hiring manager's — he can see the
+      // queue but only ever gets a real control on his own verdict above.
+      actionsHtml = window.__r360Locked && window.__r360Locked()
+        ? '<span class="tag sm hold">HR to answer</span>'
+        : '<button type="button" class="ghost sm" data-act="send">Send back to manager</button>';
+    } else if (groupKey === 'ready_to_close') {
+      actionsHtml = (window.__r360Locked && window.__r360Locked())
+        ? '<span class="tag sm hold">HR to close</span>'
+        : entry.status === 'OFFER_ACCEPTED'
+          ? '<button type="button" class="ghost sm" data-act="hire">Record as hired</button>'
+          : '<button type="button" class="ghost sm" data-act="close">Close the file</button>';
+    }
+
+    row.innerHTML =
+      '<div class="nm">' + esc(entry.name) + '<span>' + metaBits.map(esc).join(' · ') + '</span>' +
+        (entry.question ? '<div class="question">“' + esc(entry.question) + '”</div>' : '') +
+      '</div>' +
+      '<div class="actions">' + actionsHtml + '</div>';
+
+    var form = document.createElement('div');
+    form.className = 'action-form';
+    row.querySelector('.actions').after(form);
+
+    var btn = row.querySelector('[data-act]');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var act = btn.getAttribute('data-act');
+        form.classList.toggle('open');
+        if (form.classList.contains('open')) renderActionForm(form, act, entry, campaignId, row);
+      });
+    }
+
+    return row;
+  }
+
+  function renderActionForm(form, act, entry, campaignId, row) {
+    var actorId = document.getElementById('actor-select').value;
+    if (act === 'send') {
+      var answerPlaceholder = entry.question
+        ? "Your answer to the manager's question (sent to them by email)"
+        : 'Note for the hiring manager (optional)';
+      form.innerHTML =
+        '<select class="mgr"><option value="">Choose a hiring manager…</option>' +
+        managers.map(function (m) { return '<option value="' + esc(m.id) + '">' + esc(m.full_name) + '</option>'; }).join('') +
+        '</select>' +
+        '<textarea class="note" placeholder="' + esc(answerPlaceholder) + '"></textarea>' +
+        '<div class="ok" hidden></div>' +
+        '<div class="err" hidden></div>' +
+        '<button type="button" class="cta sm">Confirm</button>';
+      form.querySelector('.cta').addEventListener('click', function () {
+        var managerId = form.querySelector('.mgr').value;
+        var answer = form.querySelector('.note').value;
+        if (!managerId) { showErr(form, 'Choose a hiring manager.'); return; }
+        if (entry.question && !answer.trim()) {
+          showErr(form, "Write your answer to the manager's question first.");
+          return;
+        }
+        post(campaignId, '/lifecycle/' + entry.candidate_id + '/send-to-manager', {
+          actor_id: actorId, manager_id: managerId, note: answer,
+        }, form, function (data) {
+          if (data.mail_detail) {
+            var ok = form.querySelector('.ok');
+            ok.hidden = false;
+            ok.textContent = (data.mail_sent ? 'Mailed the manager: ' : '') + data.mail_detail;
+          }
+        });
+      });
+    } else if (act === 'review') {
+      form.innerHTML =
+        '<select class="outcome">' +
+          '<option value="PROCEED">Proceed to interview</option>' +
+          '<option value="DECLINE">Decline</option>' +
+          '<option value="QUESTION">Has a question</option>' +
+        '</select>' +
+        '<textarea class="reason" placeholder="Reason (required for decline or question)"></textarea>' +
+        '<div class="err" hidden></div>' +
+        '<button type="button" class="cta sm">Confirm</button>';
+      form.querySelector('.cta').addEventListener('click', function () {
+        var outcome = form.querySelector('.outcome').value;
+        var reason = form.querySelector('.reason').value;
+        if (outcome !== 'PROCEED' && !reason.trim()) {
+          showErr(form, 'A decline or a question needs a reason.');
+          return;
+        }
+        post(campaignId, '/lifecycle/' + entry.candidate_id + '/review', {
+          reviewer_id: findManagerId(entry) || actorId, outcome: outcome, reason: reason,
+        }, form);
+      });
+    } else if (act === 'hire') {
+      form.innerHTML =
+        '<div class="err" hidden></div>' +
+        '<button type="button" class="cta sm">Confirm hired</button>';
+      form.querySelector('.cta').addEventListener('click', function () {
+        post(campaignId, '/lifecycle/' + entry.candidate_id + '/transition', {
+          to_status: 'HIRED', actor_id: actorId,
+        }, form);
+      });
+    } else if (act === 'close') {
+      form.innerHTML =
+        '<div class="err" hidden></div>' +
+        '<button type="button" class="cta sm">Confirm close</button>';
+      form.querySelector('.cta').addEventListener('click', function () {
+        post(campaignId, '/lifecycle/' + entry.candidate_id + '/transition', {
+          to_status: 'CLOSED', actor_id: actorId,
+        }, form);
+      });
+    }
+  }
+
+  function findManagerId(entry) {
+    var match = managers.find(function (m) { return m.full_name === entry.owner_name; });
+    return match ? match.id : '';
+  }
+
+  function showErr(form, message) {
+    var err = form.querySelector('.err');
+    err.textContent = message;
+    err.hidden = false;
+  }
+
+  function post(campaignId, path, body, form, onSuccess) {
+    if (!document.getElementById('actor-select').value) {
+      showErr(form, 'Choose the acting person first.');
+      return;
+    }
+    fetch(API_BASE + '/api/campaigns/' + encodeURIComponent(campaignId) + path, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          showErr(form, (result.data && result.data.detail) || 'That could not be recorded.');
+          return;
+        }
+        if (onSuccess) onSuccess(result.data);
+        // Give a mail-status message (set by onSuccess into '.ok') a moment
+        // on screen before the fold re-renders and the form is torn down.
+        setTimeout(function () { loadQueue(campaignId); }, result.data && result.data.mail_detail ? 1400 : 0);
+      })
+      .catch(function () { showErr(form, 'Could not reach the API.'); });
+  }
+
+  Promise.all([loadManagers(), loadActors()]).then(loadCampaigns);
+})();
+</script>
+</body>
+</html>

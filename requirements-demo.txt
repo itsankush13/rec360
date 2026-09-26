@@ -1,0 +1,5 @@
+# Extra dependencies for scripts/demo_video/ only — not needed to run the app itself.
+# pip install -r requirements-demo.txt
+# playwright install chromium
+playwright>=1.63
+imageio-ffmpeg>=0.6

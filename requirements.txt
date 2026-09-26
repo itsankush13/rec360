@@ -1,0 +1,62 @@
+streamlit>=1.41.0
+fastapi>=0.115.0
+uvicorn>=0.30.0
+langchain>=0.3.25
+langchain-groq>=0.3.2
+langchain-openai>=0.2.14
+langchain-community>=0.3.24
+langchain-core>=0.3.59
+sentence-transformers>=3.0.0
+faiss-cpu>=1.12.0
+rank-bm25>=0.2.2
+pymupdf>=1.25.0
+# OCR for CVs that arrive as photographs, installed from THIS file in one
+# pass. The old two-step install in requirements-ocr.txt existed only because
+# spacy 3.7.4 and thinc 8.2.5 needed numpy<2 while the OCR chain declares
+# numpy>=2. The 3.13 upgrade moves to spacy>=3.8.7 on numpy 2.x, so the
+# collision is gone and the dance is no longer needed.
+#
+# The detection, recognition and classification models ship inside the
+# rapidocr wheel, so nothing downloads at first use and no system binary or
+# administrator rights are needed. onnxruntime is the inference engine and is
+# a SEPARATE package: rapidocr imports but does not depend on it, and without
+# it engine construction raises "onnxruntime is not installed".
+# Remove either one and OCR turns itself off: image-only files are held
+# exactly as they were before.
+rapidocr>=3.4.0
+onnxruntime>=1.20
+python-docx>=1.1.2
+python-pptx>=1.0.2
+spacy>=3.8.7
+numpy>=2.1,<3
+pydantic>=2.10.0
+pydantic-settings>=2.5.0
+plotly>=5.24.0
+networkx>=3.4.0
+pandas>=2.2.0
+scikit-learn>=1.6.0
+reportlab>=4.2.0
+openpyxl>=3.1.2
+jinja2>=3.1.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.9
+bcrypt>=4.3.0
+PyJWT>=2.10.0
+twilio>=9.0.0
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+
+# --- Added for enterprise backend build-out (Phase A onward) ---
+sqlalchemy>=2.0.30
+alembic>=1.13.0
+psycopg2-binary>=2.9.9
+redis>=5.0.0
+rq>=1.16.0
+pytest>=8.0.0
+httpx>=0.27.0
+
+# B10: local Outlook COM automation (app/core/outlook_adapter.py). Windows
+# only and only loaded when email_backend="outlook" is explicitly set;
+# absent that, the app never imports win32com. Installed and unit-tested
+# against a fake COM double this session — not yet exercised against a real
+# Outlook mailbox.
+pywin32>=306; sys_platform == "win32"

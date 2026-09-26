@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Today · Recruitment 360</title>
+<meta name="theme-color" content="#971A3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Recruitment 360">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=27">
+<style>
+  .arch.slim h1{font-size:31px;max-width:28ch}.arch.slim .date{margin-bottom:9px}
+  .today-workspace-map{display:flex;align-items:center;gap:18px;padding:8px 2px 4px}.today-workspace-map>span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:400;white-space:nowrap}.workspace-links{display:flex;flex-wrap:wrap;gap:7px}.workspace-links a{padding:7px 12px;border:1px solid var(--hair);border-radius:var(--r-pill);background:rgba(255,254,252,.72);font-size:12.5px;color:var(--ink-2);font-weight:300;text-decoration:none;transition:background .2s,border-color .2s,color .2s}.workspace-links a:hover{background:var(--maroon-soft);border-color:var(--maroon-mid);color:var(--maroon)}
+  .decide{display:grid;grid-template-columns:1fr 1fr;gap:16px}.today-card .where{margin-top:5px;font-size:14px;color:var(--ink-2);font-weight:300}.today-card .meter{margin-top:22px;display:flex;align-items:center;gap:15px}.today-card .dial{position:relative;width:74px;height:74px;flex:none}.today-card .dial svg{width:74px;height:74px;transform:rotate(-90deg)}.today-card .dial .n{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;font-weight:400;color:var(--maroon)}.today-card .txt{font-size:13.5px;line-height:1.5;color:var(--ink-2);font-weight:300}.today-card .txt b{display:block;color:var(--ink);font-weight:400}.today-card .cta{margin-top:22px}
+  .fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden}.fg>div{background:var(--surface);padding:22px 24px}.fg .k{font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);margin-bottom:11px}.fg .v{font-size:36px;font-weight:200;letter-spacing:-.045em;line-height:1}.fg .v small{font-size:16px;font-weight:300;color:var(--ink-2);margin-left:4px}.fg .v.maroon{color:var(--maroon)}.fg .b{margin-top:11px;font-size:14px;color:var(--ink-2);font-weight:300;line-height:1.5}.fg .b b{font-weight:500;color:var(--ink)}.fg .m{margin-top:7px;font-size:12.5px;color:var(--ink-3);font-weight:300}
+  .mini{display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--hair-soft)}.mini:first-child{border-top:0}.mini .nm{flex:1;min-width:0;font-size:15.5px;font-weight:400}.mini .nm span{display:block;font-size:13.5px;color:var(--ink-3);font-weight:300;margin-top:2px}.today-detail-foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:22px}.today-detail-foot .note{font-size:13px;color:var(--ink-3);font-weight:300}
+  @media (max-width:760px){.today-workspace-map{align-items:flex-start;flex-direction:column;gap:9px}.decide,.fg{grid-template-columns:1fr}.mini{align-items:flex-start;flex-wrap:wrap}.arch.slim h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="id" href="index.html"><div class="q">360</div><div><b>Recruitment 360</b><span>Talent Acquisition</span></div></a>
+  <nav aria-label="Main navigation"><a href="index.html">Today</a><a href="start-campaign.html">Start Campaign</a><a href="whatif.html">What-if Analysis</a><a href="audit.html">Audit</a><a href="developer.html">FinOps</a></nav>
+  <div class="me"><span>HR</span><div class="av" aria-hidden="true">HR</div></div>
+</div>
+<main class="page">
+  <section class="arch slim"><div class="lattice"></div><div class="date" id="i-date">Current activity</div><h1>Your recruitment work, <b>at a glance</b>.</h1><p>Start with what needs attention. Open a section for its people and record.</p></section>
+<section class="band">
+    <div class="label"><h2>Waiting for your decision</h2><span class="count" id="i-decide-count">2</span><span class="aside" id="i-decide-aside">Two shortlists · 33 people ready to review</span></div>
+    <div class="decide" id="i-decide">
+      <article class="card today-card"><div class="arcbg"></div><div class="kick">Coastal Terminal · 8 vacancies</div><h3>Control Room Operator</h3><div class="where">Closes 19 September</div><div class="meter"><div class="dial"><svg viewBox="0 0 82 82"><circle cx="41" cy="41" r="35" fill="none" stroke="#F3E6E9" stroke-width="8"/><circle cx="41" cy="41" r="35" fill="none" stroke="#971A3E" stroke-width="8" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="55"/></svg><span class="n">24</span></div><div class="txt"><b>24 people worth your time</b>out of 622 who applied</div></div><a class="cta block" href="leaderboard.html">Review shortlist</a></article>
+      <article class="card today-card"><div class="arcbg"></div><div class="kick">Head Office · 2 vacancies</div><h3>HSE Advisor</h3><div class="where">Closes 17 September</div><div class="meter"><div class="dial"><svg viewBox="0 0 82 82"><circle cx="41" cy="41" r="35" fill="none" stroke="#F3E6E9" stroke-width="8"/><circle cx="41" cy="41" r="35" fill="none" stroke="#971A3E" stroke-width="8" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="120"/></svg><span class="n">9</span></div><div class="txt"><b>9 people worth your time</b>out of 188 who applied</div></div><a class="cta block" href="leaderboard.html">Review shortlist</a></article>
+    </div>
+  </section>
+  <section class="band">
+    <div class="label"><h2>What this saved your team</h2><span class="count" id="i-saved-count">393h</span><span class="aside" id="i-saved-aside">393 hours returned · $16,506 of screening time avoided</span></div>
+    <div class="fg" id="i-saved"><div><div class="k">Hours returned</div><div class="v maroon">393<small>hours</small></div><div class="b">Reading 3,420 applications by hand takes <b>456 hours</b>. This took <b>63</b>.</div></div><div><div class="k">Screening time not spent</div><div class="v">$16,506</div><div class="b">393 hours at <b>$42.00</b> an hour, fully loaded.</div><div class="m">You set this rate. It is not fixed by the system.</div></div><div><div class="k">Days to a shortlist</div><div class="v">4.2<small>days</small></div><div class="b"><b>62% quicker</b> than the 11 days it took last year.</div></div><div><div class="k">Annualised at this volume</div><div class="v">$198,000</div><div class="b">A projection if every month runs like this one.</div></div></div>
+    <div class="today-detail-foot"><a class="ghost" href="performance.html">See the full picture</a></div>
+  </section>
+  <section class="band">
+    <div class="label"><h2>Running now</h2><span class="count" id="i-run-count">3</span><span class="aside" id="i-run-aside">Three campaigns reading · next completion today at 11:47</span></div>
+    <div class="mini"><div class="nm">Rotating Equipment Engineer<span>North Plant · 3 vacancies · closes 24 September</span></div><div class="bar2"><div class="t"><i class="d" style="width:65%"></i><i class="h" style="width:8%"></i></div><div class="l">268 of 412 read</div></div><span class="tag run">Running</span></div>
+    <div class="mini"><div class="nm">Instrumentation Technician<span>North Plant · 12 vacancies · closes 30 September</span></div><div class="bar2"><div class="t"><i class="d" style="width:41%"></i><i class="h" style="width:2%"></i></div><div class="l">389 of 941 read</div></div><span class="tag run">Running</span></div>
+    <div class="mini"><div class="nm">Turnaround Planner<span>North Plant · 4 vacancies · sent to SuccessFactors</span></div><div class="bar2"><div class="t"><i class="d" style="width:100%"></i></div><div class="l">311 of 311 read</div></div><span class="tag ok">Handed over</span></div>
+    <div class="today-detail-foot"><a class="ghost" href="campaigns.html">Open all campaigns</a><span class="note">The final read completes today at 11:47.</span></div>
+  </section>
+  <section class="band">
+    <div class="label"><h2>Held, and holding up</h2><span class="count" id="i-held-count">31</span><span class="aside" id="i-held-aside">31 files need a different route · 99.1% read without a problem</span></div>
+    <div class="mini"><div class="nm">Photographs of a CV, with no text to read<span>12 files</span></div></div><div class="mini"><div class="nm">The same person applied twice<span>9 files</span></div><button type="button" class="ghost sm">Merge them</button></div><div class="mini"><div class="nm">The file is password protected<span>6 files</span></div><button type="button" class="ghost sm">Ask for it again</button></div><div class="mini"><div class="nm">No employment dates anywhere in the CV<span>4 files</span></div></div><hr class="soft"><div class="mini"><div class="nm">Applications read without a problem<span>3,389 of 3,420</span></div><span class="tag ok">99.1%</span></div><div class="mini"><div class="nm">High scores the checker could not justify<span>Held back for a person. The limit is 1%.</span></div><span class="tag ok">0.3%</span></div>
+    <div class="today-detail-foot"><a class="ghost" href="audit.html">Open the full record</a><span class="note">A campaign never stops for a held file.</span></div>
+  </section>
+</main>
+<script>
+/* Today (HR KPI Dashboard) — live wiring.
+
+   Two rules govern every figure on this page, both from web/DATA.md:
+     * never a percentage without its denominator
+     * never a saving without the baseline it is measured against
+   The API returns percentages as {count, of, statement} for exactly this
+   reason, and the efficiency block carries an `assumptions` note saying its
+   inputs are planning assumptions rather than anything this system
+   measured. That note is displayed, not paraphrased away — the dollar
+   figure is derived from a configurable rate, and presenting it as a
+   measured saving would be a claim the software cannot support. */
+(function () {
+  var API_BASE = (localStorage.getItem('recruitment360.apiBase') || (/^(localhost|127.0.0.1)$/.test(location.hostname) ? 'http://localhost:8000' : location.origin)).replace(/\/$/, '');
+
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function set(id, html) { var el = document.getElementById(id); if (el) el.innerHTML = html; }
+  function txt(id, s) { var el = document.getElementById(id); if (el) el.textContent = s; }
+  function n1(v) { return Math.round(Number(v || 0) * 10) / 10; }
+  function getJSON(p) {
+    return fetch(API_BASE + p).then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    });
+  }
+  /* Replace everything after a band's label, leaving the heading alone. */
+  function bandBody(labelId, html) {
+    var label = document.getElementById(labelId);
+    if (!label) return;
+    var band = label.closest('.band');
+    if (!band) return;
+    var inner = band.querySelector('.story-detail-inner');
+    var target = inner || band;
+    if (inner) {
+      while (inner.firstChild) inner.removeChild(inner.firstChild);
+    } else {
+      var kids = [];
+      for (var i = 0; i < band.children.length; i++) {
+        var c = band.children[i];
+        if (!c.classList.contains('label')) kids.push(c);
+      }
+      kids.forEach(function (c) { c.parentNode.removeChild(c); });
+    }
+    var holder = document.createElement('div');
+    holder.innerHTML = html;
+    while (holder.firstChild) target.appendChild(holder.firstChild);
+  }
+
+  function dial(shortlisted, applied) {
+    var pct = applied ? Math.min(1, shortlisted / applied) : 0;
+    var off = Math.max(0, 220 - pct * 220);
+    return '<div class="dial"><svg viewBox="0 0 82 82">' +
+      '<circle cx="41" cy="41" r="35" fill="none" stroke="var(--maroon-soft)" stroke-width="8"/>' +
+      '<circle cx="41" cy="41" r="35" fill="none" stroke="var(--maroon)" stroke-width="8" ' +
+      'stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="' + off + '"/></svg>' +
+      '<span class="n">' + shortlisted + '</span></div>';
+  }
+
+  ['i-decide-count','i-saved-count','i-run-count','i-held-count'].forEach(function (id) {
+    txt(id, '—'); bandBody(id, '<p>Loading current activity…</p>');
+  });
+
+  Promise.all([
+    getJSON('/api/analytics/kpis'),
+    getJSON('/api/runs').catch(function () { return { runs: [] }; })
+  ]).then(function (r) {
+    var k = r[0], runs = (r[1] && r[1].runs) || [];
+    var w = k.workload, t = k.throughput, e = k.efficiency,
+        q = k.quality, x = k.exceptions, o = k.outcomes;
+
+    var today = new Date();
+    var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var MON = ['January','February','March','April','May','June','July',
+               'August','September','October','November','December'];
+    txt('i-date', DAYS[today.getDay()] + ', ' + today.getDate() + ' ' + MON[today.getMonth()]);
+
+    /* ── Waiting for your decision ── */
+    var withResults = runs.filter(function (run) { return run.count > 0; });
+    txt('i-decide-count', String(withResults.length));
+    txt('i-decide-aside', withResults.length
+      ? withResults.length + (withResults.length === 1 ? ' campaign' : ' campaigns') +
+        ' · ' + w.candidates_assessed + ' people assessed'
+      : 'Nothing is waiting for a decision yet');
+
+    bandBody('i-decide-count', withResults.length
+      ? withResults.map(function (run) {
+          var c = run.campaign || {};
+          return '<article class="card today-card"><div class="arcbg"></div>' +
+            '<div class="kick">' + esc(c.site || 'Location not set') + ' · ' +
+              esc(c.vacancies || 1) + (Number(c.vacancies) === 1 ? ' vacancy' : ' vacancies') + '</div>' +
+            '<h3>' + esc(c.title || c.name || 'Campaign') + '</h3>' +
+            '<div class="where">' + esc(run.submitted_count) + ' applications received</div>' +
+            '<div class="meter">' + dial(run.count, run.submitted_count) +
+              '<div class="txt"><b>' + run.count +
+              (run.count === 1 ? ' person assessed' : ' people assessed') + '</b>out of ' +
+              esc(run.submitted_count) + ' who applied</div></div>' +
+            '<a class="cta block" href="leaderboard.html?run=' + esc(run.run_id) +
+              '">Review shortlist</a></article>';
+        }).join('')
+      : '<div class="mini"><div class="nm">No assessments yet<span>Create a campaign ' +
+        'and upload CVs to get started.</span></div>' +
+        // B28: starting a campaign is HR's job, not the hiring manager's.
+        ((window.__r360Locked && window.__r360Locked())
+          ? ''
+          : '<a class="ghost sm" href="new-campaign.html">New campaign</a>') + '</div>');
+
+    /* ── What this saved your team ── */
+    var a = e.assumptions;
+    txt('i-saved-count', n1(e.recruiter_hours_returned) + 'h');
+    txt('i-saved-aside', n1(e.recruiter_hours_returned) + ' hours returned · ' +
+        e.screening_time_not_spent.currency + ' ' +
+        e.screening_time_not_spent.amount + ' of screening time avoided');
+
+    var manual = Number(e.manual_equivalent_hours) || 0;
+    var assisted = Number(e.actual_recruiter_hours) || 0;
+    bandBody('i-saved-count',
+      '<p>Estimated reading time for ' + e.cvs_included + ' applications</p>' +
+      '<div class="journey-chart" role="img" aria-label="Estimated manual and assisted reading hours">' +
+      '<div class="journey-bar"><span>Manual baseline</span><div class="journey-track"><i style="width:100%"></i></div><b>' + n1(manual) + 'h</b></div>' +
+      '<div class="journey-bar"><span>Assisted</span><div class="journey-track"><i style="width:' + (manual ? Math.min(100, Math.round(assisted / manual * 100)) : 0) + '%"></i></div><b>' + n1(assisted) + 'h</b></div></div>' +
+      '<details class="journey-detail"><summary>See the estimate and assumptions</summary>' +
+      '<p>' + esc(e.baseline) + ' ' + esc(a.note) + '</p>' +
+      '<p>Screening time not spent: ' + esc(e.screening_time_not_spent.currency) + ' ' + esc(e.screening_time_not_spent.amount) + '. ' + esc(e.screening_time_not_spent.derivation) + '</p>' +
+      '<p>' + w.candidates_assessed + ' of ' + w.cvs_received + ' applications assessed.</p></details>' +
+      '<div class="today-detail-foot"><a class="ghost" href="performance.html">' +
+      'See the full picture</a></div>');
+
+    /* ── Running now ── */
+    var live = runs.slice(0, 6);
+    txt('i-run-count', String(live.length));
+    txt('i-run-aside', live.length
+      ? live.length + (live.length === 1 ? ' assessment run recorded' : ' assessment runs recorded')
+      : 'Nothing has run yet');
+
+    bandBody('i-run-count', (live.length
+      ? live.map(function (run) {
+          var c = run.campaign || {};
+          var done = run.submitted_count
+            ? Math.round(run.count / run.submitted_count * 100) : 0;
+          var held = (run.held_files || []).length;
+          var heldPct = run.submitted_count
+            ? Math.round(held / run.submitted_count * 100) : 0;
+          return '<div class="mini"><div class="nm">' + esc(c.title || c.name || 'Campaign') +
+            '<span>' + esc(c.site || 'Location not set') + ' · ' +
+            esc(c.vacancies || 1) + (Number(c.vacancies) === 1 ? ' vacancy' : ' vacancies') +
+            '</span></div><div class="bar2"><div class="t">' +
+            '<i class="d" style="width:' + done + '%"></i>' +
+            '<i class="h" style="width:' + heldPct + '%"></i></div>' +
+            '<div class="l">' + run.count + ' of ' + run.submitted_count + ' read</div></div>' +
+            '<span class="tag ' + (run.status === 'COMPLETED' ? 'ok' : 'run') + '">' +
+            (run.status === 'COMPLETED' ? 'Finished' : 'Running') + '</span></div>';
+        }).join('')
+      : '<div class="mini"><div class="nm">No assessment runs yet<span>Upload CVs to ' +
+        'a campaign with an approved rubric.</span></div></div>') +
+      '<div class="today-detail-foot"><a class="ghost" href="campaigns.html">' +
+      'Open all campaigns</a></div>');
+
+    /* ── Held, and holding up ──
+       Two different things share this band, and must not be confused:
+       held files (by_reason) never got screened at all and need someone to
+       act before they can be; flagged files (screened_by_reason) — a
+       scanned CV, a CV with no name or contact details, a repeat applicant
+       — went through screening along with everything else and just carry a
+       note for a second look. Only the first kind gets an action button. */
+    var HELD_WORDS = {
+      PASSWORD_PROTECTED: ['The file is password protected', 'Ask for it again'],
+      CORRUPT_FILE: ['The file is damaged and cannot be opened', 'Ask for it again'],
+      UNSUPPORTED_FORMAT: ['That file type cannot be read', 'Ask for it again'],
+      EMPTY_FILE: ['The file is empty', 'Ask for it again'],
+      FILE_TOO_LARGE: ['The file is too large to read', 'Ask for it again'],
+      EXTRACTION_FAILED: ['The text in this file could not be read', null],
+      STORAGE_FAILED: ['The file could not be saved', 'Try again'],
+      INTERNAL_ERROR: ['Something went wrong reading this file', null]
+    };
+    var FLAG_WORDS = {
+      NO_TEXT_EXTRACTED: 'Photographs or scans of a CV, screened on whatever text could be recovered',
+      INCOMPLETE_CONTENT: 'No name or contact details found in the CV, screened on its text alone',
+      FLAGGED: 'Screened, but flagged for a second look'
+    };
+    var reasons = x.by_reason || {};
+    var flagReasons = x.screened_by_reason || {};
+    var flaggedScreenedCount = Object.keys(flagReasons).reduce(
+      function (sum, code) { return sum + flagReasons[code]; }, 0
+    );
+    txt('i-held-count', String(x.files_held));
+    var readOk = t.processed_without_a_problem;
+    var asideParts = [];
+    asideParts.push(x.files_held ? x.files_held + ' files need a different route' : 'Nothing is held');
+    if (flaggedScreenedCount) {
+      asideParts.push(flaggedScreenedCount + ' screened but flagged for a second look');
+    }
+    if (readOk) asideParts.push(readOk.statement + ' read without a problem');
+    txt('i-held-aside', asideParts.join(' · '));
+
+    var heldRows = Object.keys(reasons).map(function (code) {
+      var words = HELD_WORDS[code] || ['Needs a look', null];
+      return '<div class="mini"><div class="nm">' + esc(words[0]) + '<span>' +
+        reasons[code] + (reasons[code] === 1 ? ' file' : ' files') + '</span></div>' +
+        (words[1] ? '<button type="button" class="ghost sm">' + esc(words[1]) + '</button>' : '') +
+        '</div>';
+    }).join('');
+
+    // Duplicates are already merged into the existing candidate automatically
+    // — there is nothing left to do, so this is a note, not an action.
+    if (x.duplicates_found) {
+      heldRows += '<div class="mini"><div class="nm">The same person applied twice' +
+        '<span>' + x.duplicates_found + (x.duplicates_found === 1
+          ? ' file, automatically merged into the existing profile'
+          : ' files, automatically merged into the existing profiles') +
+        '</span></div><span class="tag ok">Merged</span></div>';
+    }
+
+    heldRows += Object.keys(flagReasons).map(function (code) {
+      var label = FLAG_WORDS[code] || FLAG_WORDS.FLAGGED;
+      var count = flagReasons[code];
+      return '<div class="mini"><div class="nm">' + esc(label) + '<span>' +
+        count + (count === 1 ? ' file' : ' files') + '</span></div>' +
+        '<span class="tag ok">Flagged</span></div>';
+    }).join('');
+
+    if (!heldRows) {
+      heldRows = '<div class="mini"><div class="nm">Nothing is held' +
+        '<span>Every file received has been read.</span></div>' +
+        '<span class="tag ok">All read</span></div>';
+    }
+
+    var extra = '<hr class="soft">' +
+      '<div class="mini"><div class="nm">Applications read without a problem<span>' +
+        (readOk ? esc(readOk.statement) : 'nothing read yet') + '</span></div>' +
+        (readOk ? '<span class="tag ok">' + n1(readOk.value) + '%</span>' : '') + '</div>';
+    var questioned = q.assessments_the_reviewer_questioned;
+    if (questioned) {
+      extra += '<div class="mini"><div class="nm">Assessments the checker questioned' +
+        '<span>Screened, then flagged for a person to read. ' + esc(questioned.statement) +
+        '.</span></div><span class="tag ok">' + n1(questioned.value) + '%</span></div>';
+    }
+
+    bandBody('i-held-count', heldRows + extra +
+      '<div class="today-detail-foot"><a class="ghost" href="audit.html">' +
+      'Open the full record</a><span class="note">A campaign never stops for a ' +
+      'held file.</span></div>');
+  }).catch(function () {
+    txt('i-date', 'Live figures unavailable');
+    ['i-decide-count','i-saved-count','i-run-count','i-held-count'].forEach(function (id) {
+      txt(id, '—'); bandBody(id, '<p>Could not load current data. Start the API and refresh this page.</p>');
+    });
+  });
+})();
+</script>
+<script src="assets/app.js?v=39"></script>
+</body>
+</html>
